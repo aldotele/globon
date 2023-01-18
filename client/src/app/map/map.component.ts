@@ -30,18 +30,8 @@ export class MapComponent implements AfterViewInit {
 		this.selectedLocate = value;
 	}
 
-  continentList: string[] = [
-    "Europe",
-    "Asia",
-    "Oceania",
-    "North America",
-    "South America",
-    "Africa",
-    "Antarctica"
-  ];
-
   private initMap(): void {
-    // initialize map
+    // initialize map and centering it
     this.map = L.map('map', {
       center: [39.8282, -18.5795],
       zoom: 1
