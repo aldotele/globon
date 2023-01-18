@@ -9,7 +9,7 @@ services:
 
   javalin_server:
     build: ./server
-    container_name: javalin_app
+    container_name: javalin_server
     ports:
       - 7070:7070
     environment:
@@ -21,6 +21,7 @@ services:
   angular_app:
     build: 
       context: ./client
+    container_name: angular_app
     ports: 
       - "4200:4200"
     volumes:
