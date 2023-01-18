@@ -6,6 +6,8 @@ RUN mkdir /project
 COPY . /project
 # navigate to that folder
 WORKDIR /project
+# create empty .env file for environment variables
+RUN touch .env
 # run maven command to build jar
 RUN mvn clean package -DskipTests
 # launch the jar
