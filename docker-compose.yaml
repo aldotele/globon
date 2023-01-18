@@ -1,0 +1,30 @@
+version: '3'
+
+services:
+  mongodb:
+    image: mongo:4.2.3
+    container_name: mongodb
+    ports:
+      - 27017:27017
+
+  javalin_server:
+    build: ./server
+    container_name: javalin_app
+    ports:
+      - 7070:7070
+    environment:
+      MONGO_HOST: mongodb
+    depends_on:
+      mongodb:
+        condition: service_started
+
+  angular_app:
+    build: 
+      context: ./client
+    ports: 
+      - "4200:4200"
+    volumes:
+      - /app/node_modules
+      - .:/app
+    depends_on:
+      - javalin_server

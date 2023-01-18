@@ -1,0 +1,51 @@
+<div style="margin: 30px 50px 50px 50px" class="big-container">
+  <div class="locate-container">
+    <label for="locate">Locate countries by: </label>
+
+    <select #locate (change)="onSelected(locate.value)" name="locate" id="locate">
+      <option value="">--- select ---</option>
+      <option value="marker">Marker</option>
+      <option value="coloured area">Coloured Area</option>
+    </select>
+  </div>
+
+
+  <div class="form-container">
+    <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
+  
+      <p>
+        <label for="minPopulation">Min Population </label>
+        <input type="text" id="minPopulation" name="minPopulation" ngModel>
+      </p>
+    
+      <p>
+        <label for="maxPopulation">Max Population </label>
+        <input type="text" id="maxPopulation" name="maxPopulation" ngModel>
+      </p>
+      
+      <!-- <p>
+      <label for="continents">Continent </label>
+      <select name="continents" id="continents" ngModel>
+        <option selected="" value=""></option>
+        <option [ngValue]="c" *ngFor="let c of continentList">
+          {{c}}
+        </option>
+      </select>
+      </p> -->
+    
+      <p>
+        <button type="submit" [disabled]="locate.value == '' ">Submit</button>
+      </p>
+    
+    </form>
+
+  </div>
+</div>
+
+
+
+<div style="margin-top: 100px" class="map-container">
+    <div class="map-frame">
+      <div id="map"></div>
+    </div>
+</div>
