@@ -15,8 +15,7 @@
 ### Intro
 The service acts as an aggregator of world countries and cities
 information by exposing a series of APIs and proxying requests to
-external endpoints such as [restcountries.com](https://restcountries.com/)
-and [countriesnow.space](https://countriesnow.space)
+external endpoints such as [restcountries.com](https://restcountries.com/) and [countriesnow.space](https://countriesnow.space)
 
 Some of the available features are:
 - country details
@@ -31,4 +30,9 @@ Some of the available features are:
 
 ### Run with Docker
 
-`docker compose up`
+build the image:
+`docker build -t globon_world_proxy .`
+
+run the container:
+`docker run -p 7070:7070 globon_world_proxy`
+
