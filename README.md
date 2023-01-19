@@ -30,8 +30,8 @@ and MongoDB with geospatial features as a database.
 
 `docker-compose up`
 
-After the three containers are launched successfully, navigate to:\
-[http://localhost:4200](localhost:4200)
+After the three containers are launched successfully, navigate to:
+[http://localhost:4200]()
 
-You can also access the available enpoints on[http://localhost:7070/swagger]()
+You can also access the available enpoints on [http://localhost:7070/swagger]()
 
