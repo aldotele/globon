@@ -6,6 +6,10 @@ public class Api {
         public static final String COUNTRY_DETAILS = "/country/{name}";
         public static final String COUNTRY_SEARCH = "/country/search";
         public static final String CITY_DETAILS = "/city/{name}";
+        public static final String CITY_BY_COUNTRY = "/city/in/{country}";
+        public static final String WORLD_LANGUAGES = "/world/languages";
+        public static final String WORLD_CURRENCIES = "/world/currencies";
+        public static final String WORLD_CAPITALS = "/world/capitals";
     }
 
     public static class External {

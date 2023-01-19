@@ -41,19 +41,19 @@ public class World {
         app.post(Api.Internal.COUNTRY_SEARCH, CountryController.fetchCountries);
 
         // ALL CITIES BY COUNTRY
-        app.get("/city/in/{country}", CityController.fetchCitiesByCountry);
+        app.get(Api.Internal.CITY_BY_COUNTRY, CityController.fetchCitiesByCountry);
 
         // SINGLE CITY DETAILS
         app.get(Api.Internal.CITY_DETAILS, CityController.fetchCityByName);
 
         // WORLD LANGUAGES
-        app.get("/world/languages", WorldController.fetchLanguages);
+        app.get(Api.Internal.WORLD_LANGUAGES, WorldController.fetchLanguages);
 
         // WORLD CURRENCIES
-        app.get("/world/currencies", WorldController.fetchCurrencies);
+        app.get(Api.Internal.WORLD_CURRENCIES, WorldController.fetchCurrencies);
 
         // WORLD CAPITALS
-        app.get("/world/capitals", WorldController.fetchCapitals);
+        app.get(Api.Internal.WORLD_CAPITALS, WorldController.fetchCapitals);
     }
 }
 
