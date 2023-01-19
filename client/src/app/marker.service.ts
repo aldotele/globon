@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
+import { AppSettings } from 'src/app.settings';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class MarkerService {
     this.marker.clearLayers();
     let acronyms: string[];
 
-    this.http.post("http://localhost:7070/country/search?onlyAcronym=true", search).subscribe((res: string[]) => {
+    this.http.post(AppSettings.SERVER_URL + "/country/search?onlyAcronym=true", search).subscribe((res: string[]) => {
       // the result of the request is a list of country codes
       acronyms = res;
 
@@ -39,7 +40,7 @@ export class MarkerService {
 
   makeCountrySearchMarkers(map: L.Map, search: string): void {
     this.marker.clearLayers();
-    this.http.post("http://localhost:7070/country/search", search).subscribe((res:any) => {
+    this.http.post(AppSettings.SERVER_URL + "/country/search", search).subscribe((res:any) => {
       res.forEach((country) => {
         if (country.location != null) {
           this.marker.addData(country.location).addTo(map);

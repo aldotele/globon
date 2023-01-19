@@ -1,3 +1,3 @@
 export class AppSettings {
-    public static SERVER_URL='http://localost:7070';
+    public static SERVER_URL='http://localhost:7070';
  }
