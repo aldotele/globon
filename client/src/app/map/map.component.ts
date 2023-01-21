@@ -1,11 +1,11 @@
 import { Component, AfterViewInit } from '@angular/core';
-import * as L from 'leaflet';
+import {Map, Marker, Icon, TileLayer} from 'leaflet'
 import { MarkerService } from '../marker.service';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
 const shadowUrl = 'assets/marker-shadow.png';
-const iconDefault = L.icon({
+const iconDefault = new Icon({
   iconRetinaUrl,
   iconUrl,
   shadowUrl,
@@ -15,7 +15,7 @@ const iconDefault = L.icon({
   tooltipAnchor: [16, -28],
   shadowSize: [41, 41]
 });
-L.Marker.prototype.options.icon = iconDefault;
+Marker.prototype.options.icon = iconDefault;
 
 @Component({
   selector: 'app-map',
@@ -32,13 +32,13 @@ export class MapComponent implements AfterViewInit {
 
   private initMap(): void {
     // initialize map and centering it
-    this.map = L.map('map', {
+    this.map = new Map('map', {
       center: [39.8282, -18.5795],
       zoom: 1
     });
 
     // add tile layer
-    const tiles = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const tiles = new TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18,
       minZoom: 3,
       attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'

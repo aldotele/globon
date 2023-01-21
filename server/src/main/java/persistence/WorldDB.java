@@ -146,6 +146,20 @@ public class WorldDB {
     }
 
     /**
+     * retrieves a country by name
+     */
+    public static Country retrieveCountryByCode(String code) throws JsonProcessingException, NotFoundException {
+        MongoCollection<Document> collection = database.getCollection(Collection.COUNTRIES);
+        Document document = collection.find(new BasicDBObject("acronym", code))
+                .projection(Projections.excludeId()).first();
+        if (document != null) {
+            Country country = simpleMapper.readValue(document.toJson(), Country.class);
+            return country;
+        }
+        throw new NotFoundException(code);
+    }
+
+    /**
      * retrieves all countries that match the filter criteria
      */
     public static List<Country> retrieveCountries(CountrySearch search) throws JsonProcessingException, SearchException {

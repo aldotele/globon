@@ -37,6 +37,9 @@ public class World {
         // COUNTRY BY NAME
         app.get(Api.Internal.COUNTRY_DETAILS, CountryController.fetchCountryByName);
 
+        // COUNTRY BY ISO3 CODE
+        app.get(Api.Internal.COUNTRY_DETAILS_BY_CODE, CountryController.fetchCountryByCode);
+
         //  COUNTRY FILTERS
         app.post(Api.Internal.COUNTRY_SEARCH, CountryController.fetchCountries);
 

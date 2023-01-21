@@ -26,6 +26,14 @@ public class CountryController {
         ctx.json(country);
     };
 
+    @OpenApi(summary = "Get single country details", path = Api.Internal.COUNTRY_DETAILS_BY_CODE,
+            pathParams = @OpenApiParam(name = "code", description = "country code", required = true))
+    public static Handler fetchCountryByCode = ctx -> {
+        String code = ctx.pathParam("code").toUpperCase();
+        Country country = WorldDB.retrieveCountryByCode(code);
+        ctx.json(country);
+    };
+
     @OpenApi(summary = "get countries with filter", path = Api.Internal.COUNTRY_SEARCH,
             methods = HttpMethod.POST,
             requestBody = @OpenApiRequestBody(

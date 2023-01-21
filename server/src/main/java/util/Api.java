@@ -4,6 +4,7 @@ public class Api {
     public static class Internal {
         public static final String ALL_COUNTRIES = "/country/all";
         public static final String COUNTRY_DETAILS = "/country/{name}";
+        public static final String COUNTRY_DETAILS_BY_CODE = "/country/code/{code}";
         public static final String COUNTRY_SEARCH = "/country/search";
         public static final String CITY_DETAILS = "/city/{name}";
         public static final String CITY_BY_COUNTRY = "/city/in/{country}";
