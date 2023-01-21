@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
 import { AppSettings } from 'src/app.settings';
+import fetch from 'node-fetch';
 
 @Injectable({
   providedIn: 'root'
@@ -31,7 +32,8 @@ export class MarkerService {
         resWithCoordinates.forEach((country) => {
           // filtering countries by the codes returned in the previous request
           if (acronyms.includes(country.properties.ISO_A3)) {
-            this.marker.addData(country).setStyle(this.myStyle).addTo(map);
+            this.marker.addData(country).setStyle(this.myStyle).addTo(map)
+            .on('click', onClickGetCountryDetails);
           }
         })
       })
@@ -49,3 +51,14 @@ export class MarkerService {
     })
   }
 }
+
+async function onClickGetCountryDetails(e) {
+  let countryCode = e.layer.feature.properties.ISO_A3;
+
+  const response = await fetch(AppSettings.SERVER_URL + "/country/code/" + countryCode);
+  const data = await response.json();
+
+  // TODO display country details on browser, using 
+  console.log(data);
+}
+
