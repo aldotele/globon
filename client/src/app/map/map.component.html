@@ -1,51 +1,61 @@
-<div style="margin: 30px 50px 50px 50px" class="big-container">
-  <div class="locate-container">
-    <label for="locate">Locate countries by: </label>
+<div class="big-container">
 
-    <select #locate (change)="onSelected(locate.value)" name="locate" id="locate">
-      <option value="">--- select ---</option>
-      <option value="area">Area</option>
-      <option value="marker">Marker</option>
-    </select>
-  </div>
+  <div class="filter-container">
+    <div id=inputs>
+      <!-- locate by-->
+      <label for="locate">Locate countries by: </label>
 
-
-  <div class="form-container">
-    <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
-  
-      <p>
-        <label for="minPopulation">Min Population </label>
-        <input type="text" id="minPopulation" name="minPopulation" ngModel>
-      </p>
-    
-      <p>
-        <label for="maxPopulation">Max Population </label>
-        <input type="text" id="maxPopulation" name="maxPopulation" ngModel>
-      </p>
-      
-      <!-- <p>
-      <label for="continents">Continent </label>
-      <select name="continents" id="continents" ngModel>
-        <option selected="" value=""></option>
-        <option [ngValue]="c" *ngFor="let c of continentList">
-          {{c}}
-        </option>
+      <select #locate (change)="onSelected(locate.value)" name="locate" id="locate">
+        <option value="">--- select ---</option>
+        <option value="area">Area</option>
+        <option value="marker">Marker</option>
       </select>
-      </p> -->
+
+      <!-- form -->
+      <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
     
-      <p>
-        <button type="submit" [disabled]="locate.value == '' ">Submit</button>
-      </p>
-    
-    </form>
+        <p>
+          <label for="minPopulation">Min Population </label>
+          <input type="text" id="minPopulation" name="minPopulation" ngModel>
+        </p>
+      
+        <p>
+          <label for="maxPopulation">Max Population </label>
+          <input type="text" id="maxPopulation" name="maxPopulation" ngModel>
+        </p>
+        
+        <!-- <p>
+        <label for="continents">Continent </label>
+        <select name="continents" id="continents" ngModel>
+          <option selected="" value=""></option>
+          <option [ngValue]="c" *ngFor="let c of continentList">
+            {{c}}
+          </option>
+        </select>
+        </p> -->
+      
+        <p>
+          <button type="submit" [disabled]="locate.value == '' ">Submit</button>
+        </p>
+      
+      </form>
+    </div>
+
+    <div *ngIf="markerService.getCountryDetail() as countryDetail" class="country-detail">
+      <p>name of the Country</p>
+      <p>population of the country</p>
+      <p>currency of the country (£)</p>
+      <P>Capital city</P>
+      <p>spoken languages</p>
+
+    </div>
 
   </div>
-</div>
 
+  <div class="map-container">
+      <div class="map-frame">
+        <div id="map"></div>
+      </div>
+  </div>
 
-
-<div style="margin-top: 100px" class="map-container">
-    <div class="map-frame">
-      <div id="map"></div>
-    </div>
 </div>

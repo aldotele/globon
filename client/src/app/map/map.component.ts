@@ -47,7 +47,7 @@ export class MapComponent implements AfterViewInit {
     tiles.addTo(this.map);
   }
 
-  constructor(private markerService: MarkerService) {}
+  constructor(public markerService: MarkerService) {}
 
   ngAfterViewInit(): void {
     this.initMap();

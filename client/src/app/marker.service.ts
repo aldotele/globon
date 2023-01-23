@@ -8,6 +8,7 @@ import fetch from 'node-fetch';
   providedIn: 'root'
 })
 export class MarkerService {
+  public countryDetails: string = "";
   countriesWithCoordinates: string = '/assets/data/countries_with_coordinates.geojson';
 
   constructor(private http: HttpClient) { }
@@ -50,6 +51,10 @@ export class MarkerService {
       })
     })
   }
+
+  public getCountryDetail() {
+    return this.countryDetails;
+  }
 }
 
 async function onClickGetCountryDetails(e) {
@@ -57,8 +62,11 @@ async function onClickGetCountryDetails(e) {
 
   const response = await fetch(AppSettings.SERVER_URL + "/country/code/" + countryCode);
   const data = await response.json();
+  alert(data.name);
 
   // TODO display country details on browser, using 
-  console.log(data);
+  //console.log(data);
 }
+
+
 
