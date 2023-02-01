@@ -62,7 +62,11 @@ async function onClickGetCountryDetails(e) {
 
   const response = await fetch(AppSettings.SERVER_URL + "/country/code/" + countryCode);
   const data = await response.json();
-  alert(data.name);
+  alert(data.name
+    +"\npopulation: " + data.population.toLocaleString()
+    +"\ncapital city: " + data.capital
+    +"\ncurrencies: " + data.currencies
+    +"\nspoken languages: " + data.languages);
 
   // TODO display country details on browser, using 
   //console.log(data);
