@@ -3,6 +3,7 @@ import {HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
 import { AppSettings } from 'src/app.settings';
 import fetch from 'node-fetch';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -62,14 +63,14 @@ async function onClickGetCountryDetails(e) {
 
   const response = await fetch(AppSettings.SERVER_URL + "/country/code/" + countryCode);
   const data = await response.json();
-  alert(data.name
+
+  Swal.fire(data.name
     +"\npopulation: " + data.population.toLocaleString()
     +"\ncapital city: " + data.capital
     +"\ncurrencies: " + data.currencies
     +"\nspoken languages: " + data.languages);
 
-  // TODO display country details on browser, using 
-  //console.log(data);
+  // TODO consider using modal for displaying country details 
 }
 
 
