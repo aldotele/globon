@@ -3,7 +3,7 @@
   <div class="filter-container">
     <div id=inputs>
       <!-- locate by-->
-      <label for="locate">Locate countries by: </label>
+      <label for="locate">Locate countries by: &nbsp;&nbsp; </label>
 
       <select #locate (change)="onSelected(locate.value)" name="locate" id="locate">
         <option value="">--- select ---</option>
@@ -15,12 +15,12 @@
       <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
     
         <p>
-          <label for="minPopulation">Min Population </label>
+          <label for="minPopulation">Min Population: &nbsp;&nbsp; </label>
           <input type="text" id="minPopulation" name="minPopulation" ngModel>
         </p>
       
         <p>
-          <label for="maxPopulation">Max Population </label>
+          <label for="maxPopulation">Max Population: &nbsp;&nbsp; </label>
           <input type="text" id="maxPopulation" name="maxPopulation" ngModel>
         </p>
         
@@ -35,7 +35,7 @@
         </p> -->
       
         <p>
-          <button type="submit" [disabled]="locate.value == '' ">Submit</button>
+          <button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>
         </p>
       
       </form>
