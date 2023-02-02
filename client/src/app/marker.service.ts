@@ -3,6 +3,7 @@ import {HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
 import { AppSettings } from 'src/app.settings';
 import fetch from 'node-fetch';
+import Swal from 'sweetalert2';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +47,10 @@ export class MarkerService {
     this.http.post(AppSettings.SERVER_URL + "/country/search", search).subscribe((res:any) => {
       res.forEach((country) => {
         if (country.location != null) {
-          this.marker.addData(country.location).addTo(map);
+          this.marker.addData(country.location).addTo(map)
+          .on('click', function() {
+            onClickDisplayCountryDetails(country)
+          });
         }
       })
     })
@@ -59,17 +63,19 @@ export class MarkerService {
 
 async function onClickGetCountryDetails(e) {
   let countryCode = e.layer.feature.properties.ISO_A3;
-
   const response = await fetch(AppSettings.SERVER_URL + "/country/code/" + countryCode);
   const data = await response.json();
-  alert(data.name
+  onClickDisplayCountryDetails(data);
+  // TODO consider using modal for displaying country details 
+}
+
+async function onClickDisplayCountryDetails(data) {
+  Swal.fire(data.name
     +"\npopulation: " + data.population.toLocaleString()
     +"\ncapital city: " + data.capital
     +"\ncurrencies: " + data.currencies
     +"\nspoken languages: " + data.languages);
-
-  // TODO display country details on browser, using 
-  //console.log(data);
+  // TODO consider using modal for displaying country details 
 }
 
 
