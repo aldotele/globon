@@ -7,7 +7,7 @@
 <div class="big-container">
 
   <div class="filter-container">
-    <div id=inputs>
+    <div id=select-by>
       <!-- locate by
       <label for="locate">Locate countries by: &nbsp;&nbsp; </label>
 
@@ -19,12 +19,15 @@
       -->
 
       <!-- search by -->
-      <label style="font-size: 25px" for="search">Search countries by: &nbsp;&nbsp; </label>
+      <label style="font-size: 25px" for="search">Search countries by:<br> &nbsp;&nbsp; </label>
 
       <select #search (change)="onSelected(search.value)" name="search" id="search">
-        <option value="">--- select ---</option>
+        <option value="">- - - select - - -</option>
         <option value="population">Population</option>
       </select>
+    </div>
+
+    <div class="form" id="population">
 
       <!-- form -->
       <form *ngIf="search.value=='population'" #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
