@@ -48,16 +48,10 @@ export class MarkerService {
       res.forEach((country) => {
         if (country.location != null) {
           this.marker.addData(country.location).addTo(map)
-          .on('click', function() {
-            onClickDisplayCountryDetails(country)
-          });
+          // TODO add logic
         }
       })
     })
-  }
-
-  public getCountryDetail() {
-    return this.countryDetails;
   }
 }
 
@@ -65,17 +59,24 @@ async function onClickGetCountryDetails(e) {
   let countryCode = e.layer.feature.properties.ISO_A3;
   const response = await fetch(AppSettings.SERVER_URL + "/country/code/" + countryCode);
   const data = await response.json();
-  onClickDisplayCountryDetails(data);
+  displayCountryDetails(data);
   // TODO consider using modal for displaying country details 
 }
 
-async function onClickDisplayCountryDetails(data) {
-  Swal.fire(data.name
-    +"\npopulation: " + data.population.toLocaleString()
-    +"\ncapital city: " + data.capital
-    +"\ncurrencies: " + data.currencies
-    +"\nspoken languages: " + data.languages);
-  // TODO consider using modal for displaying country details 
+async function displayCountryDetails(data) {
+  // triggering alert with country info
+  Swal.fire({
+    title: data.name,
+    html: "<h3 style='font-weight:500'>" 
+    + "<b>population</b>: " + data.population.toLocaleString() + "<br>" 
+    + "<b>capital city</b>: " + data.capital + "<br>"
+    + "<b>currencies</b>: " + data.currencies + "<br>"
+    + "<b>spoken languages</b>: " + data.languages
+    + "</h3>",
+    showConfirmButton: false,
+    showCancelButton: true,
+    cancelButtonText: "Close"
+  });
 }
 
 

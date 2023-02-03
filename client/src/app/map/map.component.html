@@ -2,7 +2,7 @@
 
   <div class="filter-container">
     <div id=inputs>
-      <!-- locate by-->
+      <!-- locate by
       <label for="locate">Locate countries by: &nbsp;&nbsp; </label>
 
       <select #locate (change)="onSelected(locate.value)" name="locate" id="locate">
@@ -10,9 +10,18 @@
         <option value="area">Area</option>
         <option value="marker">Marker</option>
       </select>
+      -->
+
+      <!-- search by -->
+      <label style="font-size: 25px" for="search">Search countries by: &nbsp;&nbsp; </label>
+
+      <select #search (change)="onSelected(search.value)" name="search" id="search">
+        <option value="">--- select ---</option>
+        <option value="population">Population</option>
+      </select>
 
       <!-- form -->
-      <form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
+      <form *ngIf="search.value=='population'" #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
     
         <p>
           <label for="minPopulation">Min Population: &nbsp;&nbsp; </label>
@@ -35,21 +44,12 @@
         </p> -->
       
         <p>
-          <button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>
+          <!--<button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>-->
+          <button class="submit-button" type="submit">Submit</button>
         </p>
       
       </form>
     </div>
-
-    <div *ngIf="markerService.getCountryDetail() as countryDetail" class="country-detail">
-      <p>name of the Country</p>
-      <p>population of the country</p>
-      <p>currency of the country (£)</p>
-      <P>Capital city</P>
-      <p>spoken languages</p>
-
-    </div>
-
   </div>
 
   <div class="map-container">
