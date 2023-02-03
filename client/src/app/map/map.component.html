@@ -1,7 +1,13 @@
+<header>
+    <span style="padding-right:20px;">Globon</span>
+    <img width="70" height="70" style= "vertical-align: middle; display: inline;" src="https://storage.googleapis.com/siteassetsswd/198/slideshow/663/20200625074107_56_o_1ba8en13b14c61b15hei1bd63jlc.jpg" alt="Material Bread logo">
+    <span style="padding-left:20px;">world discovery</span>
+</header>
+
 <div class="big-container">
 
   <div class="filter-container">
-    <div id=inputs>
+    <div id=select-by>
       <!-- locate by
       <label for="locate">Locate countries by: &nbsp;&nbsp; </label>
 
@@ -13,12 +19,15 @@
       -->
 
       <!-- search by -->
-      <label style="font-size: 25px" for="search">Search countries by: &nbsp;&nbsp; </label>
+      <label style="font-size: 25px" for="search">Search countries by:<br> &nbsp;&nbsp; </label>
 
       <select #search (change)="onSelected(search.value)" name="search" id="search">
-        <option value="">--- select ---</option>
+        <option value="">- - - select - - -</option>
         <option value="population">Population</option>
       </select>
+    </div>
+
+    <div class="form" id="population">
 
       <!-- form -->
       <form *ngIf="search.value=='population'" #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
