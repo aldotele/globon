@@ -16,9 +16,11 @@ import exception.SearchException;
 import lombok.extern.slf4j.Slf4j;
 import model.Country;
 import model.CountrySearch;
+import model.external.WorldBankCountryDetails;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.bson.Document;
+import org.json.JSONArray;
 import util.Api;
 import util.SimpleClient;
 
@@ -82,6 +84,24 @@ public class WorldDB {
             UpdateResult updateResult = collection.updateOne(new BasicDBObject("isoCode", isoCode), set);
         }
         in.close();
+
+        // retrieving income levels and aggregating in existing mongo collection
+        MongoCollection<Document> collection = database.getCollection("countries");
+
+        Request worldBankRequest = SimpleClient.buildRequest(Api.External.WORLD_BANK_COUNTRY_API);
+        Response worldBankResponse = SimpleClient.makeRequest(worldBankRequest);
+
+        JSONArray jsonArray = new JSONArray(Objects.requireNonNull(worldBankResponse.body()).string());
+        List<WorldBankCountryDetails> worldBankCountryDetails =
+                simpleMapper.readValue(jsonArray.get(1).toString(), new TypeReference<>() {
+                });
+
+        worldBankCountryDetails
+                .forEach(country -> collection.updateOne(
+                                new BasicDBObject("acronym", new BasicDBObject("$eq", country.getId())),
+                                new BasicDBObject("$set", new BasicDBObject("incomeLevel", country.getIncomeLevel()))
+                        )
+                );
     }
 
     public static <T> void writeManyToCollection(String collectionName, List<T> objects) {
