@@ -2,12 +2,13 @@ header {
   text-align: center;
   border-bottom-style: solid;
   border-top-style: solid;
-  border-color: #d2d0d0;
-  font-weight: 500;
+  border-color: #e6e2e2;
+  font-weight: 600;
   font-size: 30px;
 }
 
 header > span {
+  padding: 0 3px;
   display: inline;
   vertical-align: middle;
 }
@@ -56,6 +57,7 @@ header > span {
     height: 250px;
     padding-top: 10px;
     margin-bottom: 100px;
+    margin-top: 30px;
   }
 
   #select-by {
@@ -74,6 +76,7 @@ header > span {
     text-align: center;
     margin-top: 30px;
     width: 100%;
+    margin-bottom: 30px;
   }
 
   .form > form > p > label {
@@ -84,12 +87,12 @@ header > span {
     margin-top: 30px;
     width: 80%;
   }
-  
+
 }
 
 .map-container {
   height: 480px;
-  margin: 10px 30px 30px 30px;
+  margin: 30px 30px 30px 30px;
   }
   
   .map-frame {
