@@ -8,11 +8,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import static util.RegexUtil.exactIgnoreCase;
 
 public class QueryBuilder {
+    private static final Map<String, String> incomeLevelToCode = Map.of(
+            "high", "HIC",
+            "upperMiddle", "UMC",
+            "lowerMiddle", "LMC",
+            "low", "LIC");
+
     @NotNull
     public static BasicDBList buildQueryConditions(CountrySearch search) throws SearchException {
         BasicDBList conditions = new BasicDBList();
@@ -49,6 +56,12 @@ public class QueryBuilder {
         if (capitalRegex != null) {
             Pattern capitalPattern = Pattern.compile(capitalRegex, Pattern.CASE_INSENSITIVE);
             conditions.add(new BasicDBObject("capital", new BasicDBObject("$regex", capitalPattern)));
+        }
+
+        // incomeLevel
+        String incomeLevel = search.getIncomeLevel();
+        if (incomeLevel != null && incomeLevelToCode.containsKey(incomeLevel)) {
+            conditions.add(new BasicDBObject("incomeLevel.id", incomeLevelToCode.get(incomeLevel)));
         }
 
         if (conditions.isEmpty()) {

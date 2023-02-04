@@ -15,4 +15,5 @@ public class CountrySearch {
     private BigDecimal maxPopulation;
     private List<String> continents;
     private List<String> languages;
+    private String incomeLevel;
 }

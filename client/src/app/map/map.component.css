@@ -1,10 +1,15 @@
 header {
   text-align: center;
   border-bottom-style: solid;
-  border-top-style: solid;
   border-color: #e6e2e2;
   font-weight: 600;
   font-size: 30px;
+  padding: 20px 0px;
+}
+
+#header-div {
+  margin: auto;
+  width: 50%;
 }
 
 header > span {
@@ -15,6 +20,7 @@ header > span {
 
 .big-container {
   margin: auto;
+  height: 100%
   /*margin: 30px 50px 50px 50px;*/
 }
 
@@ -24,7 +30,7 @@ header > span {
     /* padding-top:20px;
     padding-left: 30px; */
     display: flex;
-    height: 100px;
+    height: 150px;
     padding-top: 10px;
     padding-bottom: 100px;
   }
@@ -44,11 +50,18 @@ header > span {
   
   form {
     margin-left: 150px;
-    margin-top: 30px;
+    margin-top: 50px;
   }
 }
 
 @media screen and (max-width: 600px) {
+  header {
+    font-size: 20px;
+  }
+  header > div > img {
+    width: 20px;
+    height: 20px;
+  }
   #world-discovery {
     display: none;
   }
@@ -69,7 +82,7 @@ header > span {
     height: 40px;
     text-align: center;
     font-weight: 500;
-    margin-top: 20px;
+    margin-top: 50px;
   }
   
   form {
@@ -95,33 +108,34 @@ header > span {
   margin: 30px 30px 30px 30px;
   }
   
-  .map-frame {
-    border: 2px solid black;
-    height: 100%;
-  }
-  
-  #map {
-    height: 100%;;
-  }
+.map-frame {
+  border: 2px solid black;
+  height: 100%;
+}
 
-  .submit-button {
-    cursor: pointer;
-    background-color: #4CAF50; /* Green */
-    border: none;
-    color: white;
-    padding: 6px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-  }
+#map {
+  height: 100%;;
+}
 
-  .submit-button:hover {
-    background-color: #42e048; /* Green */
-  }
+.submit-button {
+  cursor: pointer;
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 6px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin-top: 20px;
+}
 
-  .submit-button[disabled]{
-    cursor: not-allowed;
-    border: 1px solid #999999;
-    background-color: #cccccc;
-  }
+.submit-button:hover {
+  background-color: #42e048; /* Green */
+}
+
+.submit-button[disabled]{
+  cursor: not-allowed;
+  border: 1px solid #999999;
+  background-color: #cccccc;
+}
