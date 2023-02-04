@@ -25,6 +25,8 @@ Marker.prototype.options.icon = iconDefault;
 export class MapComponent implements AfterViewInit {
   private map;
   private selectedLocate = '';
+  minPopulation: any;
+  maxPopulation: any;
 
 	onSelected(value:string): void {
 		this.selectedLocate = value;
