@@ -1,7 +1,7 @@
 <header>
     <span style="padding-right:20px;">Globon</span>
     <img width="70" height="70" style= "vertical-align: middle; display: inline;" src="https://storage.googleapis.com/siteassetsswd/198/slideshow/663/20200625074107_56_o_1ba8en13b14c61b15hei1bd63jlc.jpg" alt="Material Bread logo">
-    <span style="padding-left:20px;">world discovery</span>
+    <span id=world-discovery style="padding-left:20px;">world discovery</span>
 </header>
 
 <div class="big-container">
@@ -34,12 +34,12 @@
     
         <p>
           <label for="minPopulation">Min Population: &nbsp;&nbsp; </label>
-          <input type="text" id="minPopulation" name="minPopulation" ngModel>
+          <input type="text" id="minPopulation" name="minPopulation" [(ngModel)]="minPopulation">
         </p>
       
         <p>
           <label for="maxPopulation">Max Population: &nbsp;&nbsp; </label>
-          <input type="text" id="maxPopulation" name="maxPopulation" ngModel>
+          <input type="text" id="maxPopulation" name="maxPopulation" [(ngModel)]="maxPopulation">
         </p>
         
         <!-- <p>
@@ -54,7 +54,7 @@
       
         <p>
           <!--<button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>-->
-          <button class="submit-button" type="submit">Submit</button>
+          <button class="submit-button" type="submit" [disabled]="!minPopulation && !maxPopulation">Submit</button>
         </p>
       
       </form>

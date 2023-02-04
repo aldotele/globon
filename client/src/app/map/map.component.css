@@ -1,7 +1,8 @@
 header {
   text-align: center;
-  border-style:solid;
-  border-color: #949494;
+  border-bottom-style: solid;
+  border-top-style: solid;
+  border-color: #d2d0d0;
   font-weight: 500;
   font-size: 30px;
 }
@@ -16,43 +17,79 @@ header > span {
   /*margin: 30px 50px 50px 50px;*/
 }
 
-.filter-container {
-  /* padding-top:20px;
-  padding-left: 30px; */
-  display: flex;
-  height: 100px;
-  padding-top: 10px;
-  padding-bottom: 100px;
+
+@media screen and (min-width: 600px) {
+  .filter-container {
+    /* padding-top:20px;
+    padding-left: 30px; */
+    display: flex;
+    height: 100px;
+    padding-top: 10px;
+    padding-bottom: 100px;
+  }
+
+  #select-by {
+    padding-top: 40px;
+    padding-left: 70px;
+  }
+  
+  #search {
+    width: 130px;
+    height: 40px;
+    text-align: center;
+    font-weight: 500;
+    margin-top: 20px;
+  }
+  
+  form {
+    margin-left: 150px;
+    margin-top: 30px;
+  }
 }
 
-#select-by {
-  padding-top: 40px;
-  padding-left: 70px;
-}
+@media screen and (max-width: 600px) {
+  #world-discovery {
+    display: none;
+  }
 
-#search {
-  width: 130px;
-  height: 40px;
-  text-align: center;
-  font-weight: 500;
-  margin-top: 20px;
-}
+  .filter-container {
+    height: 250px;
+    padding-top: 10px;
+    margin-bottom: 100px;
+  }
 
-form {
-  margin-left: 150px;
-  margin-top: 30px;
+  #select-by {
+    text-align: center;
+  }
+  
+  #search {
+    width: 130px;
+    height: 40px;
+    text-align: center;
+    font-weight: 500;
+    margin-top: 20px;
+  }
+  
+  form {
+    text-align: center;
+    margin-top: 30px;
+    width: 100%;
+  }
+
+  .form > form > p > label {
+    margin-bottom: 30px;
+  }
+
+  .form > form > p > input {
+    margin-top: 30px;
+    width: 80%;
+  }
+  
 }
 
 .map-container {
   height: 480px;
   margin: 10px 30px 30px 30px;
-  /*margin-top: 0;*/
-    /* position: absolute;
-    top: 100px;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    margin: 100px 30px 30px 30px; */
   }
   
   .map-frame {
@@ -78,4 +115,10 @@ form {
 
   .submit-button:hover {
     background-color: #42e048; /* Green */
+  }
+
+  .submit-button[disabled]{
+    cursor: not-allowed;
+    border: 1px solid #999999;
+    background-color: #cccccc;
   }
