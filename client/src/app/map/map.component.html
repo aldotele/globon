@@ -1,22 +1,15 @@
 <header>
+  <div id="header-div">
     <span>G&nbsp;L&nbsp;O&nbsp;B&nbsp;</span>
-    <img width="30" height="30" style= "vertical-align: middle; display: inline;" src="/assets/globon-icon.jpg" alt="Material Bread logo">
+    <img width="30" height="30" style= "vertical-align: top; display: inline;" src="/assets/globon-icon.jpg" alt="Material Bread logo">
     <span>&nbsp;N</span>
+  </div>
 </header>
 
 <div class="big-container">
 
   <div class="filter-container">
     <div id=select-by>
-      <!-- locate by
-      <label for="locate">Locate countries by: &nbsp;&nbsp; </label>
-
-      <select #locate (change)="onSelected(locate.value)" name="locate" id="locate">
-        <option value="">--- select ---</option>
-        <option value="area">Area</option>
-        <option value="marker">Marker</option>
-      </select>
-      -->
 
       <!-- search by -->
       <label style="font-size: 25px" for="search">Search countries by:<br> &nbsp;&nbsp; </label>
@@ -24,12 +17,13 @@
       <select #search (change)="onSelected(search.value)" name="search" id="search">
         <option value="">- - - select - - -</option>
         <option value="population">Population</option>
+        <option value="incomeLevel">Income Level</option>
       </select>
     </div>
 
-    <div class="form" id="population">
+    <div class="formContainer">
 
-      <!-- form -->
+      <!-- POPULATION form -->
       <form *ngIf="search.value=='population'" #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
     
         <p>
@@ -41,22 +35,30 @@
           <label for="maxPopulation">Max Population: &nbsp;&nbsp; </label>
           <input type="text" id="maxPopulation" name="maxPopulation" [(ngModel)]="maxPopulation">
         </p>
-        
-        <!-- <p>
-        <label for="continents">Continent </label>
-        <select name="continents" id="continents" ngModel>
-          <option selected="" value=""></option>
-          <option [ngValue]="c" *ngFor="let c of continentList">
-            {{c}}
-          </option>
-        </select>
-        </p> -->
-      
         <p>
           <!--<button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>-->
           <button class="submit-button" type="submit" [disabled]="!minPopulation && !maxPopulation">Submit</button>
         </p>
       
+      </form>
+
+      <!-- INCOME form -->
+      <form *ngIf="search.value=='incomeLevel'" #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
+        <div class="form-group">
+          <label for="incomeLevel">Income Level&nbsp;&nbsp;</label>
+          <select #incomeLevel id="incomeLevel" name="incomeLevel" ngModel class="form-control">
+            <option value="">- - - select - - -</option>
+            <option value="high">HIGH</option>
+            <option value="upperMiddle">UPPER MIDDLE</option>
+            <option value="lowerMiddle">LOWER MIDDLE</option>
+            <option value="low">LOW</option>
+          </select>
+          
+        </div>
+        <p>
+          <!--<button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>-->
+          <button class="submit-button" type="submit" [disabled]="incomeLevel.value == ''">Submit</button>
+        </p>
       </form>
     </div>
   </div>
@@ -68,3 +70,15 @@
   </div>
 
 </div>
+
+
+
+  <!-- locate by
+  <label for="locate">Locate countries by: &nbsp;&nbsp; </label>
+
+  <select #locate (change)="onSelected(locate.value)" name="locate" id="locate">
+    <option value="">--- select ---</option>
+    <option value="area">Area</option>
+    <option value="marker">Marker</option>
+  </select>
+  -->
