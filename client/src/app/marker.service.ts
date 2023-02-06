@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {HttpClient } from '@angular/common/http';
 import * as L from 'leaflet';
-import { AppSettings } from 'src/app.settings';
+import { Api } from 'src/app/api';
 import fetch from 'node-fetch';
 import Swal from 'sweetalert2';
 
@@ -10,7 +10,6 @@ import Swal from 'sweetalert2';
 })
 export class MarkerService {
   public countryDetails: string = "";
-  countriesWithCoordinates: string = '/assets/data/countries_with_coordinates.geojson';
 
   constructor(private http: HttpClient) { }
 
@@ -23,17 +22,14 @@ export class MarkerService {
   };
 
   makeCountrySearchBorders(map: L.Map, search: string): void {
+    // clean map before new request
     this.marker.clearLayers();
-    let acronyms: string[];
 
-    this.http.post(AppSettings.SERVER_URL + "/country/search?onlyAcronym=true", search).subscribe((res: string[]) => {
-      // the result of the request is a list of country codes
-      acronyms = res;
-
-      this.http.get(this.countriesWithCoordinates).subscribe((resWithCoordinates: any) => {
-        resWithCoordinates.forEach((country) => {
+    this.http.post(Api.SERVER + "/country/search?onlyAcronym=true", search).subscribe((countryCodes: string[]) => {
+      this.http.get(Api.COUNTRIES_BORDERS_GEOJSON).subscribe((resWithCoordinates: any) => {
+        resWithCoordinates.features.forEach((country) => {
           // filtering countries by the codes returned in the previous request
-          if (acronyms.includes(country.properties.ISO_A3)) {
+          if (countryCodes.includes(country.properties.ISO_A3)) {
             this.marker.addData(country).setStyle(this.myStyle).addTo(map)
             .on('click', onClickGetCountryDetails);
           }
@@ -44,7 +40,7 @@ export class MarkerService {
 
   makeCountrySearchMarkers(map: L.Map, search: string): void {
     this.marker.clearLayers();
-    this.http.post(AppSettings.SERVER_URL + "/country/search", search).subscribe((res:any) => {
+    this.http.post(Api.SERVER + "/country/search", search).subscribe((res:any) => {
       res.forEach((country) => {
         if (country.location != null) {
           this.marker.addData(country.location).addTo(map)
@@ -57,7 +53,7 @@ export class MarkerService {
 
 async function onClickGetCountryDetails(e) {
   let countryCode = e.layer.feature.properties.ISO_A3;
-  const response = await fetch(AppSettings.SERVER_URL + "/country/code/" + countryCode);
+  const response = await fetch(Api.SERVER + "/country/code/" + countryCode);
   const data = await response.json();
   displayCountryDetails(data);
   // TODO consider using modal for displaying country details 
