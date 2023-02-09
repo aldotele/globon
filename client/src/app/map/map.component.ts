@@ -55,7 +55,7 @@ export class MapComponent implements AfterViewInit {
     this.initMap();
   }
 
-  onSubmit(contactForm) {
-    this.markerService.makeCountrySearchBorders(this.map, contactForm.value);
+  onSubmit(form) {
+    const foundCountries: number = this.markerService.makeCountrySearchBorders(this.map, form.value);
   }
 }
