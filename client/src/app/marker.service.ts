@@ -21,11 +21,15 @@ export class MarkerService {
     "opacity": 0.65
   };
 
-  makeCountrySearchBorders(map: L.Map, search: string): void {
+  makeCountrySearchBorders(map: L.Map, search: string): number {
     // clean map before new request
     this.marker.clearLayers();
+    var foundCountries: number = 0;
 
     this.http.post(Api.SERVER + "/country/search?onlyAcronym=true", search).subscribe((countryCodes: string[]) => {
+      // save the number of countries found, to be displayed as information
+      foundCountries = countryCodes.length;
+
       this.http.get(Api.COUNTRIES_BORDERS_GEOJSON).subscribe((resWithCoordinates: any) => {
         resWithCoordinates.features.forEach((country) => {
           // filtering countries by the codes returned in the previous request
@@ -36,6 +40,7 @@ export class MarkerService {
         })
       })
     })
+    return foundCountries;
   }
 
   makeCountrySearchMarkers(map: L.Map, search: string): void {

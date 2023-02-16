@@ -16,12 +16,12 @@
 ### Intro
 The Globon WebApp allows you to visualize the world map and locate countries of the world, after applying filters on them.
 For example, you can visualize the countries of the world within a specific population range.\
-You can choose to locate the countries by a shaded area, or by a marker icon that will be placed right in the center of the country.
 
 <br/>
 
 ### Technology Stack
-The project uses Angular on the client side, Javalin (Java framework) on the server side
+The project uses Angular (with Leaflet.js for map visualization) on the client side, 
+Javalin (lightweight Java framework) on the server side
 and MongoDB with geospatial features as a database.
 
 <br/>
