@@ -4,12 +4,14 @@ import * as L from 'leaflet';
 import { Api } from 'src/app/api';
 import fetch from 'node-fetch';
 import Swal from 'sweetalert2';
+import { Observable, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MarkerService {
-  public countryDetails: string = "";
+  private foundCountriesSubject = new Subject<number>();
+  foundCountries$: Observable<number> = this.foundCountriesSubject.asObservable();
 
   constructor(private http: HttpClient) { }
 
@@ -21,14 +23,14 @@ export class MarkerService {
     "opacity": 0.65
   };
 
-  makeCountrySearchBorders(map: L.Map, search: string): number {
+  makeCountrySearchBorders(map: L.Map, search: string): void {
     // clean map before new request
     this.marker.clearLayers();
-    var foundCountries: number = 0;
+    var foundCountriesCount: number;
 
     this.http.post(Api.SERVER + "/country/search?onlyAcronym=true", search).subscribe((countryCodes: string[]) => {
       // save the number of countries found, to be displayed as information
-      foundCountries = countryCodes.length;
+      foundCountriesCount = countryCodes.length;
 
       this.http.get(Api.COUNTRIES_BORDERS_GEOJSON).subscribe((resWithCoordinates: any) => {
         resWithCoordinates.features.forEach((country) => {
@@ -37,10 +39,10 @@ export class MarkerService {
             this.marker.addData(country).setStyle(this.myStyle).addTo(map)
             .on('click', onClickGetCountryDetails);
           }
-        })
-      })
-    })
-    return foundCountries;
+        });
+        this.foundCountriesSubject.next(foundCountriesCount);
+      });
+    });
   }
 
   makeCountrySearchMarkers(map: L.Map, search: string): void {
