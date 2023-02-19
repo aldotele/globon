@@ -24,12 +24,15 @@ Marker.prototype.options.icon = iconDefault;
 })
 export class MapComponent implements AfterViewInit {
   private map;
-  private selectedLocate = '';
+  private selectedFilteringCriteria: string;
   minPopulation: any;
   maxPopulation: any;
+  isFoundCountriesCountVisible: boolean = false;
+  foundCountriesCount: number;
 
 	onSelected(value:string): void {
-		this.selectedLocate = value;
+    this.isFoundCountriesCountVisible = false;
+		this.selectedFilteringCriteria = value;
 	}
 
   private initMap(): void {
@@ -56,6 +59,13 @@ export class MapComponent implements AfterViewInit {
   }
 
   onSubmit(form) {
-    const foundCountries: number = this.markerService.makeCountrySearchBorders(this.map, form.value);
+    // filter countries based on search criteria and highlight them on map
+    this.markerService.makeCountrySearchBorders(this.map, form.value);
+
+    // get the number of filtered countries
+    this.markerService.foundCountries$.subscribe(foundCountriesCount => {
+      this.foundCountriesCount = foundCountriesCount;
+      this.isFoundCountriesCountVisible = true;
+    });
   }
 }
