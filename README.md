@@ -15,7 +15,7 @@
 
 ### Intro
 The Globon WebApp allows you to visualize the world map and locate countries of the world, after applying filters on them.
-For example, you can visualize the countries of the world within a specific population range.\
+For example, you can visualize the countries of the world within a specific population range.
 
 <br/>
 
