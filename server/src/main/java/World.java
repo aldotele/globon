@@ -1,6 +1,4 @@
 import configuration.Configuration;
-import controller.CityController;
-import controller.CountryController;
 import controller.WorldController;
 import exception.NotFoundException;
 import exception.SearchException;
@@ -32,22 +30,22 @@ public class World {
 
         // ALL COUNTRIES
 
-        app.get(Api.Internal.ALL_COUNTRIES, CountryController.fetchAllCountries);
+        app.get(Api.Internal.ALL_COUNTRIES, WorldController.fetchAllCountries);
 
         // COUNTRY BY NAME
-        app.get(Api.Internal.COUNTRY_DETAILS, CountryController.fetchCountryByName);
+        app.get(Api.Internal.COUNTRY_DETAILS, WorldController.fetchCountryByName);
 
         // COUNTRY BY ISO3 CODE
-        app.get(Api.Internal.COUNTRY_DETAILS_BY_CODE, CountryController.fetchCountryByCode);
+        app.get(Api.Internal.COUNTRY_DETAILS_BY_CODE, WorldController.fetchCountryByCode);
 
         //  COUNTRY FILTERS
-        app.post(Api.Internal.COUNTRY_SEARCH, CountryController.fetchCountries);
+        app.post(Api.Internal.COUNTRY_SEARCH, WorldController.fetchCountriesBySearchCriteria);
 
         // ALL CITIES BY COUNTRY
-        app.get(Api.Internal.CITY_BY_COUNTRY, CityController.fetchCitiesByCountry);
+        app.get(Api.Internal.CITY_BY_COUNTRY, WorldController.fetchCitiesByCountry);
 
         // SINGLE CITY DETAILS
-        app.get(Api.Internal.CITY_DETAILS, CityController.fetchCityByName);
+        app.get(Api.Internal.CITY_DETAILS, WorldController.fetchCityByName);
 
         // WORLD LANGUAGES
         app.get(Api.Internal.WORLD_LANGUAGES, WorldController.fetchLanguages);
