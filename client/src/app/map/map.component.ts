@@ -62,6 +62,7 @@ export class MapComponent implements AfterViewInit {
   onSubmit(form) {
     // filter countries based on search criteria and highlight them on map
     this.markerService.makeCountrySearchBorders(this.map, form.value);
+    this.isFoundCountriesCountVisible = false;
     this.isLoading = true;
 
     // get the number of filtered countries
