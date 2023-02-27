@@ -61,9 +61,10 @@
         </p>
       </form>
 
-      <!-- number of countries found after filtering -->
-      <div id="foundCountriesCount" [style.display]="isFoundCountriesCountVisible ? 'block' : 'none'">
-        <p>Found Countries: {{foundCountriesCount}}</p>
+      <!-- loading spinner & countries found information -->
+      <div>
+        <span class="sr-only" id="loading" [style.display]="isLoading ? 'block' : 'none'"></span>
+        <p id="foundCountriesCount" [style.display]="isFoundCountriesCountVisible ? 'block' : 'none'">{{foundCountriesCount}} Countries found.</p>
       </div>
 
     </div>

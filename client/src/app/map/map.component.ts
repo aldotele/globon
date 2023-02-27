@@ -29,6 +29,7 @@ export class MapComponent implements AfterViewInit {
   maxPopulation: any;
   isFoundCountriesCountVisible: boolean = false;
   foundCountriesCount: number;
+  isLoading: boolean = false;
 
 	onSelected(value:string): void {
     this.isFoundCountriesCountVisible = false;
@@ -61,11 +62,14 @@ export class MapComponent implements AfterViewInit {
   onSubmit(form) {
     // filter countries based on search criteria and highlight them on map
     this.markerService.makeCountrySearchBorders(this.map, form.value);
+    this.isFoundCountriesCountVisible = false;
+    this.isLoading = true;
 
     // get the number of filtered countries
     this.markerService.foundCountries$.subscribe(foundCountriesCount => {
       this.foundCountriesCount = foundCountriesCount;
       this.isFoundCountriesCountVisible = true;
+      this.isLoading = false;
     });
   }
 }
