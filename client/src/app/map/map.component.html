@@ -61,9 +61,15 @@
         </p>
       </form>
 
+      <div class="d-flex justify-content-center" [style.display]="isLoading ? 'block' : 'none'">
+        <div class="spinner-border" role="status" >
+          <span class="sr-only" id="loading"></span>
+        </div>
+      </div>
+
       <!-- number of countries found after filtering -->
       <div id="foundCountriesCount" [style.display]="isFoundCountriesCountVisible ? 'block' : 'none'">
-        <p>Found Countries: {{foundCountriesCount}}</p>
+        <p>{{foundCountriesCount}} Countries found.</p>
       </div>
 
     </div>
