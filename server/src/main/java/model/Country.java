@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Data
 public class Country implements Serializable {
@@ -75,7 +76,11 @@ public class Country implements Serializable {
         List<String> currencyKeys = currencies.keySet().stream().toList();
         for (String currencyKey: currencyKeys) {
             Map<String, String> inner = (Map<String, String>) currencies.get(currencyKey);
-            output.add(inner.get("name") + " " + "(" + inner.get("symbol") + ")");
+            String symbol = inner.getOrDefault("symbol", "");
+            if (!symbol.isEmpty()) {
+                symbol = "(" + symbol + ")";
+            }
+            output.add(inner.get("name") + " " + symbol);
         }
         this.currencies = output;
     }
