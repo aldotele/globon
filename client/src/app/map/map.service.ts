@@ -9,7 +9,7 @@ import { Observable, Subject } from 'rxjs';
 @Injectable({
   providedIn: 'root'
 })
-export class MarkerService {
+export class MapService {
   private foundCountriesSubject = new Subject<number>();
   foundCountries$: Observable<number> = this.foundCountriesSubject.asObservable();
 
