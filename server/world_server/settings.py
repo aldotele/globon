@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'world_proxy.apps.WorldProxyConfig',  # added
+    'graphene_django',  # added
 ]
 
 MIDDLEWARE = [
