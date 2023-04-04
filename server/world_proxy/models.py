@@ -13,3 +13,10 @@ class Country(models.Model):
 
     def __str__(self):
         return self.name
+
+    def from_json(self, json):
+        self.name = json['name']['common']
+        self.official_name = json['name']['official']
+        self.acronym = json['cca3']
+        self.capital = json['capital']
+        self.population = json['population']

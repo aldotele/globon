@@ -1,7 +1,7 @@
 from django.shortcuts import render
 import requests
 from django.http import HttpResponse
-import json
+from .models import Country
 
 
 def welcome(request):
@@ -10,7 +10,9 @@ def welcome(request):
 
 def get_all_countries(request):
     response = requests.get("https://restcountries.com/v3.1/all")
-    body = json.loads(response.content)
 
-    print(body[0]["name"]["common"])
+    for country_in_json in response.json():
+        country = Country()
+        country.from_json(country_in_json)
+
     return HttpResponse(response, content_type='application/json')
