@@ -6,7 +6,7 @@ class Country(models.Model):
     official_name = models.CharField(max_length=255)
     acronym = models.CharField(max_length=3)
     capital = models.CharField(max_length=255)
-    population = models.IntegerField
+    population = models.IntegerField(null=True)
 
     class Meta:
         verbose_name_plural = 'Countries'
@@ -15,8 +15,11 @@ class Country(models.Model):
         return self.name
 
     def from_json(self, json):
-        self.name = json['name']['common']
-        self.official_name = json['name']['official']
-        self.acronym = json['cca3']
-        self.capital = json['capital']
-        self.population = json['population']
+        try:
+            self.name = json['name']['common']
+            self.official_name = json['name']['official']
+            self.acronym = json['cca3']
+            self.capital = json['capital']
+            self.population = json['population']
+        except KeyError:
+            pass
