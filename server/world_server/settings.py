@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'world_proxy.apps.WorldProxyConfig',  # added
+    'country.apps.CountryConfig',
     'rest_framework',  # added
 ]
 

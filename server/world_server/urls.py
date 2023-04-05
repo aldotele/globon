@@ -21,5 +21,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     #path('graphql', GraphQLView.as_view(graphiql=True, schema=schema)),
-    path('', include('world_proxy.urls'))
+    path('', include('world_proxy.urls')),
+    path('country', include('country.urls')),
 ]
