@@ -43,9 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'world_proxy.apps.WorldProxyConfig',  # added
+    # added
+    'rest_framework',
+    'world_proxy.apps.WorldProxyConfig',
     'country.apps.CountryConfig',
-    'rest_framework',  # added
 ]
 
 MIDDLEWARE = [

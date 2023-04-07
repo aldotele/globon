@@ -1,6 +1,6 @@
 from django.urls import path
-from country.views import get_all_countries
+from country.views import CountryView
 
 urlpatterns = [
-    path('all', get_all_countries, name='get_all_countries'),
+    path('all', CountryView.as_view()),
 ]
