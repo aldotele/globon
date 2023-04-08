@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.postgres.fields import ArrayField
 import uuid
 
 
@@ -9,6 +8,8 @@ class Country(models.Model):
     official_name = models.CharField(max_length=255)
     acronym = models.CharField(max_length=3)
     population = models.IntegerField()
+    flag = models.URLField()
+    capital = models.JSONField(null=True)
 
     class Meta:
         verbose_name_plural = 'Countries'
@@ -23,5 +24,7 @@ class Country(models.Model):
             self.official_name = json['name']['official']
             self.acronym = json['cca3']
             self.population = json['population']
+            self.flag = json['flags']['png']
+            self.capital = json['capital']
         except KeyError:
             pass
