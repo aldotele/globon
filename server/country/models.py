@@ -10,6 +10,7 @@ class Country(models.Model):
     population = models.IntegerField()
     flag = models.URLField()
     capital = models.JSONField(null=True)
+    translations = models.JSONField(null=True)
 
     class Meta:
         verbose_name_plural = 'Countries'
@@ -26,5 +27,15 @@ class Country(models.Model):
             self.population = json['population']
             self.flag = json['flags']['png']
             self.capital = json['capital']
+            self.translations = Country.get_translations(json['translations'])
         except KeyError:
             pass
+
+    @staticmethod
+    def get_translations(dict):
+        translations = []
+        for key, value in dict.items():
+            translation = value['common']
+            if translation not in translations:
+                translations.append(translation)
+        return translations
