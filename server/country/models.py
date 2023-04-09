@@ -8,10 +8,11 @@ class Country(models.Model):
     official_name = models.CharField(max_length=255)
     acronym = models.CharField(max_length=3)
     population = models.IntegerField()
-    flag = models.URLField()
+    flag = models.URLField(max_length=200)
     capital = models.JSONField(null=True)
     translations = models.JSONField(null=True)
     currencies = models.JSONField(null=True)
+    map = models.URLField(max_length=200, null=True)
 
     class Meta:
         verbose_name_plural = 'Countries'
@@ -26,10 +27,11 @@ class Country(models.Model):
             self.official_name = json['name']['official']
             self.acronym = json['cca3']
             self.population = json['population']
-            self.flag = json['flags']['png']
+            self.flag = json['flags']['svg']
             self.capital = json['capital']
             self.translations = Country.retrieve_translations(json['translations'])
             self.currencies = Country.retrieve_currencies(json['currencies'])
+            self.map = json['maps']['openStreetMaps']
         except KeyError:
             pass
 
