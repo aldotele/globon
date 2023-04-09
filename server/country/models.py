@@ -11,6 +11,7 @@ class Country(models.Model):
     flag = models.URLField()
     capital = models.JSONField(null=True)
     translations = models.JSONField(null=True)
+    currencies = models.JSONField(null=True)
 
     class Meta:
         verbose_name_plural = 'Countries'
@@ -27,15 +28,23 @@ class Country(models.Model):
             self.population = json['population']
             self.flag = json['flags']['png']
             self.capital = json['capital']
-            self.translations = Country.get_translations(json['translations'])
+            self.translations = Country.retrieve_translations(json['translations'])
+            self.currencies = Country.retrieve_currencies(json['currencies'])
         except KeyError:
             pass
 
     @staticmethod
-    def get_translations(dict):
+    def retrieve_translations(json_node):
         translations = []
-        for key, value in dict.items():
+        for key, value in json_node.items():
             translation = value['common']
             if translation not in translations:
                 translations.append(translation)
         return translations
+
+    @staticmethod
+    def retrieve_currencies(json_node):
+        currencies = []
+        for key, value in json_node.items():
+            currencies.append(value['name'] + " (" + value['symbol'] + ")")
+        return currencies
