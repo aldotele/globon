@@ -14,6 +14,7 @@ class Country(models.Model):
     currencies = models.JSONField(null=True)
     map = models.URLField(max_length=200, null=True)
     languages = models.JSONField(null=True)
+    borders = models.JSONField(null=True)
 
     class Meta:
         verbose_name_plural = 'Countries'
@@ -34,6 +35,7 @@ class Country(models.Model):
             self.currencies = Country.retrieve_currencies(json['currencies'])
             self.map = json['maps']['openStreetMaps']
             self.languages = Country.retrieve_languages(json['languages'])
+            self.borders = json['borders']
         except KeyError:
             pass
 
