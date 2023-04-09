@@ -13,6 +13,7 @@ class Country(models.Model):
     translations = models.JSONField(null=True)
     currencies = models.JSONField(null=True)
     map = models.URLField(max_length=200, null=True)
+    languages = models.JSONField(null=True)
 
     class Meta:
         verbose_name_plural = 'Countries'
@@ -32,6 +33,7 @@ class Country(models.Model):
             self.translations = Country.retrieve_translations(json['translations'])
             self.currencies = Country.retrieve_currencies(json['currencies'])
             self.map = json['maps']['openStreetMaps']
+            self.languages = Country.retrieve_languages(json['languages'])
         except KeyError:
             pass
 
@@ -50,3 +52,10 @@ class Country(models.Model):
         for key, value in json_node.items():
             currencies.append(value['name'] + " (" + value['symbol'] + ")")
         return currencies
+
+    @staticmethod
+    def retrieve_languages(json_node):
+        languages = []
+        for key, value in json_node.items():
+            languages.append(value)
+        return languages
