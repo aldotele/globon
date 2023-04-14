@@ -12,6 +12,19 @@ class CountryListView(APIView):
         serializer = CountrySerializer(queryset, many=True)
         return Response(serializer.data)
 
+    def post(self, request):
+        filters = self.request.data
+        queryset = get_countries()
+        max_population = filters.get("maxPopulation")
+        if max_population:
+            queryset = queryset.filter(population__lte=max_population)
+        min_population = filters.get("minPopulation")
+        if min_population:
+            queryset = queryset.filter(population__gte=min_population)
+
+        serializer = CountrySerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class CountryDetailView(APIView):
     def get(self, request, code):
