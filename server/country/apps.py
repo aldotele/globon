@@ -26,5 +26,8 @@ class CountryConfig(AppConfig):
                     country.from_json(country_in_json)
                     country.save()
                 logging.info("db populate with countries")
+                world_bank_countries_details = proxy.retrieve_world_bank_country_details()
+                for country_details in world_bank_countries_details:
+                    Country.objects.filter(acronym=country_details["id"]).update(income_level=country_details["incomeLevel"])
         else:
             pass
