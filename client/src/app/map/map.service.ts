@@ -29,17 +29,13 @@ export class MapService {
     var foundCountriesCount: number;
 
     this.http.post(Api.SERVER + "/api/countries", search).subscribe((countries: object[]) => {
-      console.log(countries)
-      var allCodes = countries.map(obj=>
-        obj["acronym"]);
-        console.log(allCodes);
+      var acronyms = countries.map(obj => obj["acronym"]);
       // save the number of countries found, to be displayed as information
-      foundCountriesCount = allCodes.length;
-
+      foundCountriesCount = acronyms.length;
       this.http.get(Api.COUNTRIES_BORDERS_GEOJSON).subscribe((resWithCoordinates: any) => {
         resWithCoordinates.features.forEach((country) => {
           // filtering countries by the codes returned in the previous request
-          if (allCodes.includes(country.properties.ISO_A3)) {
+          if (acronyms.includes(country.properties.ISO_A3)) {
             this.marker.addData(country).setStyle(this.myStyle).addTo(map)
             .on('click', onClickGetCountryDetails);
           }
