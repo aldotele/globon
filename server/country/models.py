@@ -15,7 +15,7 @@ class Country(models.Model):
     map = models.URLField(max_length=200, null=True)
     languages = models.JSONField(null=True)
     borders = models.JSONField(null=True)
-    income_level = models.JSONField(null=True)
+    income_level = models.CharField(max_length=4, null=True)
 
     class Meta:
         verbose_name_plural = 'Countries'

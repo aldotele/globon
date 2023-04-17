@@ -21,7 +21,9 @@ class CountryListView(APIView):
         min_population = filters.get("minPopulation")
         if min_population:
             queryset = queryset.filter(population__gte=min_population)
-
+        income_level = filters.get("incomeLevel")
+        if income_level:
+            queryset = queryset.filter(income_level=income_level)
         serializer = CountrySerializer(queryset, many=True)
         return Response(serializer.data)
 
