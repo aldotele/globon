@@ -28,14 +28,18 @@ export class MapService {
     this.marker.clearLayers();
     var foundCountriesCount: number;
 
-    this.http.post(Api.SERVER + "/country/search?onlyAcronym=true", search).subscribe((countryCodes: string[]) => {
+    this.http.post(Api.SERVER + "/api/countries", search).subscribe((countries: object[]) => {
+      console.log(countries)
+      var allCodes = countries.map(obj=>
+        obj["acronym"]);
+        console.log(allCodes);
       // save the number of countries found, to be displayed as information
-      foundCountriesCount = countryCodes.length;
+      foundCountriesCount = allCodes.length;
 
       this.http.get(Api.COUNTRIES_BORDERS_GEOJSON).subscribe((resWithCoordinates: any) => {
         resWithCoordinates.features.forEach((country) => {
           // filtering countries by the codes returned in the previous request
-          if (countryCodes.includes(country.properties.ISO_A3)) {
+          if (allCodes.includes(country.properties.ISO_A3)) {
             this.marker.addData(country).setStyle(this.myStyle).addTo(map)
             .on('click', onClickGetCountryDetails);
           }
@@ -60,7 +64,7 @@ export class MapService {
 
 async function onClickGetCountryDetails(e) {
   let countryCode = e.layer.feature.properties.ISO_A3;
-  const response = await fetch(Api.SERVER + "/country/code/" + countryCode);
+  const response = await fetch(Api.SERVER + "/api/countries/code/" + countryCode);
   const data = await response.json();
   displayCountryDetails(data);
   // TODO consider using modal for displaying country details 
