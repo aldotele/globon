@@ -28,7 +28,7 @@ export class MapService {
     this.marker.clearLayers();
     var foundCountriesCount: number;
 
-    this.http.post(Api.SERVER + "/api/countries", search).subscribe((countries: object[]) => {
+    this.http.post(Api.SERVER + "/api/countries/", search).subscribe((countries: object[]) => {
       var acronyms = countries.map(obj => obj["acronym"]);
       // save the number of countries found, to be displayed as information
       foundCountriesCount = acronyms.length;
