@@ -20,9 +20,11 @@ For example, you can visualize the countries of the world within a specific popu
 <br/>
 
 ### Technology Stack
-The project uses Angular (with Leaflet.js for map visualization) on the client side, 
-Javalin (lightweight Java framework) on the server side
-and MongoDB with geospatial features as a database.
+Back-End --> Python with Django REST Framework
+Front-End --> Angular
+Database --> PostgreSQL
+
+The project uses the Leaflet.js library for visualizing the world map and interacting with it.
 
 <br/>
 

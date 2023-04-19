@@ -1,14 +1,7 @@
-FROM maven:3.8.3-openjdk-17
-
-# create project folder in container
-RUN mkdir /project
-# copy the whole code in that folder
-COPY . /project
-# navigate to that folder
-WORKDIR /project
-# create empty .env file for environment variables
-RUN touch .env
-# run maven command to build jar
-RUN mvn clean package -DskipTests
-# launch the jar
-CMD ["java", "-jar", "target/world.jar"]
+# syntax=docker/dockerfile:1
+FROM python:3
+ENV PYTHONUNBUFFERED=1
+WORKDIR /code
+COPY requirements.txt /code/
+RUN pip install -r requirements.txt
+COPY . /code/

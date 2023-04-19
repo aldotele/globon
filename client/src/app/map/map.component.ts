@@ -1,6 +1,6 @@
 import { Component, AfterViewInit } from '@angular/core';
 import {Map, Marker, Icon, TileLayer} from 'leaflet'
-import { MarkerService } from '../marker.service';
+import { MapService } from './map.service';
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/marker-icon.png';
@@ -53,7 +53,7 @@ export class MapComponent implements AfterViewInit {
     tiles.addTo(this.map);
   }
 
-  constructor(public markerService: MarkerService) {}
+  constructor(public mapService: MapService) {}
 
   ngAfterViewInit(): void {
     this.initMap();
@@ -61,12 +61,12 @@ export class MapComponent implements AfterViewInit {
 
   onSubmit(form) {
     // filter countries based on search criteria and highlight them on map
-    this.markerService.makeCountrySearchBorders(this.map, form.value);
+    this.mapService.makeCountrySearchBorders(this.map, form.value);
     this.isFoundCountriesCountVisible = false;
     this.isLoading = true;
 
     // get the number of filtered countries
-    this.markerService.foundCountries$.subscribe(foundCountriesCount => {
+    this.mapService.foundCountries$.subscribe(foundCountriesCount => {
       this.foundCountriesCount = foundCountriesCount;
       this.isFoundCountriesCountVisible = true;
       this.isLoading = false;
