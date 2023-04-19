@@ -35,5 +35,4 @@ The project uses the [Leaflet.js](https://leafletjs.com/) library for visualizin
 After the three containers are launched successfully, navigate to:
 [http://localhost:4200]()
 
-You can also access the available enpoints on [http://localhost:7070/swagger]()
 

@@ -22,5 +22,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     #path('graphql', GraphQLView.as_view(graphiql=True, schema=schema)),
     path('', include('world_proxy.urls')),
-    path('api/countries', include('country.urls')),
+    path('api/countries/', include('country.urls')),
 ]
