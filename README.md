@@ -20,11 +20,11 @@ For example, you can visualize the countries of the world within a specific popu
 <br/>
 
 ### Technology Stack
-Back-End --> Python with Django REST Framework
-Front-End --> Angular
-Database --> PostgreSQL
+Back-End --> **Python** with **Django REST Framework**\
+Front-End --> **Angular**\
+Database --> **PostgreSQL**
 
-The project uses the Leaflet.js library for visualizing the world map and interacting with it.
+The project uses the [Leaflet.js](https://leafletjs.com/) library for visualizing the world map and interacting with it.
 
 <br/>
 
