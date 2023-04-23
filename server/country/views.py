@@ -4,16 +4,14 @@ from rest_framework.views import APIView
 
 from .persistence import get_countries, get_country_by_code
 from .serializers import CountrySerializer
+from drf_spectacular.utils import extend_schema
 
 
 class CountryListView(APIView):
-    def get(self, request):
-        queryset = get_countries().order_by('name')
-        serializer = CountrySerializer(queryset, many=True)
-        return Response(serializer.data)
 
-    def post(self, request):
-        filters = self.request.data
+    @extend_schema(responses=CountrySerializer)
+    def get(self, request):
+        filters = self.request.query_params
         queryset = get_countries()
         max_population = filters.get("maxPopulation")
         if max_population:
