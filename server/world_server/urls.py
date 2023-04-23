@@ -17,10 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 # from graphene_django.views import GraphQLView
 # from world_proxy.schema import schema
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     #path('graphql', GraphQLView.as_view(graphiql=True, schema=schema)),
     path('', include('world_proxy.urls')),
     path('api/countries/', include('country.urls')),
+    path('schema/', SpectacularAPIView.as_view(), name="schema"),
+    path('swagger/', SpectacularSwaggerView.as_view(url_name="schema")),
 ]

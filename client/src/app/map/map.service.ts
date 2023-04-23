@@ -23,12 +23,18 @@ export class MapService {
     "opacity": 0.65
   };
 
-  makeCountrySearchBorders(map: L.Map, search: string): void {
+  makeCountrySearchBorders(map: L.Map, search: Object): void {
     // clean map before new request
     this.marker.clearLayers();
     var foundCountriesCount: number;
+    var queryParams = "?";
+    for (const [key, value] of Object.entries(search)) {
+      if (value != undefined) {
+        queryParams += key + "=" + value + "&";
+      }
+    }
 
-    this.http.post(Api.SERVER + "/api/countries/", search).subscribe((countries: object[]) => {
+    this.http.get(Api.SERVER + "/api/countries/" + queryParams).subscribe((countries: object[]) => {
       var acronyms = countries.map(obj => obj["acronym"]);
       // save the number of countries found, to be displayed as information
       foundCountriesCount = acronyms.length;
