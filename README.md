@@ -35,6 +35,6 @@ The project uses the [Leaflet.js](https://leafletjs.com/) library for visualizin
 After the three containers are launched successfully, navigate to:
 [http://localhost:4200]() to try it out!
 
-You can also access the [http://localhost:8000/swagger](Swagger UI)
+You can also access the [Swagger UI](http://localhost:8000/swagger)
 
 
