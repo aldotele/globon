@@ -18,6 +18,7 @@ from django.urls import path, include
 # from graphene_django.views import GraphQLView
 # from world_proxy.schema import schema
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,3 +28,5 @@ urlpatterns = [
     path('schema/', SpectacularAPIView.as_view(), name="schema"),
     path('swagger/', SpectacularSwaggerView.as_view(url_name="schema")),
 ]
+
+urlpatterns += staticfiles_urlpatterns()
