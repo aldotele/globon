@@ -39,7 +39,7 @@ export class MapComponent implements AfterViewInit {
   private initMap(): void {
     // initialize map and centering it
     this.map = new Map('map', {
-      center: [39.8282, -18.5795],
+      center: [50.378472, 14.970598],
       zoom: 1
     });
 
