@@ -34,7 +34,7 @@ export class MapService {
       }
     }
 
-    this.http.get(Api.SERVER + "/api/countries/" + queryParams).subscribe((countries: object[]) => {
+    this.http.get(Api.DOMAIN + "/api/countries/" + queryParams).subscribe((countries: object[]) => {
       var acronyms = countries.map(obj => obj["acronym"]);
       // save the number of countries found, to be displayed as information
       foundCountriesCount = acronyms.length;
@@ -53,7 +53,7 @@ export class MapService {
 
   makeCountrySearchMarkers(map: L.Map, search: string): void {
     this.marker.clearLayers();
-    this.http.post(Api.SERVER + "/country/search", search).subscribe((res:any) => {
+    this.http.post(Api.DOMAIN + "/country/search", search).subscribe((res:any) => {
       res.forEach((country) => {
         if (country.location != null) {
           this.marker.addData(country.location).addTo(map)
@@ -66,7 +66,7 @@ export class MapService {
 
 async function onClickGetCountryDetails(e) {
   let countryCode = e.layer.feature.properties.ISO_A3;
-  const response = await fetch(Api.SERVER + "/api/countries/code/" + countryCode);
+  const response = await fetch(Api.DOMAIN + "/api/countries/code/" + countryCode);
   const data = await response.json();
   displayCountryDetails(data);
   // TODO consider using modal for displaying country details 
