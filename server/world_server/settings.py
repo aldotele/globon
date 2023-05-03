@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'drf_spectacular',
+    'django_filters',
     'world_proxy.apps.WorldProxyConfig',
     'country.apps.CountryConfig',
 ]
