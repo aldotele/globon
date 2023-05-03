@@ -21,4 +21,4 @@ class CountryFilters(rest_framework.FilterSet):
 
     class Meta:
         model = Country
-        fields = ["population", "income_level"]
+        fields = ["maxPopulation", "minPopulation", "incomeLevel"]
