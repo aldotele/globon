@@ -19,6 +19,11 @@ class CountryFilters(rest_framework.FilterSet):
         lookup_expr="gte"
     )
 
+    language = rest_framework.CharFilter(
+        field_name="languages",
+        lookup_expr="icontains"
+    )
+
     class Meta:
         model = Country
-        fields = ["maxPopulation", "minPopulation", "incomeLevel"]
+        fields = ["maxPopulation", "minPopulation", "incomeLevel", "language"]
