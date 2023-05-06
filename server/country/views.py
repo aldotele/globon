@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .filters import CountryFilters
-from .persistence import get_countries, get_country_by_code
+from .persistence import get_countries, get_country_by_code, get_all_languages
 from .serializers import CountrySerializer
 
 
@@ -32,3 +32,9 @@ class CountryDetailView(APIView):
         country_instance = get_country_by_code(code)
         serializer = CountrySerializer(country_instance)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class LanguageView(APIView):
+    def get(self, request):
+        return Response(get_all_languages(), status=status.HTTP_200_OK)
+
