@@ -18,6 +18,7 @@
         <option value="">- - - select - - -</option>
         <option value="population">Population</option>
         <option value="incomeLevel">Income Level</option>
+        <option value="language">Language</option>
       </select>
     </div>
 
@@ -58,6 +59,21 @@
         <p>
           <!--<button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>-->
           <button class="submit-button" type="submit" [disabled]="incomeLevel.value == ''">Submit</button>
+        </p>
+      </form>
+
+      <!-- LANGUAGE form -->
+      <form *ngIf="search.value=='language'" #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)">
+        <div class="form-group">
+          <label for="language">Language&nbsp;&nbsp;</label>
+          <select #language id="language" name="language" ngModel class="form-control" style="width: 100%;">
+            <option value="">- - - select - - -</option>
+            <option value={{language}} *ngFor="let language of allLanguages">{{language}}</option>
+          </select>
+          
+        </div>
+        <p>
+          <button class="submit-button" type="submit" [disabled]="language.value == ''">Submit</button>
         </p>
       </form>
 

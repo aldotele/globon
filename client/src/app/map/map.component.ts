@@ -30,10 +30,15 @@ export class MapComponent implements AfterViewInit {
   isFoundCountriesCountVisible: boolean = false;
   foundCountriesCount: number;
   isLoading: boolean = false;
+  allLanguages: any;
 
 	onSelected(value:string): void {
     this.isFoundCountriesCountVisible = false;
 		this.selectedFilteringCriteria = value;
+    if (this.selectedFilteringCriteria == "language") {
+      this.mapService.getAllLanguages()
+        .subscribe(data => this.allLanguages = data)
+    }
 	}
 
   private initMap(): void {

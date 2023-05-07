@@ -13,7 +13,7 @@ class Country(models.Model):
     translations = models.JSONField(null=True)
     currencies = models.JSONField(null=True)
     map = models.URLField(max_length=200, null=True)
-    languages = models.JSONField(null=True)
+    languages = models.JSONField(default=list)
     borders = models.JSONField(null=True)
     income_level = models.CharField(max_length=4, null=True)
 
