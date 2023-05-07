@@ -62,6 +62,10 @@ export class MapService {
       })
     })
   }
+
+  getAllLanguages() {
+    return this.http.get(Api.DOMAIN + "/api/countries/languages")
+  }
 }
 
 async function onClickGetCountryDetails(e) {
