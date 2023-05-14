@@ -35,13 +35,13 @@ export class MapService {
     }
 
     this.http.get(Api.DOMAIN + "/api/countries/" + queryParams).subscribe((countries: object[]) => {
-      var acronyms = countries.map(obj => obj["acronym"]);
+      var isoCodes = countries.map(obj => obj["iso_code"]);
       // save the number of countries found, to be displayed as information
-      foundCountriesCount = acronyms.length;
+      foundCountriesCount = isoCodes.length;
       this.http.get(Api.COUNTRIES_BORDERS_GEOJSON).subscribe((resWithCoordinates: any) => {
         resWithCoordinates.features.forEach((country) => {
           // filtering countries by the codes returned in the previous request
-          if (acronyms.includes(country.properties.ISO_A3)) {
+          if (isoCodes.includes(country.properties.ISO_A3)) {
             this.marker.addData(country).setStyle(this.myStyle).addTo(map)
             .on('click', onClickGetCountryDetails);
           }
@@ -69,10 +69,12 @@ export class MapService {
 }
 
 async function onClickGetCountryDetails(e) {
-  let countryCode = e.layer.feature.properties.ISO_A3;
-  const response = await fetch(Api.DOMAIN + "/api/countries/code/" + countryCode);
-  const data = await response.json();
-  displayCountryDetails(data);
+  let isoCode = e.layer.feature.properties.ISO_A3;
+  const response = await fetch(Api.DOMAIN + "/api/countries?isoCode=" + isoCode);
+  const countriesByIsoCode = await response.json();
+  if (countriesByIsoCode.length > 0) {
+    displayCountryDetails(countriesByIsoCode[0]);
+  }
   // TODO consider using modal for displaying country details 
 }
 

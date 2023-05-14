@@ -7,7 +7,7 @@ def get_countries():
 
 
 def get_country_by_code(code):
-    return Country.objects.get(acronym=code)
+    return Country.objects.get(iso_code=code)
 
 
 def get_all_languages():

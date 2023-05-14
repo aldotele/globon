@@ -24,6 +24,11 @@ class CountryFilters(rest_framework.FilterSet):
         lookup_expr="icontains"
     )
 
+    isoCode = rest_framework.CharFilter(
+        field_name="iso_code",
+        lookup_expr="iexact"
+    )
+
     class Meta:
         model = Country
-        fields = ["maxPopulation", "minPopulation", "incomeLevel", "language"]
+        fields = ["maxPopulation", "minPopulation", "incomeLevel", "language", "isoCode"]
