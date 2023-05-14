@@ -6,7 +6,7 @@ class Country(models.Model):
     uuid = models.UUIDField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     official_name = models.CharField(max_length=255)
-    acronym = models.CharField(max_length=3)
+    iso_code = models.CharField(max_length=3)
     population = models.IntegerField()
     flag = models.URLField(max_length=200)
     capital = models.JSONField(null=True)
@@ -28,7 +28,7 @@ class Country(models.Model):
             self.uuid = uuid.uuid4()
             self.name = json['name']['common']
             self.official_name = json['name']['official']
-            self.acronym = json['cca3']
+            self.iso_code = json['cca3']
             self.population = json['population']
             self.flag = json['flags']['svg']
             self.capital = json['capital']

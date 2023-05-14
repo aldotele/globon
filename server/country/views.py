@@ -24,16 +24,6 @@ class CountryList(ListCreateAPIView):
         return super().get(request)
 
 
-class CountryDetailView(APIView):
-    def get(self, request, code):
-        """
-        Retrieves the Country with given code
-        """
-        country_instance = get_country_by_code(code)
-        serializer = CountrySerializer(country_instance)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
 class LanguageView(APIView):
     def get(self, request):
         return Response(get_all_languages(), status=status.HTTP_200_OK)
