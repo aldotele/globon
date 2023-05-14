@@ -6,22 +6,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .filters import CountryFilters
-from .persistence import get_countries, get_country_by_code, get_all_languages
+from .persistence import get_countries, get_all_languages
 from .serializers import CountrySerializer
 
 
+@extend_schema(responses=CountrySerializer,
+               parameters=[OpenApiParameter(name="incomeLevel", type=str, enum=["HIC", "UMC", "LMC", "LIC"])])
 class CountryList(ListCreateAPIView):
+    http_method_names = ["get"]
     serializer_class = CountrySerializer
     queryset = get_countries()
     filter_backends = (rest_framework.DjangoFilterBackend,)
     filterset_class = CountryFilters
-
-    @extend_schema(responses=CountrySerializer,
-                   parameters=[OpenApiParameter(name="minPopulation", type=int),
-                               OpenApiParameter(name="maxPopulation", type=int),
-                               OpenApiParameter(name="incomeLevel", type=str, enum=["HIC", "UMC", "LMC", "LIC"])])
-    def get(self, request, *args, **kwargs):
-        return super().get(request)
 
 
 class LanguageView(APIView):
