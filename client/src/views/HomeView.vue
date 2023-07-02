@@ -1,4 +1,5 @@
 <script setup>
+import router from "@/router";
 
 let isReady = false;
 
@@ -10,6 +11,7 @@ const launch = () => {
             if (json['ready']) {
               isReady = true;
               console.log('ready')
+              router.push("/countries");
             }
         })
     })
@@ -24,6 +26,7 @@ const launch = () => {
 <template>
   <main>
       <h1>The World at your fingertips</h1>
+      <!-- <router-link class="start-btn" :to="{ path: '/countries' }"><button class="start-btn">Start Discovering</button></router-link> -->
       <button class="start-btn" @click="launch()">Start Discovering</button>
   </main>
 </template>
