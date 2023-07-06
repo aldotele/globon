@@ -1,24 +1,25 @@
 <script setup>
 import router from "@/router";
 
+const welcomeMessage = "Welcome To World Proxy";
 let isReady = false;
 
 // contacting the server
 const launch = () => {
-  fetch("http://localhost:8000/ready/", { method: 'GET', redirect: 'follow'})
-    .then(response => {
-        response.json().then(json => {
-            if (json['ready']) {
-              isReady = true;
-              console.log('ready')
-              router.push("/countries");
-            }
-        })
+  fetch(import.meta.env.VITE_SERVER_ADDRESS, { method: 'GET', redirect: 'follow'})
+    .then(response => { 
+      if (response.status == 200) {
+        isReady = true;
+        console.log("Ready: ", isReady);
+        // when server is up and running, navigate to the countries section
+        router.push("/countries");
+      }
     })
     .catch(error => {
       console.log(error);
         // handle the error
     });
+  console.log("executed");
 }
 
 </script>
