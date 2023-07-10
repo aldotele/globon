@@ -10,9 +10,9 @@ let center = ref([30, 15])
 <template>
     <main>
       <l-map ref="map" v-model:zoom="zoom" v-model:center="center" :useGlobalLeaflet="false">
-        <l-tile-layer url="https://tiles.stadiamaps.com/tiles/osm_bright/{z}/{x}/{y}{r}.png"
+        <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       layer-type="base"
-                      name="Stadia Maps Basemap"></l-tile-layer>
+                      name="Open Street Map"></l-tile-layer>
       </l-map>
     </main>
 </template>
