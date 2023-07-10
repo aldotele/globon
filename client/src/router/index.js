@@ -22,7 +22,7 @@ const router = createRouter({
       path: '/countries',
       name: 'countries',
       component: CountriesView
-    }
+    },
   ]
 })
 
