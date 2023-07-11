@@ -1,14 +1,16 @@
 <script setup>
 import router from "@/router";
 
-const welcomeMessage = "Welcome To World Proxy";
+const WELCOME_MESSAGE = "Welcome To World Proxy";
+const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 let isReady = false;
 
 // contacting the server
 const launch = () => {
-  fetch(import.meta.env.VITE_SERVER_ADDRESS, { method: 'GET', redirect: 'follow'})
-    .then(response => { 
-      if (response.status == 200) {
+  fetch(SERVER_ADDRESS, { method: 'GET', redirect: 'follow'})
+    .then((response) => response.text())
+    .then((text) => {
+      if (text.includes(WELCOME_MESSAGE)) {
         isReady = true;
         console.log("Ready: ", isReady);
         // when server is up and running, navigate to the countries section
@@ -19,7 +21,6 @@ const launch = () => {
       console.log(error);
         // handle the error
     });
-  console.log("executed");
 }
 
 </script>
