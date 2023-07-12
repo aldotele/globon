@@ -3,6 +3,10 @@ import "leaflet/dist/leaflet.css"
 import { LMap, LTileLayer, LPolygon, LGeoJson } from "@vue-leaflet/vue-leaflet"
 import { ref } from 'vue'
 
+const props = defineProps({
+            data: Object,
+          })
+
 // api of all world countries borders coordinates
 const COUNTRIES_BORDERS = import.meta.env.VITE_COUNTRIES_BORDERS_GEOJSON;
 
@@ -35,7 +39,7 @@ let polygon = ref([
 
 <template>
     <main>
-      <l-map ref="map" v-model:zoom="zoom" v-model:center="center" :useGlobalLeaflet="false">
+      <l-map style="display:none" ref="map" v-model:zoom="zoom" v-model:center="center" :useGlobalLeaflet="false">
         <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       layer-type="base"
                       name="Open Street Map">
@@ -45,6 +49,8 @@ let polygon = ref([
         <!-- <l-polygon v-for="(polygon, index) in polygons" :key="index" :lat-lngs="polygon" color="red" :fill="false" /> -->
         <!-- {/* <l-polygon :lat-lngs="polygon" color="red" :fill="false" /> */} -->
       </l-map>
+
+      <div>{{ data }}</div>
     </main>
 </template>
 
@@ -55,7 +61,8 @@ html, body {
   }
   
   main {
-    height: 100vh;
-    width: 100vw;
+    height: 60vh;
+    width: 95vw;
+    margin: 200px auto 30px auto;
   }
 </style>
