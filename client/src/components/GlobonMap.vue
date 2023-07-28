@@ -3,8 +3,9 @@ import "leaflet/dist/leaflet.css"
 import { LMap, LTileLayer, LPolygon, LGeoJson } from "@vue-leaflet/vue-leaflet"
 import { ref } from 'vue'
 
+
 const props = defineProps({
-            data: Object,
+            filters: Object,
           })
 
 // api of all world countries borders coordinates
@@ -18,9 +19,9 @@ const polygons = ref([])
 fetch(COUNTRIES_BORDERS, { method: 'GET', redirect: 'follow'})
     .then((response) => response.json())
     .then((geoJson) => geoJson.features.forEach((country) => {
-      if (["ITA", "FRA", "MEX", "ESP", "USA"].includes(country.properties.ISO_A3)) {
-        polygons.value.push(country)
-      }
+        if ([props.filters.iso3Codes].includes(country.properties.ISO_A3)) {
+          polygons.value.push(country)
+        }
     }))
 
 let polygon = ref([
@@ -39,7 +40,7 @@ let polygon = ref([
 
 <template>
     <main>
-      <l-map style="display:none" ref="map" v-model:zoom="zoom" v-model:center="center" :useGlobalLeaflet="false">
+      <l-map style="display:block" ref="map" v-model:zoom="zoom" v-model:center="center" :useGlobalLeaflet="false">
         <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       layer-type="base"
                       name="Open Street Map">
@@ -50,7 +51,7 @@ let polygon = ref([
         <!-- {/* <l-polygon :lat-lngs="polygon" color="red" :fill="false" /> */} -->
       </l-map>
 
-      <div>{{ data }}</div>
+      <div>{{ filters }}</div>
     </main>
 </template>
 

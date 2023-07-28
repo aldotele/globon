@@ -7,12 +7,14 @@ import GlobonMap from '../components/GlobonMap.vue';
 
 const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 
-let data = reactive({
+let filters = reactive({
     minPopulation: null,
     maxPopulation: null,
     isSubmitted: false,
     iso3Codes: []
 })
+
+let isSubmitted = ref(false);
 
 // will hold the country codes of filtered countries
 const iso3Codes = ref([]);
@@ -25,9 +27,8 @@ const afterSubmit = () => {
         filters.iso3Codes.push(country.iso_code)
     }))
     console.log("submitted !")
+    isSubmitted.value = true;
 }
-
-
 
 </script>
 
@@ -64,8 +65,7 @@ const afterSubmit = () => {
     
         </form>
     </div>
-    
-    <GlobonMap :data="data"/>    
+    <GlobonMap v-if="isSubmitted" :filters="filters" />
 </template>
 
 <style lang="scss" scoped>
