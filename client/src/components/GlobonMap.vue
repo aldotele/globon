@@ -2,11 +2,16 @@
 import "leaflet/dist/leaflet.css"
 import { LMap, LTileLayer, LPolygon, LGeoJson } from "@vue-leaflet/vue-leaflet"
 import { ref } from 'vue'
+import { isProxy, toRaw } from 'vue';
+
 
 
 const props = defineProps({
-            filters: Object,
+            iso3Codes: Array,
           })
+
+console.log(props.iso3Codes)
+console.log(toRaw(props.iso3Codes)[0])
 
 // api of all world countries borders coordinates
 const COUNTRIES_BORDERS = import.meta.env.VITE_COUNTRIES_BORDERS_GEOJSON;
@@ -19,7 +24,7 @@ const polygons = ref([])
 fetch(COUNTRIES_BORDERS, { method: 'GET', redirect: 'follow'})
     .then((response) => response.json())
     .then((geoJson) => geoJson.features.forEach((country) => {
-        if ([props.filters.iso3Codes].includes(country.properties.ISO_A3)) {
+        if ([props.iso3Codes.value].includes(country.properties.ISO_A3)) {
           polygons.value.push(country)
         }
     }))
@@ -51,7 +56,6 @@ let polygon = ref([
         <!-- {/* <l-polygon :lat-lngs="polygon" color="red" :fill="false" /> */} -->
       </l-map>
 
-      <div>{{ filters }}</div>
     </main>
 </template>
 

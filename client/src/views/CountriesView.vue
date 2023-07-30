@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { defineEmits, reactive } from "vue"
+import { defineEmits, reactive, toRefs } from "vue"
 
 
 import GlobonMap from '../components/GlobonMap.vue';
@@ -24,7 +24,7 @@ const afterSubmit = () => {
      { method: 'GET', redirect: 'follow'})
     .then((response) => response.json())
     .then((json) => json.forEach((country) => {
-        filters.iso3Codes.push(country.iso_code)
+        iso3Codes.value.push(country.iso_code)
     }))
     console.log("submitted !")
     isSubmitted.value = true;
@@ -65,7 +65,7 @@ const afterSubmit = () => {
     
         </form>
     </div>
-    <GlobonMap v-if="isSubmitted" :filters="filters" />
+    <GlobonMap v-if="isSubmitted" :iso3Codes="iso3Codes" />
 </template>
 
 <style lang="scss" scoped>
