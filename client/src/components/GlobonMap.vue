@@ -10,8 +10,9 @@ const props = defineProps({
             iso3Codes: Array,
           })
 
-console.log(props.iso3Codes)
-console.log(toRaw(props.iso3Codes)[0])
+//console.log(toRaw(props.iso3Codes)[0])
+//console.log(props.iso3Codes)
+//console.log(props.iso3Codes[0])
 
 // api of all world countries borders coordinates
 const COUNTRIES_BORDERS = import.meta.env.VITE_COUNTRIES_BORDERS_GEOJSON;
@@ -24,7 +25,7 @@ const polygons = ref([])
 fetch(COUNTRIES_BORDERS, { method: 'GET', redirect: 'follow'})
     .then((response) => response.json())
     .then((geoJson) => geoJson.features.forEach((country) => {
-        if ([props.iso3Codes.value].includes(country.properties.ISO_A3)) {
+        if (props.iso3Codes.includes(country.properties.ISO_A3)) {
           polygons.value.push(country)
         }
     }))
