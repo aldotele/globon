@@ -20,12 +20,16 @@ let isSubmitted = ref(false);
 const iso3Codes = [];
 
 const afterSubmit = () => {
-    fetch(SERVER_ADDRESS+"/api/countries?minPopulation="+filters.minPopulation+"&maxPopulation="+filters.maxPopulation,
-     { method: 'GET', redirect: 'follow'})
-    .then((response) => response.json())
-    .then((json) => json.forEach((country) => {
-        iso3Codes.push(country.iso_code)
+    let uri = SERVER_ADDRESS+"/api/countries?";
+    uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
+    uri = filters.maxPopulation ? uri + `maxPopulation=${filters.maxPopulation}&` : uri;
+
+    fetch(uri, { method: 'GET', redirect: 'follow'})
+        .then((response) => response.json())
+        .then((json) => json.forEach((country) => {
+            iso3Codes.push(country.iso_code)
     }))
+    
     console.log("submitted !")
     isSubmitted.value = true;
 }
