@@ -17,9 +17,10 @@ let filters = reactive({
 let isSubmitted = ref(false);
 
 // will hold the country codes of filtered countries
-const iso3Codes = [];
+let iso3Codes = [];
 
 const afterSubmit = () => {
+    iso3Codes = [];
     let uri = SERVER_ADDRESS+"/api/countries?";
     uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
     uri = filters.maxPopulation ? uri + `maxPopulation=${filters.maxPopulation}&` : uri;
@@ -29,9 +30,9 @@ const afterSubmit = () => {
         .then((json) => json.forEach((country) => {
             iso3Codes.push(country.iso_code)
     }))
-    
-    console.log("submitted !")
+
     isSubmitted.value = true;
+    console.log("submitted !")
 }
 
 </script>
