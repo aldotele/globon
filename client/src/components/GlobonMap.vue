@@ -140,7 +140,7 @@ html, body {
 main {
   height: 60vh;
   width: 95vw;
-  margin: 200px auto 30px auto;
+  margin: 100px auto 30px auto;
 }
 
 #leaflet-map {
