@@ -1,10 +1,25 @@
 <script setup>
-import { ref, reactive, onMounted, watch } from 'vue'
+import { ref, reactive, onMounted, watch, computed } from 'vue'
 import L, { marker } from 'leaflet';
 import { Map, TileLayer } from 'leaflet';
 
 const props = defineProps({
-  iso3Codes: Array
+  iso3Codes: Array,
+  searchCount: Number
+})
+
+const counter = computed(() => props.searchCount);
+
+// deep property set to true allows to track nested properties changes also
+watch(counter, () => {
+  //console.log("new search: ", counter.value)
+  //console.log(props.iso3Codes.length);
+  // clearing borders when a new search is made
+  state.marker.clearLayers();
+  // fetching data again
+  fetchData();
+}, {
+  deep: true,
 })
 
 const myStyle = {
@@ -27,7 +42,7 @@ const state = reactive({
     layers: [],
   },
   marker: L.geoJSON(),
-  //geoJsonData: null,
+  geoJsonData: null,
   mapInstance: null,
   //layerControlInstance: null
 })
@@ -58,9 +73,8 @@ async function fetchData() {
   // api of all world countries borders coordinates
   const COUNTRIES_BORDERS = import.meta.env.VITE_COUNTRIES_BORDERS_GEOJSON;
   const response = await fetch(COUNTRIES_BORDERS, { method: 'GET', redirect: 'follow'});
-  const geoJsonData = await response.json();
-
-  geoJsonData.features.forEach((geoJsonCountry) => {
+  state.geoJsonData = await response.json();
+  state.geoJsonData.features.forEach((geoJsonCountry) => {
     if (props.iso3Codes.includes(geoJsonCountry.properties.ISO_A3)) {
       applyBorders(geoJsonCountry);
     }
@@ -75,12 +89,14 @@ function applyBorders(geoJsonBorders) {
 
 
 async function main() {
+  
   await initMap();
   await fetchData();
 }
 
 
 onMounted(() => {
+  console.log("search number ", counter.value);
   //console.log(props.iso3Codes)
   main();
 })

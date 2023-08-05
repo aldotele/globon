@@ -16,27 +16,44 @@ let filters = reactive({
     iso3Codes: []
 })
 
+let searchCount = ref(0);
 let isSubmitted = ref(false);
 
 // will hold the country codes of filtered countries
-const iso3Codes = [];
+let iso3Codes = [];
 
-const afterSubmit = () => {
-    iso3Codes = [];
+const afterSubmit = async () => {
     let uri = SERVER_ADDRESS+"/api/countries?";
-    uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
-    uri = filters.maxPopulation ? uri + `maxPopulation=${filters.maxPopulation}&` : uri;
-    uri = filters.incomeLevel ? uri + `incomeLevel=${filters.incomeLevel}&` : uri;
 
-    fetch(uri, { method: 'GET', redirect: 'follow'})
-        .then((response) => response.json())
-        .then((json) => json.forEach((country) => {
-            iso3Codes.push(country.iso_code)
-    }))
+    switch (filters.type) {
+    case 'population':
+        uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
+        uri = filters.maxPopulation ? uri + `maxPopulation=${filters.maxPopulation}&` : uri;
+        break;
+    case 'incomeLevel':
+        uri = filters.incomeLevel ? uri + `incomeLevel=${filters.incomeLevel}&` : uri;
+        break;
+    default:
+        console.log(`No filters applied.`);
+    }
+
+    const response = await fetch(uri, {method: 'GET', redirect: 'follow'});
+    const data = await response.json();
+    iso3Codes = await extractCountryCodes(data);
 
     isSubmitted.value = true;
     console.log("submitted !")
+    searchCount.value++;
 }
+
+async function extractCountryCodes(data) {
+    let codes = []
+    data.forEach((country) => {
+        codes.push(country.iso_code);
+    })
+    return codes;
+}
+
 
 </script>
 
@@ -89,7 +106,7 @@ const afterSubmit = () => {
             </p>
         </form>
     </div>
-    <GlobonMap v-if="isSubmitted" :iso3Codes="iso3Codes" />
+    <GlobonMap v-if="isSubmitted" :iso3Codes="iso3Codes" :searchCount="searchCount" />
 </template>
 
 <style lang="scss" scoped>
