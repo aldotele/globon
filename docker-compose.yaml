@@ -1,4 +1,4 @@
-version: '3.5'
+version: '3.9'
 
 services:
   db:
@@ -30,8 +30,13 @@ services:
   client:
     build: 
       context: ./client
+      target: 'develop-stage'
     container_name: worldproxy_client
     ports: 
-      - "4200:4200"
+      - "5173:5173"
+    volumes:
+    - .:/usr/src/app
+    - /usr/src/app/node_modules
+    command: /bin/sh -c "npm run dev"
     depends_on:
       - server
