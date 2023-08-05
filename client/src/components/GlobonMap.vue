@@ -11,13 +11,13 @@ const props = defineProps({
 const counter = computed(() => props.searchCount);
 
 // deep property set to true allows to track nested properties changes also
-watch(counter, () => {
+watch(counter, async () => {
   //console.log("new search: ", counter.value)
   //console.log(props.iso3Codes.length);
   // clearing borders when a new search is made
-  state.marker.clearLayers();
+  await clearMarkers();
   // fetching data again
-  fetchData();
+  applyBorders();
 }, {
   deep: true,
 })
@@ -68,30 +68,31 @@ async function initMap() {
   state.mapInstance = leafletMap;
 }
 
+async function clearMarkers() {
+  state.marker.clearLayers();
+}
+
 // fetch data
-async function fetchData() {
+async function fetchAllGeoJsonBorders() {
   // api of all world countries borders coordinates
   const COUNTRIES_BORDERS = import.meta.env.VITE_COUNTRIES_BORDERS_GEOJSON;
   const response = await fetch(COUNTRIES_BORDERS, { method: 'GET', redirect: 'follow'});
   state.geoJsonData = await response.json();
+}
+
+async function applyBorders() {
   state.geoJsonData.features.forEach((geoJsonCountry) => {
     if (props.iso3Codes.includes(geoJsonCountry.properties.ISO_A3)) {
-      applyBorders(geoJsonCountry);
-    }
+      state.marker.addData(geoJsonCountry)
+        .setStyle(myStyle)
+        .addTo(state.mapInstance);    }
   })
 }
 
-function applyBorders(geoJsonBorders) {
-  state.marker.addData(geoJsonBorders)
-    .setStyle(myStyle)
-    .addTo(state.mapInstance);
-}
-
-
 async function main() {
-  
   await initMap();
-  await fetchData();
+  await fetchAllGeoJsonBorders();
+  await applyBorders();
 }
 
 
