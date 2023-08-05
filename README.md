@@ -21,7 +21,7 @@ For example, you can visualize the countries of the world within a specific popu
 
 ### Technology Stack
 Back-End --> **Python** with **Django REST Framework**\
-Front-End --> **Angular**\
+Front-End --> **Vue.js**\
 Database --> **PostgreSQL**
 
 The project uses the [Leaflet.js](https://leafletjs.com/) library for visualizing the world map and interacting with it.
@@ -33,7 +33,7 @@ The project uses the [Leaflet.js](https://leafletjs.com/) library for visualizin
 `docker-compose up`
 
 After the three containers are launched successfully, navigate to:
-[localhost:4200](http://localhost:4200) to try it out!
+[localhost:5173](http://localhost:5173) to try it out!
 
 You can also access the [Swagger UI](http://localhost:8000/swagger)
 
