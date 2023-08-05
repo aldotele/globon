@@ -1,17 +1,14 @@
-FROM node:16-alpine
-
-# set the working directory in the container
-WORKDIR /usr/src/app
-
-# copy the package.json and package-lock.json files
+# develop stage
+FROM node:lts-alpine as develop-stage
+WORKDIR /app
 COPY package*.json ./
-
-# install the dependencies
 RUN npm install
-
-# copy the rest of project files
 COPY . .
-
+# build stage
+FROM develop-stage as build-stage
 RUN npm run build
-EXPOSE 4200
-CMD ["npm", "start"]
+# production stage
+FROM nginx:1.15.7-alpine as production-stage
+COPY --from=build-stage /app/dist /usr/share/nginx/html
+EXPOSE 5173
+CMD ["nginx", "-g", "daemon off;"]
