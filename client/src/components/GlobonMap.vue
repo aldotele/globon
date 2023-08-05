@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive,onMounted } from 'vue'
+import { ref, reactive, onMounted, watch } from 'vue'
 import L, { marker } from 'leaflet';
 import { Map, TileLayer } from 'leaflet';
 
@@ -32,8 +32,6 @@ const state = reactive({
   //layerControlInstance: null
 })
 
-const countriesGeoJson = [];
-
 async function initMap() {
   const leafletMap = L.map(state.mapId, state.mapOptions);
 
@@ -64,11 +62,15 @@ async function fetchData() {
 
   geoJsonData.features.forEach((geoJsonCountry) => {
     if (props.iso3Codes.includes(geoJsonCountry.properties.ISO_A3)) {
-      state.marker.addData(geoJsonCountry)
-        .setStyle(myStyle)
-        .addTo(state.mapInstance);
+      applyBorders(geoJsonCountry);
     }
-  }) 
+  })
+}
+
+function applyBorders(geoJsonBorders) {
+  state.marker.addData(geoJsonBorders)
+    .setStyle(myStyle)
+    .addTo(state.mapInstance);
 }
 
 

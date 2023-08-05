@@ -19,7 +19,7 @@ let filters = reactive({
 let isSubmitted = ref(false);
 
 // will hold the country codes of filtered countries
-let iso3Codes = [];
+const iso3Codes = [];
 
 const afterSubmit = () => {
     iso3Codes = [];
