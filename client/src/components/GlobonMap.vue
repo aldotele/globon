@@ -16,6 +16,8 @@ watch(counter, async () => {
   //console.log(props.iso3Codes.length);
   // clearing borders when a new search is made
   await clearMarkers();
+  // clear also the found countried description
+  state.foundCountriesFlag = false;
   // fetching data again
   applyBorders();
 }, {
@@ -44,7 +46,9 @@ const state = reactive({
   marker: L.geoJSON(),
   geoJsonData: null,
   mapInstance: null,
-  //layerControlInstance: null
+  //layerControlInstance: null,
+  foundCountriesCount: 0,
+  foundCountriesFlag: false
 })
 
 async function initMap() {
@@ -87,6 +91,8 @@ async function applyBorders() {
         .setStyle(myStyle)
         .addTo(state.mapInstance);    }
   })
+  state.foundCountriesCount = props.iso3Codes.length;
+  state.foundCountriesFlag = true;
 }
 
 async function main() {
@@ -106,6 +112,11 @@ onMounted(() => {
 
 <template>
   <main>
+    <!-- loading spinner & countries found information -->
+    <div>
+      <p v-if="state.foundCountriesFlag" id="foundCountriesCount">{{ state.foundCountriesCount }} countries were found</p>
+      <p v-else id="loading">Loading Countries ...</p>
+    </div>
     <div :id="state.mapId"></div>
   </main>
     <!-- <main>
@@ -138,6 +149,10 @@ main {
   margin: 100px auto 30px auto;
 }
 
+p {
+  text-align: center;
+}
+
 #leaflet-map {
   height: 98vh;
   width: 90%;
@@ -145,4 +160,5 @@ main {
   margin: 0 auto;
   border-style: double;
 }
+
 </style>
