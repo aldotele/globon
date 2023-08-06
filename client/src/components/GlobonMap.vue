@@ -2,6 +2,8 @@
 import { ref, reactive, onMounted, watch, computed } from 'vue'
 import L, { marker } from 'leaflet';
 import { Map, TileLayer } from 'leaflet';
+import Swal from 'sweetalert2';
+
 
 const props = defineProps({
   iso3Codes: Array,
@@ -89,10 +91,37 @@ async function applyBorders() {
     if (props.iso3Codes.includes(geoJsonCountry.properties.ISO_A3)) {
       state.marker.addData(geoJsonCountry)
         .setStyle(myStyle)
-        .addTo(state.mapInstance);    }
+        .addTo(state.mapInstance)
+        .on('click', showCountryDetails);    
+      }
   })
   state.foundCountriesCount = props.iso3Codes.length;
   state.foundCountriesFlag = true;
+}
+
+async function showCountryDetails(e) {
+  let isoCode = e.layer.feature.properties.ISO_A3;
+  const response = await fetch(import.meta.env.VITE_SERVER_ADDRESS + "/api/countries?isoCode=" + isoCode);
+  const countriesByIsoCode = await response.json();
+  if (countriesByIsoCode.length > 0) {
+    triggerCountryAlert(countriesByIsoCode[0]);
+  }
+}
+
+async function triggerCountryAlert(data) {
+  // triggering alert with country info
+  Swal.fire({
+    title: data.name,
+    html: "<h3 style='font-weight:500'>" 
+    + "<b>population</b>: " + data.population.toLocaleString() + "<br>" 
+    + "<b>capital city</b>: " + data.capital + "<br>"
+    + "<b>currencies</b>: " + data.currencies + "<br>"
+    + "<b>spoken languages</b>: " + data.languages
+    + "</h3>",
+    showConfirmButton: false,
+    showCancelButton: true,
+    cancelButtonText: "Close"
+  });
 }
 
 async function main() {
@@ -100,7 +129,6 @@ async function main() {
   await fetchAllGeoJsonBorders();
   await applyBorders();
 }
-
 
 onMounted(() => {
   console.log("search number ", counter.value);
