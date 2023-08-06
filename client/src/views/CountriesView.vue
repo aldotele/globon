@@ -124,4 +124,23 @@ form {
     margin-top: 30px;
 }
 
+
+.submit-button {
+  cursor: pointer;
+  font-weight: 700;
+  border: 1px solid black;
+  color: black;
+  padding: 6px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  margin-top: 20px;
+}
+
+.submit-button:hover {
+    color: white;
+    background-color: #42e048;
+}
+
 </style>
