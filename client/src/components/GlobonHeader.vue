@@ -24,6 +24,7 @@ import { RouterLink } from 'vue-router';
 header {
   nav {
     display: flex;
+    font-weight: 500;
     align-items: center;
     padding: 25px 16px;
     border-bottom: 2px solid rgb(208, 206, 206);

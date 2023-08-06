@@ -1,6 +1,10 @@
 <template>
   <div class="about">
-    <h1>This is an about page</h1>
+    <h1>About Globon</h1>
+    <p>Globon was built with the purpose of making you discover 
+      the world interactively and with ease by applying filters on the world map
+      based on what you are more interested about.
+    </p>
   </div>
 </template>
 
@@ -8,7 +12,6 @@
 @media (min-width: 1024px) {
   .about {
     min-height: 100vh;
-    display: flex;
     align-items: center;
   }
 }

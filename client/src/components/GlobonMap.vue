@@ -179,6 +179,7 @@ main {
 
 p {
   text-align: center;
+  font-size: large;
 }
 
 #leaflet-map {
