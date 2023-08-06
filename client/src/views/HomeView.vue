@@ -1,18 +1,25 @@
 <script setup>
 import router from "@/router";
+import { reactive } from "vue"
 
 const WELCOME_MESSAGE = "Welcome To World Proxy";
 const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
-let isReady = false;
+
+const state = reactive({
+  isReady: false,
+  isLaunched: false
+})
 
 // contacting the server
 const launch = () => {
+  // user has launched the application
+  state.isLaunched = true;
   fetch(SERVER_ADDRESS, { method: 'GET', redirect: 'follow'})
     .then((response) => response.text())
     .then((text) => {
       if (text.includes(WELCOME_MESSAGE)) {
-        isReady = true;
-        console.log("Ready: ", isReady);
+        // server is ready
+        state.isReady = true;
         // when server is up and running, navigate to the countries section
         router.push("/countries");
       }
@@ -30,42 +37,47 @@ const launch = () => {
       <h1>The World at your fingertips</h1>
       <!-- <router-link class="start-btn" :to="{ path: '/countries' }"><button class="start-btn">Start Discovering</button></router-link> -->
       <button class="start-button" @click="launch()">Start Discovering</button>
+      <p v-if="state.isLaunched && !state.isReady">Please Wait . . .</p>
   </main>
 </template>
 
 <style lang="scss" scoped>
-main {
-  display: flex;
-  flex-direction: column;
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 40px 16px;
+  main {
+    display: flex;
+    flex-direction: column;
+    max-width: 500px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 40px 16px;
 
-h1 {
-  margin-bottom: 16px;
-  text-align: center;
-}
+  h1 {
+    margin-bottom: 16px;
+    text-align: center;
+  }
 
-.start-button {
-  height: 45px;
-  width: 250px;
-  margin: 0 auto;
-  cursor: pointer;
-  font-weight: 600;
-  border: 1px solid black;
-  color: black;
-  padding: 6px 32px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  margin-top: 20px;
-}
+  p {
+    text-align: center;
+  }
 
-.start-button:hover {
-    color: white;
-    background-color: #42e048;
-}
+  .start-button {
+    height: 45px;
+    width: 250px;
+    margin: 0 auto;
+    cursor: pointer;
+    font-weight: 600;
+    border: 1px solid black;
+    color: black;
+    padding: 6px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+
+  .start-button:hover {
+      color: white;
+      background-color: #42e048;
+  }
 }
 </style>
