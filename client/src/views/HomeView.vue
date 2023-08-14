@@ -86,11 +86,11 @@ main {
   .loader {
     padding-top: 20px;
     margin: 0 auto;
-    border: 7px solid #38373729; /* grey */
-    border-top: 7px solid #3498db; /* Blue */
+    border: 5px solid #38373729; /* grey */
+    border-top: 6px solid #3498db; /* Blue */
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 20px;
     animation: spin 2s linear infinite;
   }
 
