@@ -1,9 +1,14 @@
 <script setup>
-import { ref } from 'vue'
-import { defineEmits, reactive, toRefs } from "vue"
+import { ref, watch } from 'vue'
+import { reactive } from "vue"
 
+import { useQuery } from "@vue/apollo-composable"
 
 import GlobonMap from '../components/GlobonMap.vue';
+
+import gql from "graphql-tag"
+import { provideApolloClient } from "@vue/apollo-composable";
+import { apolloClient } from "../graphql/apollo";
 
 const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 
@@ -23,43 +28,68 @@ let isSubmitted = ref(false);
 let iso3Codes = [];
 
 const afterSubmit = async () => {
-    let uri = SERVER_ADDRESS+"/api/countries?";
+    let query;
 
     switch (filters.type) {
     case 'population':
-        uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
-        uri = filters.maxPopulation ? uri + `maxPopulation=${filters.maxPopulation}&` : uri;
+        const minPop = filters.minPopulation ? filters.minPopulation : 0;
+        // TODO replace with logic to handle big integers, this way we are excluding China and India
+        const maxPop = filters.maxPopulation ? filters.maxPopulation : 2000000000;
+        query = gql`
+            query {
+                allCountries(population_Range: [${minPop}, ${maxPop}]) {
+                    edges {
+                        node {
+                            isoCode,
+                        }
+                    }
+                }
+            }
+        `;
         break;
     case 'incomeLevel':
-        uri = filters.incomeLevel ? uri + `incomeLevel=${filters.incomeLevel}&` : uri;
+        query = gql`
+            query {
+                allCountries(incomeLevel: "${filters.incomeLevel}") {
+                    edges {
+                        node {
+                            isoCode,
+                        }
+                    }
+                }
+            }
+        `;
         break;
     default:
         console.log(`No filters applied.`);
     }
 
-    const response = await fetch(uri, {method: 'GET', redirect: 'follow'});
-    const data = await response.json();
-    iso3Codes = await extractCountryCodes(data);
+    const { result, loading, error } = await executeQuery(query);
+    watch(result, async (newResult) => {
+        iso3Codes = await extractCountryCodes(newResult);
+        isSubmitted.value = true;
+        console.log("submitted !")
+        searchCount.value++;
+    })
+}
 
-    isSubmitted.value = true;
-    console.log("submitted !")
-    searchCount.value++;
+async function executeQuery(query) {
+    return provideApolloClient(apolloClient)(() => useQuery(query));
 }
 
 async function extractCountryCodes(data) {
     let codes = []
-    data.forEach((country) => {
-        codes.push(country.iso_code);
+    data.allCountries.edges.forEach((element) => {
+        codes.push(element.node.isoCode);
     })
     return codes;
 }
-
 
 </script>
 
 <template>
     <div class="input-wrapper">
-        <div id=search-by>
+        <div id="search-by">
 
             <!-- search by -->
             <label style="font-size: 25px" for="search">Search countries by:<br> &nbsp;&nbsp; </label>
@@ -84,7 +114,6 @@ async function extractCountryCodes(data) {
             <input type="text" id="maxPopulation" name="maxPopulation" v-model="filters.maxPopulation">
             </p>
             <p>
-            <!--<button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>-->
             <button @click="afterSubmit" class="submit-button" type="submit">Submit</button>
             </p>
     

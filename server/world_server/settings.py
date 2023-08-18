@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     # added
     'corsheaders',
     'rest_framework',
+    'graphene_django',
     'drf_spectacular',
     'django_filters',
     'world_proxy.apps.WorldProxyConfig',
@@ -147,4 +148,8 @@ REST_FRAMEWORK ={
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Globon World Proxy",
+}
+
+GRAPHENE = {
+    "SCHEMA": "world_server.schema.schema"
 }
