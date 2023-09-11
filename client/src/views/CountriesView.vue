@@ -110,6 +110,10 @@ async function extractCountryCodes(data) {
 </template>
 
 <style lang="scss" scoped>
+
+* {
+font-family: 'Open Sans', sans-serif;
+}
 .input-wrapper {
     display: flex;
     justify-content: space-evenly;
