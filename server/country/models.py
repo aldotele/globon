@@ -53,7 +53,10 @@ class Country(models.Model):
     def retrieve_currencies(json_node):
         currencies = []
         for key, value in json_node.items():
-            currencies.append(value['name'] + " (" + value['symbol'] + ")")
+            currency = value.get('name', "")
+            if 'symbol' in value:
+                currency += " (" + value['symbol'] + ")"
+            currencies.append(currency)
         return currencies
 
     @staticmethod
