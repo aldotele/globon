@@ -50,8 +50,14 @@ header {
       list-style: none;
 
       a {
+        font-size: large;
         text-decoration: none;
         color: inherit;
+        margin-right: 20px;
+      }
+
+      a:hover {
+        text-decoration: underline;
       }
     }
   }

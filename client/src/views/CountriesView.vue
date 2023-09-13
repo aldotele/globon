@@ -120,6 +120,10 @@ font-family: 'Open Sans', sans-serif;
     align-items: center;   
 }
 
+#search {
+    width: 180px;
+}
+
 #search-by {
     margin-top: 30px;
 }
