@@ -2,12 +2,8 @@ from .models import Country
 import itertools
 
 
-def get_countries():
+def get_all_countries():
     return Country.objects.all()
-
-
-def get_country_by_code(code):
-    return Country.objects.get(iso_code=code)
 
 
 def get_all_languages():
