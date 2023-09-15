@@ -9,15 +9,15 @@ const discoverCountries = () => {
 }
 
 const discoverCities = () => {
-    Swal.fire({
-    title: "Work in progress",
-    html: "the cities section is coming soon ...",
-    showConfirmButton: false,
-    showCancelButton: true,
-    cancelButtonText: "Close"
-    });
+    // Swal.fire({
+    // title: "Work in progress",
+    // html: "the cities section is coming soon ...",
+    // showConfirmButton: false,
+    // showCancelButton: true,
+    // cancelButtonText: "Close"
+    // });
     
-    //router.push("/cities");
+    router.push("/cities");
 }
 
 </script>
