@@ -40,7 +40,7 @@ const afterSubmit = async () => {
     iso3Codes = await extractCountryCodes(data);
 
     isSubmitted.value = true;
-    console.log("submitted !")
+    //console.log("submitted !")
     searchCount.value++;
 }
 
@@ -81,11 +81,11 @@ async function extractCountryCodes(data) {
             <label for="maxPopulation">Max Population: &nbsp;&nbsp; </label>
             <input type="text" id="maxPopulation" name="maxPopulation" v-model="filters.maxPopulation">
             </p>
-            <p>
-            <!--<button class="submit-button" type="submit" [disabled]="locate.value == '' ">Submit</button>-->
-            <button @click="afterSubmit" class="submit-button" type="submit">Submit</button>
-            </p>
-    
+
+            <div class="button-block">
+                <button @click="afterSubmit" class="submit-button" type="submit">Submit</button>
+            </div>
+
         </form>
 
         <!-- INCOME form -->
@@ -99,9 +99,9 @@ async function extractCountryCodes(data) {
                 <option value="LIC">LOW</option>
             </select>
             
-            <p>
+            <div class="button-block">
                 <button @click="afterSubmit" class="submit-button" type="submit">Submit</button>
-            </p>
+            </div>
         </form>
     </div>
     <CountryMap v-if="isSubmitted" :iso3Codes="iso3Codes" :searchCount="searchCount" />
@@ -115,7 +115,7 @@ font-family: 'Open Sans', sans-serif;
 .input-wrapper {
     display: flex;
     justify-content: space-evenly;
-    align-items: center;   
+    align-items: center;
 }
 
 #search {
@@ -149,4 +149,14 @@ form {
     background-color: #42e048;
 }
 
+@media screen and (max-width: 600px) {
+    .input-wrapper {
+        flex-direction: column;
+    }
+
+    .button-block {
+        text-align: center;
+        margin-top: 20px;
+    }
+}
 </style>

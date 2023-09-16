@@ -62,6 +62,7 @@ async function clearMarkers() {
 }
 
 async function applyMarkers() {
+  console.log("search number ", counter.value);
   state.foundCitiesCount = props.citiesIdToCoords.length;
   // before applying markers, create a marker group for the current search
   state.markerGroup = L.layerGroup().addTo(state.mapInstance)
@@ -133,7 +134,6 @@ async function main() {
 }
 
 onMounted(() => {
-  console.log("search number ", counter.value);
   main();
 })
 

@@ -96,7 +96,7 @@ async function extractCitiesIdToCoords(data) {
             </p>
         </form>
 
-        <div>
+        <div class="button-block">
             <button @click="afterSubmit" class="submit-button" type="submit">Search Cities</button>
         </div>
     </div>
@@ -114,6 +114,7 @@ font-family: 'Open Sans', sans-serif;
 .input-wrapper {
     display: flex;
     justify-content: space-evenly;
+    margin: 0 auto;
     width: 80%;
     align-items: center;   
 }
@@ -156,6 +157,17 @@ form {
 #many-msg {
     text-align: center;
     text-decoration: underline;
+}
+
+@media screen and (max-width: 600px) {
+    .input-wrapper {
+        flex-direction: column;
+    }
+
+    .button-block {
+        text-align: center;
+        margin-top: 20px;
+    }
 }
 
 </style>
