@@ -1,22 +1,11 @@
 <script setup>
 import router from "@/router";
-import Swal from 'sweetalert2';
 
-
-// navigate to the selected section
 const discoverCountries = () => {
     router.push("/countries");
 }
 
 const discoverCities = () => {
-    // Swal.fire({
-    // title: "Work in progress",
-    // html: "the cities section is coming soon ...",
-    // showConfirmButton: false,
-    // showCancelButton: true,
-    // cancelButtonText: "Close"
-    // });
-    
     router.push("/cities");
 }
 

@@ -1,9 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { defineEmits, reactive, toRefs } from "vue"
+import { ref, reactive, onMounted } from 'vue'
 
-import GlobonCityMap from '../components/GlobonCityMap.vue';
-
+import CityMap from '../components/CityMap.vue';
 
 const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 
@@ -24,10 +22,11 @@ const manyItemsMsg = ref(false);
 
 onMounted(async () => {
   try {
-    // Make an API request to fetch countries and populate the countries ref
+    // Make an API request to fetch countries and populate the coutryNameToIso ref
     const response = await fetch(SERVER_ADDRESS+"/api/countries", {method: 'GET', redirect: 'follow'});
     const data = await response.json();
 
+    // countryNameToIso object is used to populate the dropdown country filter
     data.forEach((country) => {
         countryNameToIso.value[country.name] = country.iso_code;
     })
@@ -36,9 +35,7 @@ onMounted(async () => {
   }
 });
 
-
 const afterSubmit = async () => {
-    //console.log(filters);
     let uri = SERVER_ADDRESS+"/api/cities?";
     uri = filters.iso3 ? uri + `iso3=${filters.iso3}&` : uri;
     uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
@@ -106,7 +103,7 @@ async function extractCitiesIdToCoords(data) {
 
     <p id="many-msg" v-if="manyItemsMsg">Too many cities to display on map. Please narrow down your search.</p>
 
-    <GlobonCityMap v-if="isSubmitted" :citiesIdToCoords="citiesIdToCoords" :searchCount="searchCount" />
+    <CityMap v-if="isSubmitted" :citiesIdToCoords="citiesIdToCoords" :searchCount="searchCount" :filters="filters" />
 
 </template>
 

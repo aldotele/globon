@@ -1,9 +1,8 @@
 <script setup>
-import { ref, reactive, onMounted, watch, computed } from 'vue'
-import L, { marker } from 'leaflet';
-import { Map, TileLayer } from 'leaflet';
-import Swal from 'sweetalert2';
 
+import { reactive, onMounted, watch, computed } from 'vue'
+import L from 'leaflet';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
   iso3Codes: Array,
@@ -12,17 +11,15 @@ const props = defineProps({
 
 const counter = computed(() => props.searchCount);
 
-// deep property set to true allows to track nested properties changes also
+// a new search will increment the counter, therefore previous markers will be removed first
 watch(counter, async () => {
-  //console.log("new search: ", counter.value)
-  //console.log(props.iso3Codes.length);
-  // clearing borders when a new search is made
-  await clearMarkers();
+  await clearBorders();
   // clear also the found countried description
   state.foundCountriesFlag = false;
   // fetching data again
   applyBorders();
 }, {
+  // deep property set to true allows to track nested properties changes also
   deep: true,
 })
 
@@ -74,7 +71,7 @@ async function initMap() {
   state.mapInstance = leafletMap;
 }
 
-async function clearMarkers() {
+async function clearBorders() {
   state.marker.clearLayers();
 }
 
@@ -132,7 +129,6 @@ async function main() {
 
 onMounted(() => {
   console.log("search number ", counter.value);
-  //console.log(props.iso3Codes)
   main();
 })
 

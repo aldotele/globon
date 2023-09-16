@@ -1,18 +1,18 @@
 <script setup>
-import { ref, reactive, onMounted, watch, computed } from 'vue'
-import L, { marker } from 'leaflet';
-import { Map, TileLayer } from 'leaflet';
+import { reactive, onMounted, watch, computed } from 'vue'
+import L from 'leaflet';
 import Swal from 'sweetalert2';
 
 
 const props = defineProps({
   citiesIdToCoords: Array,
   searchCount: Number,
+  filters: Object
 })
 
 const counter = computed(() => props.searchCount);
 
-// deep property set to true allows to track nested properties changes also
+// a new search will increment the counter, therefore previous markers will be removed first
 watch(counter, async () => {
   await clearMarkers();
   // clear also the found cities description
@@ -20,6 +20,7 @@ watch(counter, async () => {
   // fetching data again
   applyMarkers();
 }, {
+  // deep property set to true allows to track nested properties changes also
   deep: true,
 })
 
@@ -61,8 +62,17 @@ async function clearMarkers() {
 }
 
 async function applyMarkers() {
+  state.foundCitiesCount = props.citiesIdToCoords.length;
   // before applying markers, create a marker group for the current search
   state.markerGroup = L.layerGroup().addTo(state.mapInstance)
+  // center map on the country if a country filter is present
+  if (state.foundCitiesCount > 0 && props.filters.iso3) {
+    const firstCoords = Object.values(props.citiesIdToCoords[0])[0];
+    state.mapInstance.setView(new L.LatLng(firstCoords[0], firstCoords[1]), 3);
+  } else {
+    // reset to world center
+    state.mapInstance.setView(state.mapOptions.center);
+  }
   props.citiesIdToCoords.forEach((cityIdToCoords) => {
     // creating a new marker with lat, lng and add it to the group
     // note that cityIdToCoords is an object with key->sm_id and value->[lat, lng]
@@ -73,7 +83,6 @@ async function applyMarkers() {
     });
   })
 
-  state.foundCitiesCount = props.citiesIdToCoords.length;
   state.foundCitiesFlag = true;
 }
 
@@ -83,7 +92,7 @@ async function showCityDetails(city_id) {
   if (body.length > 0) {
     let city = body[0];
     // center the map on the city
-    state.mapInstance.setView(new L.LatLng(city.lat, city.lng), 5);
+    state.mapInstance.setView(new L.LatLng(city.lat, city.lng), 6);
 
     triggerCountryAlert(city);
   }

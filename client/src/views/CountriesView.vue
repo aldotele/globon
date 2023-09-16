@@ -1,9 +1,7 @@
 <script setup>
-import { ref } from 'vue'
-import { defineEmits, reactive, toRefs } from "vue"
+import { reactive, ref } from "vue"
 
-
-import GlobonMap from '../components/GlobonMap.vue';
+import CountryMap from '../components/CountryMap.vue';
 
 const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 
@@ -106,7 +104,7 @@ async function extractCountryCodes(data) {
             </p>
         </form>
     </div>
-    <GlobonMap v-if="isSubmitted" :iso3Codes="iso3Codes" :searchCount="searchCount" />
+    <CountryMap v-if="isSubmitted" :iso3Codes="iso3Codes" :searchCount="searchCount" />
 </template>
 
 <style lang="scss" scoped>
