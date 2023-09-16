@@ -21,7 +21,7 @@ const launch = () => {
         // server is ready
         state.isReady = true;
         // when server is up and running, navigate to the countries section
-        router.push("/countries");
+        router.push("/discover");
       }
     })
     .catch(error => {

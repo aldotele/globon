@@ -1,26 +1,31 @@
 from django_filters import rest_framework
 from drf_spectacular.utils import extend_schema, OpenApiParameter
-from rest_framework import status
-from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .filters import CountryFilters
-from .persistence import get_countries, get_all_languages
+from .persistence import get_all_countries
 from .serializers import CountrySerializer
 
 
 @extend_schema(responses=CountrySerializer,
-               parameters=[OpenApiParameter(name="incomeLevel", type=str, enum=["HIC", "UMC", "LMC", "LIC"])])
-class CountryList(ListCreateAPIView):
-    http_method_names = ["get"]
-    serializer_class = CountrySerializer
-    queryset = get_countries()
+               parameters=[OpenApiParameter(name="incomeLevel", type=str, enum=["HIC", "UMC", "LMC", "LIC"]),
+                           OpenApiParameter(name="isoCode", type=str),
+                           OpenApiParameter(name="minPopulation", type=int),
+                           OpenApiParameter(name="maxPopulation", type=int)])
+class CountryList(APIView):
     filter_backends = (rest_framework.DjangoFilterBackend,)
     filterset_class = CountryFilters
 
+    def get(self, request, format=None):
+        query = self.filter_queryset(get_all_countries())
+        serializer = CountrySerializer(query, many=True)
+        return Response(serializer.data)
 
-class LanguageView(APIView):
-    def get(self, request):
-        return Response(get_all_languages(), status=status.HTTP_200_OK)
-
+    def filter_queryset(self, queryset):
+        """
+        taken from the GenericAPIView. In this way we can use the simpler APIView
+        """
+        for backend in list(self.filter_backends):
+            queryset = backend().filter_queryset(self.request, queryset, self)
+        return queryset

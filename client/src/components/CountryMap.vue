@@ -1,9 +1,8 @@
 <script setup>
-import { ref, reactive, onMounted, watch, computed } from 'vue'
-import L, { marker } from 'leaflet';
-import { Map, TileLayer } from 'leaflet';
-import Swal from 'sweetalert2';
 
+import { reactive, onMounted, watch, computed } from 'vue'
+import L from 'leaflet';
+import Swal from 'sweetalert2';
 
 const props = defineProps({
   iso3Codes: Array,
@@ -12,21 +11,19 @@ const props = defineProps({
 
 const counter = computed(() => props.searchCount);
 
-// deep property set to true allows to track nested properties changes also
+// a new search will increment the counter, therefore previous markers will be removed first
 watch(counter, async () => {
-  //console.log("new search: ", counter.value)
-  //console.log(props.iso3Codes.length);
-  // clearing borders when a new search is made
-  await clearMarkers();
+  await clearBorders();
   // clear also the found countried description
   state.foundCountriesFlag = false;
   // fetching data again
   applyBorders();
 }, {
+  // deep property set to true allows to track nested properties changes also
   deep: true,
 })
 
-const myStyle = {
+const mapStyle = {
   "color": "#ff7800",
   "weight": 1.5,
   "opacity": 0.65
@@ -74,7 +71,7 @@ async function initMap() {
   state.mapInstance = leafletMap;
 }
 
-async function clearMarkers() {
+async function clearBorders() {
   state.marker.clearLayers();
 }
 
@@ -90,7 +87,7 @@ async function applyBorders() {
   state.geoJsonData.features.forEach((geoJsonCountry) => {
     if (props.iso3Codes.includes(geoJsonCountry.properties.ISO_A3)) {
       state.marker.addData(geoJsonCountry)
-        .setStyle(myStyle)
+        .setStyle(mapStyle)
         .addTo(state.mapInstance)
         .on('click', showCountryDetails);    
       }
@@ -113,9 +110,9 @@ async function triggerCountryAlert(data) {
   Swal.fire({
     title: data.name,
     html: "<h3 style='font-weight:500'>" 
-    + "<b>population</b>: " + data.population.toLocaleString() + "<br>" 
-    + "<b>capital city</b>: " + data.capital + "<br>"
-    + "<b>currencies</b>: " + data.currencies.join(", ") + "<br>"
+    + "<b>population</b>: " + data.population.toLocaleString() + "<br><br>" 
+    + "<b>capital city</b>: " + data.capital.join(", ") + "<br><br>"
+    + "<b>currencies</b>: " + data.currencies.join(", ") + "<br><br>"
     + "<b>spoken languages</b>: " + data.languages.join(", ")
     + "</h3>",
     showConfirmButton: false,
@@ -132,7 +129,6 @@ async function main() {
 
 onMounted(() => {
   console.log("search number ", counter.value);
-  //console.log(props.iso3Codes)
   main();
 })
 

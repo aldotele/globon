@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'django_filters',
     'world_proxy.apps.WorldProxyConfig',
     'country.apps.CountryConfig',
+    'city.apps.CityConfig',
 ]
 
 MIDDLEWARE = [
