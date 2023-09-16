@@ -50,8 +50,8 @@ main {
     height: 80px;
     margin: 0 10px;
     cursor: pointer;
-    font-weight: 500;
-    border: 0.5px solid black;
+    font-weight: bold;
+    border: 0.3px dashed black;
     color: black;
     padding: 6px 32px;
     text-align: center;
@@ -64,6 +64,7 @@ main {
   .discover-button:hover {
     color: white;
     background-color: #42e048;
+    border: 1px solid black;
   }
 
 }

@@ -84,7 +84,7 @@ async function extractCitiesIdToCoords(data) {
         </form>
 
         <!-- POPULATION form -->
-        <form>
+        <form id="population-form">
             <p>
             <label for="minPopulation">Min Population: &nbsp;&nbsp; </label>
             <input type="text" id="minPopulation" name="minPopulation" v-model="filters.minPopulation">
@@ -119,22 +119,15 @@ font-family: 'Open Sans', sans-serif;
     align-items: center;   
 }
 
-#search {
-    width: 180px;
-}
-
-#search-by {
-    margin-top: 30px;
-}
-
 #country {
     width: 100px;
 }
 
 form {
     margin-top: 30px;
+    text-align: center;
+    padding: 20px ;
 }
-
 
 .submit-button {
   cursor: pointer;
