@@ -6,8 +6,8 @@ import Swal from 'sweetalert2';
 
 
 const props = defineProps({
-  citiesCoords: Array,
-  searchCount: Number
+  citiesIdToCoords: Array,
+  searchCount: Number,
 })
 
 const counter = computed(() => props.searchCount);
@@ -63,24 +63,55 @@ async function clearMarkers() {
 async function applyMarkers() {
   // before applying markers, create a marker group for the current search
   state.markerGroup = L.layerGroup().addTo(state.mapInstance)
-  props.citiesCoords.forEach((cityCoords) => {
+  props.citiesIdToCoords.forEach((cityIdToCoords) => {
     // creating a new marker with lat, lng and add it to the group
-    const marker = L.marker(cityCoords);
+    // note that cityIdToCoords is an object with key->sm_id and value->[lat, lng]
+    const marker = L.marker(Object.values(cityIdToCoords)[0]);
     marker.addTo(state.markerGroup)
-    .on('click', showCityDetails);
+    .on('click', function() {
+      showCityDetails(Object.keys(cityIdToCoords)[0]);
+    });
   })
 
-  state.foundCitiesCount = props.citiesCoords.length;
+  state.foundCitiesCount = props.citiesIdToCoords.length;
   state.foundCitiesFlag = true;
 }
 
-async function showCityDetails(e) {
-  console.log(e);
+async function showCityDetails(city_id) {
+  const response = await fetch(import.meta.env.VITE_SERVER_ADDRESS + "/api/cities?smId=" + city_id);
+  const body = await response.json();
+  if (body.length > 0) {
+    let city = body[0];
+    // center the map on the city
+    state.mapInstance.setView(new L.LatLng(city.lat, city.lng), 5);
 
+    triggerCountryAlert(city);
+  }
+}
+
+async function triggerCountryAlert(data) {
+  // notes will be added if city is either a country/region/county capital
+  let notes = data.capital == "primary" ? "capital city" : 
+  data.capital == "admin" ? "region capital" 
+  : data.capital == "minor" ? "county capital" 
+  : "";
+
+  let builtHtml = `
+    <h3 style='font-weight:500'>
+    <b>population</b>: ${data.population.toLocaleString()}<br><br>
+    <b>country</b>: ${data.country}<br><br>
+    <b>region</b>: ${data.admin_name}<br><br>
+  `;
+  
+  if (notes) {
+    builtHtml += `<b>notes</b>: ${notes}<br><br>`;
+  }
+  builtHtml += "</h3>";
+  
   // triggering alert with country info
   Swal.fire({
-    title: "Work in Progress",
-    html: "city details feature is coming soon ...",
+    title: data.city,
+    html: builtHtml,
     showConfirmButton: false,
     showCancelButton: true,
     cancelButtonText: "Close"

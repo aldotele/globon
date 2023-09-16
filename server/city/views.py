@@ -9,9 +9,10 @@ from .serializers import CitySerializer
 
 
 @extend_schema(responses=CitySerializer,
-               parameters=[OpenApiParameter(name="iso3", type=str),
-                           OpenApiParameter(name="capital", type=bool),
-                           OpenApiParameter(name="countyCapital", type=bool),
+               parameters=[OpenApiParameter(name="iso3", type=str, description="3 characters identifier of the country"),
+                           OpenApiParameter(name="smId", type=int, description="unique identifier of the city"),
+                           OpenApiParameter(name="capital", type=bool, description="true if country capital"),
+                           OpenApiParameter(name="countyCapital", type=bool, description="true if local capital"),
                            OpenApiParameter(name="minPopulation", type=int),
                            OpenApiParameter(name="maxPopulation", type=int),
                            ])

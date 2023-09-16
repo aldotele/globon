@@ -30,6 +30,11 @@ class CityFilters(rest_framework.FilterSet):
         lookup_expr="exact"
     )
 
+    smId = rest_framework.NumberFilter(
+        field_name="sm_id",
+        lookup_expr="exact"
+    )
+
     maxPopulation = rest_framework.NumberFilter(
         field_name="population",
         lookup_expr="lte"
@@ -46,4 +51,4 @@ class CityFilters(rest_framework.FilterSet):
 
     class Meta:
         model = City
-        fields = ["maxPopulation", "minPopulation", "iso3", "capital", "countyCapital"]
+        fields = ["maxPopulation", "minPopulation", "iso3", "smId", "capital", "countyCapital"]

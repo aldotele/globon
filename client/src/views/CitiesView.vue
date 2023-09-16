@@ -8,16 +8,16 @@ import GlobonCityMap from '../components/GlobonCityMap.vue';
 const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 
 let filters = reactive({
+    iso3: null,
     minPopulation: null,
     maxPopulation: null,
-    iso3: null,
 })
 
 let searchCount = ref(0);
 let isSubmitted = ref(false);
 
 // will hold the city ids of filtered cities
-let citiesCoords = [];
+let citiesIdToCoords = [];
 
 const countryNameToIso = ref({});
 const manyItemsMsg = ref(false);
@@ -31,7 +31,6 @@ onMounted(async () => {
     data.forEach((country) => {
         countryNameToIso.value[country.name] = country.iso_code;
     })
-    countryNameToIso.value
   } catch (error) {
     console.error('Error fetching countries:', error);
   }
@@ -39,7 +38,7 @@ onMounted(async () => {
 
 
 const afterSubmit = async () => {
-    console.log(filters);
+    //console.log(filters);
     let uri = SERVER_ADDRESS+"/api/cities?";
     uri = filters.iso3 ? uri + `iso3=${filters.iso3}&` : uri;
     uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
@@ -55,19 +54,23 @@ const afterSubmit = async () => {
 
     if (response.status == 200) {
         manyItemsMsg.value = false;
-        citiesCoords = await extractCityCoords(data);
+        citiesIdToCoords = await extractCitiesIdToCoords(data);
         isSubmitted.value = true;
-        console.log("submitted !")
+        //console.log("submitted !")
         searchCount.value++;
     }
 }
 
-async function extractCityCoords(data) {
-    let coords = []
+async function extractCitiesIdToCoords(data) {
+    let res = []
     data.forEach((city) => {
-        coords.push([city.lat, city.lng])
+        let city_id = city.sm_id;
+        let city_coords = [city.lat, city.lng];
+        let cityIdToCoords = {};
+        cityIdToCoords[city_id] = city_coords
+        res.push(cityIdToCoords);
     })
-    return coords;
+    return res;
 }
 
 </script>
@@ -80,7 +83,6 @@ async function extractCityCoords(data) {
             <select id="country" name="country" v-model="filters.iso3">
                 <option value="">- - - select - - -</option>
                 <option :key="countryNameToIso[countryName]" :value="countryNameToIso[countryName]" v-for="countryName in Object.keys(countryNameToIso).sort()">{{ countryName }}</option>
-                <option :key="iso" :value="iso" v-for="(iso, countryName) in countryNameToIso">{{ countryName }}</option>
             </select>
         </form>
 
@@ -104,7 +106,7 @@ async function extractCityCoords(data) {
 
     <p id="many-msg" v-if="manyItemsMsg">Too many cities to display on map. Please narrow down your search.</p>
 
-    <GlobonCityMap v-if="isSubmitted" :citiesCoords="citiesCoords" :searchCount="searchCount" />
+    <GlobonCityMap v-if="isSubmitted" :citiesIdToCoords="citiesIdToCoords" :searchCount="searchCount" />
 
 </template>
 
