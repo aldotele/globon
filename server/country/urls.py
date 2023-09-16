@@ -1,8 +1,7 @@
 from django.urls import path
-from country.views import CountryList, LanguageView
+from country.views import CountryList
 
 urlpatterns = [
     path('', CountryList.as_view()),
-    path('languages/', LanguageView.as_view()),
 ]
 
