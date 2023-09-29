@@ -69,10 +69,10 @@ async function applyMarkers() {
   // center map on the country if a country filter is present
   if (state.foundCitiesCount > 0 && props.filters.iso3) {
     const firstCoords = Object.values(props.citiesIdToCoords[0])[0];
-    state.mapInstance.setView(new L.LatLng(firstCoords[0], firstCoords[1]), 3);
+    state.mapInstance.setView(new L.LatLng(firstCoords[0], firstCoords[1]), 5);
   } else {
     // reset to world center
-    state.mapInstance.setView(state.mapOptions.center);
+    state.mapInstance.setView(state.mapOptions.center, 3);
   }
   props.citiesIdToCoords.forEach((cityIdToCoords) => {
     // creating a new marker with lat, lng and add it to the group
