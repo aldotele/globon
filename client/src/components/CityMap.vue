@@ -93,7 +93,8 @@ async function showCityDetails(city_id) {
   if (body.length > 0) {
     let city = body[0];
     // center the map on the city
-    state.mapInstance.setView(new L.LatLng(city.lat, city.lng), 6);
+    let newZoomLevel = state.mapInstance.getZoom() > 6 ? state.mapInstance.getZoom() : 6;
+    state.mapInstance.setView(new L.LatLng(city.lat, city.lng), newZoomLevel);
 
     triggerCountryAlert(city);
   }
@@ -108,7 +109,7 @@ async function triggerCountryAlert(data) {
 
   let builtHtml = `
     <h3 style='font-weight:500'>
-    <b>population</b>: ${data.population.toLocaleString()}<br><br>
+    <b>population</b>: ${data.population ? data.population.toLocaleString() : "n/a"}<br><br>
     <b>country</b>: ${data.country}<br><br>
     <b>region</b>: ${data.admin_name}<br><br>
   `;

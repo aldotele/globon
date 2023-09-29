@@ -51,7 +51,7 @@ main {
     margin: 0 10px;
     cursor: pointer;
     font-weight: bold;
-    border: 0.3px dashed black;
+    border: 0.5px dotted rgb(169, 165, 165);
     color: black;
     padding: 6px 32px;
     text-align: center;
