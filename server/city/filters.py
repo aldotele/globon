@@ -5,22 +5,10 @@ from .models import City
 
 class CustomCapitalFilter(rest_framework.BooleanFilter):
     def filter(self, qs, value):
-        if value is None:
-            return qs
-        elif value:
-            return qs.filter(**{self.field_name + '__in': ["primary"]})
+        if value:
+            return qs.filter(**{self.field_name: "primary"})
         else:
-            return qs.filter(**{self.field_name + '__in': ["", "admin", "minor"]})
-
-
-class CustomCountyCapitalFilter(rest_framework.BooleanFilter):
-    def filter(self, qs, value):
-        if value is None:
             return qs
-        elif value:
-            return qs.filter(**{self.field_name + '__in': ["primary", "admin", "minor"]})
-        else:
-            return qs.filter(**{self.field_name + '__in': [""]})
 
 
 class CityFilters(rest_framework.FilterSet):
@@ -47,8 +35,6 @@ class CityFilters(rest_framework.FilterSet):
 
     capital = CustomCapitalFilter(field_name="capital")
 
-    countyCapital = CustomCountyCapitalFilter(field_name="capital")
-
     class Meta:
         model = City
-        fields = ["maxPopulation", "minPopulation", "iso3", "smId", "capital", "countyCapital"]
+        fields = ["maxPopulation", "minPopulation", "iso3", "smId", "capital"]
