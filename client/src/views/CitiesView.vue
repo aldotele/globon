@@ -9,6 +9,7 @@ let filters = reactive({
     iso3: null,
     minPopulation: null,
     maxPopulation: null,
+    capital: null
 })
 
 let searchCount = ref(0);
@@ -40,6 +41,7 @@ const afterSubmit = async () => {
     uri = filters.iso3 ? uri + `iso3=${filters.iso3}&` : uri;
     uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
     uri = filters.maxPopulation ? uri + `maxPopulation=${filters.maxPopulation}&` : uri;
+    uri = filters.capital ? uri + `capital=${filters.capital}&` : uri;
 
     const response = await fetch(uri, {method: 'GET', redirect: 'follow'});
     const data = await response.json();
@@ -96,7 +98,13 @@ async function extractCitiesIdToCoords(data) {
             </p>
         </form>
 
-        <div class="button-block">
+        <!-- CAPITAL form -->
+        <form>
+            <input type="checkbox" id="capital" name="capital" value="capital" v-model="filters.capital">
+            <label for="capital"> only capitals</label><br>
+        </form>
+
+        <div id="submit-section" class="button-block">
             <button @click="afterSubmit" class="submit-button" type="submit">Search Cities</button>
         </div>
     </div>
@@ -159,7 +167,12 @@ form {
 
     .button-block {
         text-align: center;
-        margin-top: 20px;
+        margin-top: 15px;
+    }
+
+    form {
+        margin-top: 15px;
+        padding: 5px;
     }
 }
 
