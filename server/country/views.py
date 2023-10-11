@@ -10,7 +10,7 @@ from .serializers import CountrySerializer
 
 @extend_schema(responses=CountrySerializer,
                parameters=[OpenApiParameter(name="incomeLevel", type=str, enum=["HIC", "UMC", "LMC", "LIC"]),
-                           OpenApiParameter(name="isoCode", type=str),
+                           OpenApiParameter(name="iso3", type=str),
                            OpenApiParameter(name="minPopulation", type=int),
                            OpenApiParameter(name="maxPopulation", type=int)])
 class CountryList(APIView):
