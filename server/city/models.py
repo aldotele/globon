@@ -1,6 +1,6 @@
 from django.db import models
 
-# Create your models here.
+
 class City(models.Model):
     city = models.CharField(max_length=255)
     city_ascii = models.CharField(max_length=255, null=True)

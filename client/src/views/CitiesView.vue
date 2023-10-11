@@ -29,7 +29,7 @@ onMounted(async () => {
 
     // countryNameToIso object is used to populate the dropdown country filter
     data.forEach((country) => {
-        countryNameToIso.value[country.name] = country.iso_code;
+        countryNameToIso.value[country.name] = country.iso3;
     })
   } catch (error) {
     console.error('Error fetching countries:', error);

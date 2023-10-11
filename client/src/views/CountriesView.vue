@@ -47,7 +47,7 @@ const afterSubmit = async () => {
 async function extractCountryCodes(data) {
     let codes = []
     data.forEach((country) => {
-        codes.push(country.iso_code);
+        codes.push(country.iso3);
     })
     return codes;
 }
