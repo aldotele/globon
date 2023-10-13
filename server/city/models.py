@@ -15,7 +15,8 @@ class City(models.Model):
     sm_id = models.BigIntegerField(null=True)
 
     class Meta:
-        verbose_name_plural = 'Cities'
+        db_table = 'city'
+        verbose_name_plural = 'cities'
 
     def __str__(self):
         return self.city

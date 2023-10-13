@@ -18,7 +18,8 @@ class Country(models.Model):
     income_level = models.CharField(max_length=4, null=True)
 
     class Meta:
-        verbose_name_plural = 'Countries'
+        db_table = 'country'
+        verbose_name_plural = 'countries'
 
     def __str__(self):
         return self.name
