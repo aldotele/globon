@@ -1,14 +1,14 @@
-from django.db import models
 import uuid
+
+from django.db import models
 
 
 class Country(models.Model):
-    uuid = models.UUIDField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     official_name = models.CharField(max_length=255)
     iso3 = models.CharField(max_length=3)
-    population = models.IntegerField()
-    flag = models.URLField(max_length=200)
+    population = models.BigIntegerField(null=True)
+    flag = models.URLField(max_length=200, null=True)
     capital = models.JSONField(null=True)
     translations = models.JSONField(null=True)
     currencies = models.JSONField(null=True)
@@ -66,3 +66,15 @@ class Country(models.Model):
         for key, value in json_node.items():
             languages.append(value)
         return languages
+
+
+class CountryCodes(models.Model):
+    name = models.CharField(max_length=255)
+    gec = models.CharField(max_length=2)
+    iso2 = models.CharField(max_length=2)
+    iso3 = models.CharField(max_length=3)
+    stanag = models.CharField(max_length=3)
+    internet = models.CharField(max_length=3)
+
+    class Meta:
+        db_table = 'country_codes'

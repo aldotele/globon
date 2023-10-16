@@ -10,10 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
-from pathlib import Path
 import os
-import environ
+from pathlib import Path
+
 import dj_database_url
+import environ
 
 env = environ.Env()
 environ.Env.read_env()
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'world_proxy.apps.WorldProxyConfig',
     'country.apps.CountryConfig',
     'city.apps.CityConfig',
+    'initializer.apps.InitializerConfig',
 ]
 
 MIDDLEWARE = [
