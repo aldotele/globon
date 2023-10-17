@@ -1,4 +1,3 @@
-import asyncio
 import logging
 import os
 
@@ -18,26 +17,9 @@ class InitializerConfig(AppConfig):
             from country.models import Country
 
             # check if countries are already on db or not
-            if Country.objects.all():
-                logging.info("countries are already on db")
-            else:
-                asyncio.run(load_country_data())
+            if not Country.objects.all():
+                load_country_data()
 
-
-            # check if countries are already on db or not
-            # if Country.objects.all():
-            #     logging.info("countries are already on db")
-            # else:
-            #     # invoke proxy to populate db
-            #     all_countries = proxy.retrieve_all_countries()
-            #     for country_in_json in all_countries:
-            #         country = Country()
-            #         country.from_json(country_in_json)
-            #         country.save()
-            #     logging.info("db populate with countries")
-            #     world_bank_countries_details = proxy.retrieve_world_bank_country_details()
-            #     for country_details in world_bank_countries_details:
-            #         Country.objects.filter(iso3=country_details["id"]).update(income_level=country_details["incomeLevel"]["id"])
             return True
         else:
             pass

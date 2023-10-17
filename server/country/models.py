@@ -5,7 +5,7 @@ from django.db import models
 
 class Country(models.Model):
     name = models.CharField(max_length=255)
-    official_name = models.CharField(max_length=255)
+    official_name = models.CharField(max_length=255, null=True)
     iso3 = models.CharField(max_length=3)
     population = models.BigIntegerField(null=True)
     flag = models.URLField(max_length=200, null=True)
@@ -13,7 +13,7 @@ class Country(models.Model):
     translations = models.JSONField(null=True)
     currencies = models.JSONField(null=True)
     map = models.URLField(max_length=200, null=True)
-    languages = models.JSONField(default=list)
+    languages = models.JSONField(null=True)
     borders = models.JSONField(null=True)
     income_level = models.CharField(max_length=4, null=True)
 
