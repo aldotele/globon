@@ -20,7 +20,11 @@ class FactbookExtractor:
     def extract_capital(json, subfields):
         capital_string = FactbookExtractor.extract_field(json, *subfields)
         if capital_string:
-            return capital_string.split("; ")
+            capital_string_split = capital_string.split("; ")
+
+        # TODO update capital retrieval, sometimes there are sentences
+            return [capital[:capital.index(" (")] if " (" in capital
+                    else capital for capital in capital_string_split if "note" not in capital]
         return None
 
     @staticmethod
