@@ -3,7 +3,8 @@ import requests
 
 
 class ProxyAPI:
-    factbook_codes = "https://raw.githubusercontent.com/factbook/factbook/master/factbook-codes/data/codesxref.csv"
+    factbook_codesxref = "https://raw.githubusercontent.com/factbook/factbook/master/factbook-codes/data/codesxref.csv"
+    factbook_codes = "https://raw.githubusercontent.com/factbook/factbook/master/factbook-codes/data/codes.csv"
     factbook_country_base_uri = "https://raw.githubusercontent.com/factbook/factbook.json/master"
     restcountries_base_uri = "https://restcountries.com/v3.1"
     worldbank_uri = "https://api.worldbank.org/v2/country?format=json&per_page=299"
@@ -25,11 +26,15 @@ def retrieve_worldbank_countries():
     return response.json()[1]
 
 
+def retrieve_factbook_codesxref():
+    return pd.read_csv(ProxyAPI.factbook_codesxref, na_filter=False)
+
+
 def retrieve_factbook_codes():
     return pd.read_csv(ProxyAPI.factbook_codes, na_filter=False)
 
 
-async def retrieve_factbook_country(session, gec, continent):
-    async with session.get(ProxyAPI.factbook_country_base_uri + "/" + continent + "/" + gec + ".json") as resp:
+async def retrieve_factbook_country(session, iso3, gec, region):
+    async with session.get(ProxyAPI.factbook_country_base_uri + "/" + region + "/" + gec + ".json") as resp:
         country_json = await resp.json(content_type=None)
-        return country_json
+        return {"iso3": iso3, "gec": gec,"country": country_json}

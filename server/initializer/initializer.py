@@ -5,7 +5,7 @@ import time
 import aiohttp
 from asgiref.sync import sync_to_async
 
-from country.util.country_utils import CountryUtils
+from country.util.factbook_extractor import FactbookExtractor
 from world_proxy import proxy
 
 
@@ -14,33 +14,36 @@ async def load_country_data():
     # different codes will be used to make proxy requests to different sources
     start_time = time.time()
     logging.info("loading country tables ...")
-    df = proxy.retrieve_factbook_codes()
+    df_codesxref = proxy.retrieve_factbook_codesxref()
+    df_codes = proxy.retrieve_factbook_codes()
 
     async with aiohttp.ClientSession() as session:
         tasks = []
 
-        for index, row in df.iterrows():
+        for index, row in df_codesxref.iterrows():
             # gec code is used for factbook (e.g. gm for germany)
-            gec = row['GEC']
+            gec = row['GEC'].lower()
             # iso3 code is used for restcountries and worldbank
             iso3 = row['A2']
 
             # persist country codes when relative factbook json is present
-            if gec.lower() in CountryUtils.gec_to_continent and (iso3 in CountryUtils.restcountries_iso3 or iso3 == 'XKS'):
-                # persisting the codes
-                await create_country_codes(iso3, gec, row)
-                continent = CountryUtils.gec_to_continent[gec.lower()]
+            if len(iso3) == 3:
+                region_search = df_codes.loc[df_codes['Code'] == gec, 'Region']
+                if not region_search.empty:
+                    # "&" and "and" will be replaced by "n" in region names
+                    region = region_search.values[0].lower()\
+                        .replace(" ", "-").replace("-and-", "-n-").replace("-&-", "-n-")
 
-                tasks.append(asyncio.ensure_future(proxy.retrieve_factbook_country(session, gec.lower(), continent)))
-                # invoke restcountries handling the Kosovo inconsistency
-                #restcountries_country_json = proxy.retrieve_restcountries_country(iso3 if iso3 != "XKS" else "UNK")
+                    # persisting the codes
+                    await create_country_codes(iso3, gec.upper(), row)
+                    # invoking factbook
+                    tasks.append(
+                        asyncio.ensure_future(proxy.retrieve_factbook_country(session, iso3, gec.lower(), region))
+                    )
 
-                # TODO find a way to extract properly population from factbook
-                # population = extract_factbook_population(country_json['People and Society']['Population']['text'])
-
-        res = await asyncio.gather(*tasks)
-        for country in res:
-            await create_country(None, country, None)
+        results = await asyncio.gather(*tasks)
+        for country_json in results:
+            await create_country(country_json)
 
     # TODO handle income loading
     # worldbank_countries = proxy.retrieve_worldbank_countries()
@@ -51,23 +54,24 @@ async def load_country_data():
 
 
 @sync_to_async()
-def create_country(iso3, factbook_country_json, restcountries_country_json):
+def create_country(country_json):
     from country.models import Country
 
-    name = factbook_country_json['Government']['Country name']['conventional short form']['text']
-    official_name = factbook_country_json['Government']['Country name']['conventional long form']['text']
-    # population = restcountries_country_json['population'] if restcountries_country_json else None
-    # capital = restcountries_country_json['capital'] if 'capital' in restcountries_country_json else None
-    # flag = restcountries_country_json['flags']['svg'] if restcountries_country_json else None
-    # map = restcountries_country_json['maps']['openStreetMaps'] if 'maps' in restcountries_country_json else None
-    # borders = restcountries_country_json['borders'] if 'borders' in restcountries_country_json else None
-    # currencies = Country.retrieve_currencies(restcountries_country_json['currencies']) if 'currencies' in restcountries_country_json else None
-    # languages = Country.retrieve_languages(restcountries_country_json['languages']) if 'languages' in restcountries_country_json else None
+    iso3 = country_json['iso3']
+    name = country_json['country']['Government']['Country name']['conventional short form']['text']
+    official_name = country_json['country']['Government']['Country name']['conventional long form']['text']
+    population = FactbookExtractor.extract_population(country_json['country']['People and Society']['Population']['text'])
+    capital = FactbookExtractor.extract_capital(country_json['country'], ["Government", "Capital", "name", "text"])
+    flag = FactbookExtractor.extract_flag(country_json['gec'])
+    map = FactbookExtractor.extract_flag(country_json['gec'])
 
     Country.objects.create(
-        name=name,
+        iso3=iso3,
+        name=name if name != "none" else official_name if official_name else None,
         official_name=official_name if official_name != "none" else None,
-        iso3=name[:3],
+        population=population, capital=capital,
+        flag=flag,
+        map=map
     )
 
 
