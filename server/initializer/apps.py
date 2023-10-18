@@ -1,3 +1,4 @@
+import asyncio
 import logging
 import os
 
@@ -18,7 +19,7 @@ class InitializerConfig(AppConfig):
 
             # check if countries are already on db or not
             if not Country.objects.all():
-                load_country_data()
+                asyncio.run(load_country_data())
 
             return True
         else:
