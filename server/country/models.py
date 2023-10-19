@@ -33,3 +33,35 @@ class CountryCodes(models.Model):
 
     class Meta:
         db_table = 'country_codes'
+
+    def __str__(self):
+        return self.name
+
+
+class CountryGeography(models.Model):
+    iso3 = models.CharField(max_length=3)
+    coordinates = models.JSONField()
+    total_area_sq_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    land_area_sq_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    water_area_sq_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    border_length_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    coastline_length_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)
+    highest_point = models.JSONField(null=True)
+
+    class Meta:
+        db_table = 'country_geography'
+
+    def __str__(self):
+        return self.iso3
+
+
+class CountryBorder(models.Model):
+    iso3_country1 = models.CharField(max_length=3)
+    iso3_country2 = models.CharField(max_length=3)
+    length_km = models.DecimalField(max_digits=10, decimal_places=2)
+
+    class Meta:
+        db_table = 'country_border'
+
+    def __str__(self):
+        return str(self.iso3_country1) + "-" + str(self.iso3_country2)
