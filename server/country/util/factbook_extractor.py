@@ -1,3 +1,6 @@
+import re
+
+
 class FactbookExtractor:
     @staticmethod
     def extract_field(json, *subfields):
@@ -51,6 +54,20 @@ class FactbookExtractor:
             if number_part.isdecimal():
                 return float(number_part)
         return None
+
+    @staticmethod
+    def extract_border_countries(json, subfields):
+        res = {}
+        border_countries_string = FactbookExtractor.extract_field(json, *subfields)
+        if border_countries_string:
+            border_countries_string = border_countries_string.split(";")
+            for el in border_countries_string:
+                match = re.search(r'^(.*?)(\d+)', el)
+                if match:
+                    country = match.group(1).strip()
+                    length = match.group(2).strip()
+                    res[country] = int(length)
+        return res
 
     @staticmethod
     def extract_flag(gec):

@@ -56,12 +56,12 @@ class CountryGeography(models.Model):
 
 
 class CountryBorder(models.Model):
-    iso3_country1 = models.CharField(max_length=3)
-    iso3_country2 = models.CharField(max_length=3)
+    country1 = models.CharField(max_length=255, null=True)
+    country2 = models.CharField(max_length=255, null=True)
     length_km = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         db_table = 'country_border'
 
     def __str__(self):
-        return str(self.iso3_country1) + "-" + str(self.iso3_country2)
+        return str(self.country1) + "-" + str(self.country2)

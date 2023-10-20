@@ -55,7 +55,7 @@ async def load_country_data():
 
 @sync_to_async()
 def create_country(country_json):
-    from country.models import Country, CountryGeography
+    from country.models import Country, CountryGeography, CountryBorder
 
     iso3 = country_json['iso3']
     name = country_json['country']['Government']['Country name']['conventional short form']['text']
@@ -70,6 +70,7 @@ def create_country(country_json):
     water_area_sq_km = FactbookExtractor.extract_area(country_json['country'], ["Geography", "Area", "water", "text"])
     border_length_km = FactbookExtractor.extract_length(country_json['country'], ["Geography", "Land boundaries", "total", "text"])
     coastline_length_km = FactbookExtractor.extract_length(country_json['country'], ["Geography", "Coastline", "text"])
+    border_countries_dict = FactbookExtractor.extract_border_countries(country_json['country'], ["Geography", "Land boundaries", "border countries", "text"])
 
     Country.objects.create(
         iso3=iso3,
@@ -90,7 +91,12 @@ def create_country(country_json):
         coastline_length_km=coastline_length_km
     )
 
-
+    for key in border_countries_dict:
+        CountryBorder.objects.create(
+            country1=name if name != "none" else official_name if official_name else None,
+            country2=key,
+            length_km=border_countries_dict[key]
+        )
 
 
 @sync_to_async
