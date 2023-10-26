@@ -5,6 +5,7 @@ import time
 import aiohttp
 from asgiref.sync import sync_to_async
 
+from country.util.country_utils import CountryUtils
 from country.util.factbook_extractor import FactbookExtractor
 from world_proxy import proxy
 
@@ -36,12 +37,12 @@ async def load_country_data():
 
                     # persisting the codes
                     await create_country_codes(iso3, gec.upper(), row)
-                    # invoking factbook
-                    tasks.append(
-                        asyncio.ensure_future(proxy.retrieve_factbook_country(session, iso3, gec.lower(), region))
-                    )
+
+                    task = asyncio.ensure_future(proxy.retrieve_factbook_country(session, iso3, gec.lower(), region))
+                    tasks.append(task)
 
         results = await asyncio.gather(*tasks)
+
         for country_json in results:
             await create_country(country_json)
 
@@ -60,17 +61,23 @@ def create_country(country_json):
     iso3 = country_json['iso3']
     name = country_json['country']['Government']['Country name']['conventional short form']['text']
     official_name = country_json['country']['Government']['Country name']['conventional long form']['text']
-    population = FactbookExtractor.extract_population(country_json['country']['People and Society']['Population']['text'])
+    population = FactbookExtractor.extract_population(
+        country_json['country']['People and Society']['Population']['text'])
     capital = FactbookExtractor.extract_capital(country_json['country'], ["Government", "Capital", "name", "text"])
     flag = FactbookExtractor.extract_flag(country_json['gec'])
     map = FactbookExtractor.extract_flag(country_json['gec'])
-    coordinates = FactbookExtractor.extract_coordinates(country_json['country'], ["Geography", "Geographic coordinates", "text"])
+    coordinates = FactbookExtractor.extract_coordinates(country_json['country'],
+                                                        ["Geography", "Geographic coordinates", "text"])
     total_area_sq_km = FactbookExtractor.extract_area(country_json['country'], ["Geography", "Area", "total", "text"])
     land_area_sq_km = FactbookExtractor.extract_area(country_json['country'], ["Geography", "Area", "land", "text"])
     water_area_sq_km = FactbookExtractor.extract_area(country_json['country'], ["Geography", "Area", "water", "text"])
-    border_length_km = FactbookExtractor.extract_length(country_json['country'], ["Geography", "Land boundaries", "total", "text"])
+    border_length_km = FactbookExtractor.extract_length(country_json['country'],
+                                                        ["Geography", "Land boundaries", "total", "text"])
     coastline_length_km = FactbookExtractor.extract_length(country_json['country'], ["Geography", "Coastline", "text"])
-    border_countries_dict = FactbookExtractor.extract_border_countries(country_json['country'], ["Geography", "Land boundaries", "border countries", "text"])
+    border_countries_dict = FactbookExtractor.extract_border_countries(country_json['country'],
+                                                                       ["Geography", "Land boundaries",
+                                                                        "border countries", "text"])
+    income_level = CountryUtils.iso3_to_income.get(iso3, None)
 
     Country.objects.create(
         iso3=iso3,
@@ -78,7 +85,8 @@ def create_country(country_json):
         official_name=official_name if official_name != "none" else None,
         population=population, capital=capital,
         flag=flag,
-        map=map
+        map=map,
+        income_level=income_level
     )
 
     CountryGeography.objects.create(
