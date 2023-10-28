@@ -32,8 +32,53 @@ class FactbookExtractor:
 
     @staticmethod
     def extract_coordinates(json, subfields):
-        # TODO implement extraction and conversion of coordinates
-        return FactbookExtractor.extract_field(json, *subfields)
+        try:
+            input = FactbookExtractor.extract_field(json, *subfields)
+            if not input:
+                return None
+            # separate latitude text from longitude text
+            split = input.split(", ")
+            # the pattern to extract, namely a pattern that match the format like "13 50 N" or "3 5 N"
+            pattern = r'\d{1,2}\s\d{1,2}\s[A-Z]'
+
+            if len(split) >= 2:
+                match_on_lat = re.search(pattern, split[0])
+                if not match_on_lat:
+                    return None
+                lat_text = match_on_lat.group()
+
+                match_on_lng = re.search(pattern, split[1])
+                if not match_on_lng:
+                    return None
+                lng_text = match_on_lng.group()
+
+                lat_split = lat_text.split(" ")
+                lng_split = lng_text.split(" ")
+
+                if len(lat_split) >= 3 and len(lng_split) >= 3:
+                    # first part is the degrees of latitude and longitude
+                    lat_result = lat_split[0]
+                    lng_result = lng_split[0]
+
+                    # divide the number of minutes by 60 to convert them to decimal degrees
+                    # for example if input for latitude is "15 30 S", 30 divided by 60 is 0.5 that will be added to 15
+                    if lat_split[1] != "00":
+                        lat_result = str(int(lat_result) + int(lat_split[1]) / 60)
+                    if lng_split[1] != "00":
+                        lng_result = str(int(lng_result) + int(lng_split[1]) / 60)
+
+                    # for South and West the result becomes negative
+                    lat_result = lat_result if "N" in lat_split[2] else "-" + lat_result
+                    lng_result = lng_result if "E" in lng_split[2] else "-" + lng_result
+
+                    return [float(lat_result), float(lng_result)]
+
+                else:
+                    return None
+            else:
+                return None
+        except ValueError:
+            return None
 
     @staticmethod
     def extract_area(json, subfields):
@@ -77,3 +122,10 @@ class FactbookExtractor:
     def extract_map(gec):
         return "https://www.cia.gov/the-world-factbook/static/maps/" + gec.upper() + "-map.jpg"
 
+    @staticmethod
+    def extract_official_languages(json):
+        # TODO way to standardize extraction
+        attempt_1 = FactbookExtractor.extract_field(json, *['People and Society', 'Languages', 'Languages', 'text'])
+        attempt_2 = FactbookExtractor.extract_field(json, *['People and Society', 'Languages', 'text'])
+        regexp = re.findall(r'\w+(?=\s*\(official)', attempt_1)
+        return None

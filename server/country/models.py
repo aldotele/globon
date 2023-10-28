@@ -40,7 +40,7 @@ class CountryCodes(models.Model):
 
 class CountryGeography(models.Model):
     iso3 = models.CharField(max_length=3)
-    coordinates = models.JSONField()
+    lat_lng = models.JSONField(null=True)
     total_area_sq_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     land_area_sq_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)
     water_area_sq_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)

@@ -46,10 +46,6 @@ async def load_country_data():
         for country_json in results:
             await create_country(country_json)
 
-    # TODO handle income loading
-    # worldbank_countries = proxy.retrieve_worldbank_countries()
-    # for country_details in worldbank_countries:
-    #     Country.objects.filter(iso3=country_details["id"]).update(income_level=country_details["incomeLevel"]["id"])
     end_time = time.time()
     logging.info("loading took " + str(start_time - end_time))
 
@@ -66,8 +62,6 @@ def create_country(country_json):
     capital = FactbookExtractor.extract_capital(country_json['country'], ["Government", "Capital", "name", "text"])
     flag = FactbookExtractor.extract_flag(country_json['gec'])
     map = FactbookExtractor.extract_flag(country_json['gec'])
-    coordinates = FactbookExtractor.extract_coordinates(country_json['country'],
-                                                        ["Geography", "Geographic coordinates", "text"])
     total_area_sq_km = FactbookExtractor.extract_area(country_json['country'], ["Geography", "Area", "total", "text"])
     land_area_sq_km = FactbookExtractor.extract_area(country_json['country'], ["Geography", "Area", "land", "text"])
     water_area_sq_km = FactbookExtractor.extract_area(country_json['country'], ["Geography", "Area", "water", "text"])
@@ -78,6 +72,7 @@ def create_country(country_json):
                                                                        ["Geography", "Land boundaries",
                                                                         "border countries", "text"])
     income_level = CountryUtils.iso3_to_income.get(iso3, None)
+    lat_lng = FactbookExtractor.extract_coordinates(country_json['country'], ["Geography", "Geographic coordinates", "text"])
 
     Country.objects.create(
         iso3=iso3,
@@ -91,12 +86,12 @@ def create_country(country_json):
 
     CountryGeography.objects.create(
         iso3=iso3,
-        coordinates=coordinates,
         total_area_sq_km=total_area_sq_km,
         land_area_sq_km=land_area_sq_km,
         water_area_sq_km=water_area_sq_km,
         border_length_km=border_length_km,
-        coastline_length_km=coastline_length_km
+        coastline_length_km=coastline_length_km,
+        lat_lng=lat_lng
     )
 
     for key in border_countries_dict:
