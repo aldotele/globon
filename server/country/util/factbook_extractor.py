@@ -32,7 +32,7 @@ class FactbookExtractor:
         # handle case of more elements with possible notes/sentences in it
         if len(extracted) > 1:
             # variable that will store actual capitals, leaving out notes and sentences
-            kept = []
+            kept = [extracted[0]]
             # the check will start from the second element as the first one is always a capital for sure
             for element in extracted[1:]:
                 # element is considered a capital if every word starts with uppercase
