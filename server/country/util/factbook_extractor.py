@@ -22,13 +22,25 @@ class FactbookExtractor:
     @staticmethod
     def extract_capital(json, subfields):
         capital_string = FactbookExtractor.extract_field(json, *subfields)
-        if capital_string:
-            capital_string_split = capital_string.split("; ")
-
-        # TODO update capital retrieval, sometimes there are sentences
-            return [capital[:capital.index(" (")] if " (" in capital
-                    else capital for capital in capital_string_split if "note" not in capital]
-        return None
+        if not capital_string:
+            return None
+        # splitting by ; which divides capitals in case of more capitals
+        capital_string_split = capital_string.split("; ")
+        # ignoring the parentheses notes if present
+        extracted = [capital[:capital.index(" (")] if " (" in capital
+                     else capital for capital in capital_string_split if "note" not in capital]
+        # handle case of more elements with possible notes/sentences in it
+        if len(extracted) > 1:
+            # variable that will store actual capitals, leaving out notes and sentences
+            kept = []
+            # the check will start from the second element as the first one is always a capital for sure
+            for element in extracted[1:]:
+                # element is considered a capital if every word starts with uppercase
+                if all(word[0].isupper() for word in element.split(" ")):
+                    kept.append(element)
+            return kept
+        else:
+            return extracted
 
     @staticmethod
     def extract_coordinates(json, subfields):
