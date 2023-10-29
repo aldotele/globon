@@ -1,6 +1,5 @@
 import asyncio
 import logging
-import os
 
 from django.apps import AppConfig
 
@@ -12,18 +11,15 @@ class InitializerConfig(AppConfig):
     name = 'initializer'
 
     def ready(self):
-        if os.environ.get('RUN_MAIN'):
-            print("run_main")
-            logging.info("ONE TIME EXECUTION: populating db ...")
-            # import model
-            from country.models import Country
+        print("run_main")
+        logging.info("ONE TIME EXECUTION: populating db ...")
+        # import model
+        from country.models import Country
 
-            # check if countries are already on db or not
-            if not Country.objects.all():
-                print("empty tables")
-                asyncio.run(load_country_data())
+        # check if countries are already on db or not
+        if not Country.objects.all():
+            print("empty tables")
+            asyncio.run(load_country_data())
 
-            return True
-        else:
-            print("no loading needed")
-            pass
+        return True
+
