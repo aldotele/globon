@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 
 from django.apps import AppConfig
 
@@ -11,7 +12,7 @@ class InitializerConfig(AppConfig):
     name = 'initializer'
 
     def ready(self):
-        #if os.environ.get('RUN_MAIN'):
+        if os.environ.get('RUN_MAIN'):
             logging.info("ONE TIME EXECUTION: populating db ...")
             # import model
             from country.models import Country
@@ -21,5 +22,5 @@ class InitializerConfig(AppConfig):
                 asyncio.run(load_country_data())
 
             return True
-        #else:
+        else:
             pass
