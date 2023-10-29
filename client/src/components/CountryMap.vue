@@ -112,8 +112,8 @@ async function triggerCountryAlert(data) {
     html: "<h3 style='font-weight:500'>" 
     + "<b>population</b>: " + data.population.toLocaleString() + "<br><br>" 
     + "<b>capital city</b>: " + data.capital.join(", ") + "<br><br>"
-    + "<b>currencies</b>: " + data.currencies.join(", ") + "<br><br>"
-    + "<b>spoken languages</b>: " + data.languages.join(", ")
+    //+ "<b>currencies</b>: " + data.currencies.join(", ") + "<br><br>"
+    //+ "<b>spoken languages</b>: " + data.languages.join(", ")
     + "</h3>",
     showConfirmButton: false,
     showCancelButton: true,
