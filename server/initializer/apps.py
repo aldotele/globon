@@ -4,7 +4,7 @@ import os
 
 from django.apps import AppConfig
 
-from .initializer import load_country_data
+from .initializer import load_countries
 
 
 class InitializerConfig(AppConfig):
@@ -19,7 +19,7 @@ class InitializerConfig(AppConfig):
 
             # check if countries are already on db or not
             if not Country.objects.all():
-                asyncio.run(load_country_data())
+                asyncio.run(load_countries())
 
             return True
         else:

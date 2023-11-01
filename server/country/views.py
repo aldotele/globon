@@ -10,16 +10,25 @@ from .serializers import CountrySerializer
 
 @extend_schema(responses=CountrySerializer,
                parameters=[OpenApiParameter(name="incomeLevel", type=str, enum=["HIC", "UMC", "LMC", "LIC"]),
-                           OpenApiParameter(name="iso3", type=str),
-                           OpenApiParameter(name="minPopulation", type=int),
-                           OpenApiParameter(name="maxPopulation", type=int)])
+                           OpenApiParameter(name="iso3", type=str,
+                                            description="unique identifier (ITA for Italy, DEU for Germany, ...)"),
+                           OpenApiParameter(name="minPopulation", type=int,
+                                            description="the minimum population"),
+                           OpenApiParameter(name="maxPopulation", type=int,
+                                            description="the maximum population"),
+                           OpenApiParameter(name="fields", type=str,
+                                            description='specify the fields you want to include as "field1,field2, ..."')])
 class CountryList(APIView):
     filter_backends = (rest_framework.DjangoFilterBackend,)
     filterset_class = CountryFilters
 
-    def get(self, request, format=None):
+    def get(self, request):
         query = self.filter_queryset(get_all_countries())
-        serializer = CountrySerializer(query, many=True)
+        serializer = CountrySerializer(
+            query, many=True, fields=[field.strip() for field in request.query_params.get('fields').split(",")]) \
+            if "fields" in request.query_params \
+            else CountrySerializer(query, many=True)
+
         return Response(serializer.data)
 
     def filter_queryset(self, queryset):

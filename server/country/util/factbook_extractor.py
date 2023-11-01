@@ -3,7 +3,7 @@ import re
 
 class FactbookExtractor:
     @staticmethod
-    def extract_field(json, *subfields):
+    def extract_field(json, *subfields) -> str | None:
         res = json
         for subfield in subfields:
             try:
@@ -20,15 +20,15 @@ class FactbookExtractor:
         return None
 
     @staticmethod
-    def extract_capital(json, subfields):
-        capital_string = FactbookExtractor.extract_field(json, *subfields)
-        if not capital_string:
+    def extract_capital(json, *subfields):
+        capital_text = FactbookExtractor.extract_field(json, *subfields)
+        if not capital_text:
             return None
         # splitting by ; which divides capitals in case of more capitals
-        capital_string_split = capital_string.split("; ")
+        capital_text_split = capital_text.split("; ")
         # ignoring the parentheses notes if present
         extracted = [capital[:capital.index(" (")] if " (" in capital
-                     else capital for capital in capital_string_split if "note" not in capital]
+                     else capital for capital in capital_text_split if "note" not in capital]
         # handle case of more elements with possible notes/sentences in it
         if len(extracted) > 1:
             # variable that will store actual capitals, leaving out notes and sentences
@@ -43,13 +43,13 @@ class FactbookExtractor:
             return extracted
 
     @staticmethod
-    def extract_coordinates(json, subfields):
+    def extract_coordinates(json, *subfields):
         try:
-            input = FactbookExtractor.extract_field(json, *subfields)
-            if not input:
+            coordinates_text = FactbookExtractor.extract_field(json, *subfields)
+            if not coordinates_text:
                 return None
             # separate latitude text from longitude text
-            split = input.split(", ")
+            split = coordinates_text.split(", ")
             # the pattern to extract, namely a pattern that match the format like "13 50 N" or "3 5 N"
             pattern = r'\d{1,2}\s\d{1,2}\s[A-Z]'
 
@@ -93,32 +93,32 @@ class FactbookExtractor:
             return None
 
     @staticmethod
-    def extract_area(json, subfields):
-        area_string = FactbookExtractor.extract_field(json, *subfields)
-        if area_string and " sq" in area_string:
-            area_string_split = area_string.split(" sq")
-            number_part = area_string_split[0].replace(",", "")
+    def extract_area(json, *subfields):
+        area_text = FactbookExtractor.extract_field(json, *subfields)
+        if area_text and " sq" in area_text:
+            area_text_split = area_text.split(" sq")
+            number_part = area_text_split[0].replace(",", "")
             if number_part.isdigit():
                 return int(number_part)
         return None
 
     @staticmethod
-    def extract_length(json, subfields):
-        length_string = FactbookExtractor.extract_field(json, *subfields)
-        if length_string and " km" in length_string:
-            length_string_split = length_string.split(" km")
-            number_part = length_string_split[0].replace(",", "")
+    def extract_length(json, *subfields):
+        length_text = FactbookExtractor.extract_field(json, *subfields)
+        if length_text and " km" in length_text:
+            length_text_split = length_text.split(" km")
+            number_part = length_text_split[0].replace(",", "")
             if number_part.isdecimal():
                 return float(number_part)
         return None
 
     @staticmethod
-    def extract_border_countries(json, subfields):
+    def extract_border_countries(json, *subfields):
         res = {}
-        border_countries_string = FactbookExtractor.extract_field(json, *subfields)
-        if border_countries_string:
-            border_countries_string = border_countries_string.split(";")
-            for el in border_countries_string:
+        border_countries_text = FactbookExtractor.extract_field(json, *subfields)
+        if border_countries_text:
+            border_countries_text = border_countries_text.split(";")
+            for el in border_countries_text:
                 match = re.search(r'^(.*?)(\d+)', el)
                 if match:
                     country = match.group(1).strip()
@@ -141,3 +141,43 @@ class FactbookExtractor:
         attempt_2 = FactbookExtractor.extract_field(json, *['People and Society', 'Languages', 'text'])
         regexp = re.findall(r'\w+(?=\s*\(official)', attempt_1)
         return None
+
+    @staticmethod
+    def extract_rate(json, *subfields):
+        growth_rate_text = FactbookExtractor.extract_field(json, *subfields)
+        if not growth_rate_text:
+            return None
+        return float(growth_rate_text[:growth_rate_text.index("%")].strip()) \
+            if "%" in growth_rate_text else None
+
+    @staticmethod
+    def extract_birth_rate(json, *subfields):
+        birth_rate_text = FactbookExtractor.extract_field(json, *subfields)
+        if not birth_rate_text:
+            return None
+        return float(birth_rate_text[:birth_rate_text.index("births")].strip()) \
+            if "births" in birth_rate_text.lower() else None
+
+    @staticmethod
+    def extract_death_rate(json, *subfields):
+        death_rate_text = FactbookExtractor.extract_field(json, *subfields)
+        if not death_rate_text:
+            return None
+        return float(death_rate_text[:death_rate_text.index("deaths")].strip()) \
+            if "deaths" in death_rate_text.lower() else None
+
+    @staticmethod
+    def extract_median_age(json, *subfields):
+        median_age_text = FactbookExtractor.extract_field(json, *subfields)
+        if not median_age_text:
+            return None
+        return float(median_age_text[:median_age_text.index("years")].strip()) \
+            if "years" in median_age_text.lower() else None
+
+    @staticmethod
+    def extract_until_delimiter(json, delimiter, *subfields):
+        extracted = FactbookExtractor.extract_field(json, *subfields)
+        if not extracted:
+            return None
+        return float(extracted[:extracted.index(delimiter)].strip()) \
+            if delimiter in extracted.lower() else None
