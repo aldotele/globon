@@ -1,4 +1,5 @@
 import asyncio
+import locale
 import logging
 import time
 
@@ -11,6 +12,8 @@ from world_proxy import proxy
 
 
 async def load_countries():
+    # locale is used to parse as numbers strings written in this format "1,500.57"
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
     # first step is retrieving the codes of the country from factbook
     # different codes will be used to make proxy requests to different sources
     start_time = time.time()
@@ -52,119 +55,355 @@ async def load_countries():
 
 @sync_to_async()
 def load_country(country_json):
-    from country.models import Country, CountryGeography, CountryBorder, CountrySociety
+    from country.models import Country, CountryGeography, CountryBorder, CountrySociety, CountryEconomy
 
+    # Extraction
     iso3 = country_json['iso3']
-    name = country_json['country']['Government']['Country name']['conventional short form']['text']
-    official_name = country_json['country']['Government']['Country name']['conventional long form']['text']
-    population = FactbookExtractor.extract_population(
-        country_json['country']['People and Society']['Population']['text'])
+    income_level = CountryUtils.iso3_to_income.get(iso3, None)
+    name = FactbookExtractor.extract_field(country_json['country'],
+                                           'Government', 'Country name', 'conventional short form', 'text')
+    official_name = FactbookExtractor.extract_field(country_json['country'],
+                                                    'Government', 'Country name', 'conventional long form', 'text')
+    # TODO use pattern instead, to catch the number which refers to population
+    population = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'], "People and Society", "Population", "text"),
+            until=" "
+        )
+    )
     capital = FactbookExtractor.extract_capital(country_json['country'], "Government", "Capital", "name", "text")
-    flag = FactbookExtractor.extract_flag(country_json['gec'])
-    map = FactbookExtractor.extract_flag(country_json['gec'])
-    total_area_sq_km = FactbookExtractor.extract_area(country_json['country'], "Geography", "Area", "total", "text")
-    land_area_sq_km = FactbookExtractor.extract_area(country_json['country'], "Geography", "Area", "land", "text")
-    water_area_sq_km = FactbookExtractor.extract_area(country_json['country'], "Geography", "Area", "water", "text")
-    border_length_km = FactbookExtractor.extract_length(country_json['country'],
-                                                        "Geography", "Land boundaries", "total", "text")
-    coastline_length_km = FactbookExtractor.extract_length(country_json['country'], "Geography", "Coastline", "text")
     border_countries_dict = FactbookExtractor.extract_border_countries(country_json['country'],
                                                                        "Geography", "Land boundaries",
                                                                        "border countries", "text")
-    income_level = CountryUtils.iso3_to_income.get(iso3, None)
     lat_lng = FactbookExtractor.extract_coordinates(country_json['country'],
                                                     "Geography", "Geographic coordinates", "text")
-    population_growth_rate = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                       'People and Society', 'Population growth rate',
-                                                                       'text')
-    population_0_14_percentage = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                           'People and Society', 'Age structure',
-                                                                           '0-14 years', 'text')
-    population_15_64_percentage = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                            'People and Society', 'Age structure',
-                                                                            '15-64 years', 'text')
-    population_65_more_percentage = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                              'People and Society', 'Age structure',
-                                                                              '65 years and over', 'text')
-    median_age = FactbookExtractor.extract_until_delimiter(country_json['country'], "years",
-                                                           'People and Society', 'Median age', 'total', 'text')
-    median_age_male = FactbookExtractor.extract_until_delimiter(country_json['country'], "years",
-                                                                'People and Society', 'Median age', 'male', 'text')
-    median_age_female = FactbookExtractor.extract_until_delimiter(country_json['country'], "years",
-                                                                  'People and Society', 'Median age', 'female', 'text')
-    births_every_1000 = FactbookExtractor.extract_until_delimiter(country_json['country'], "births",
-                                                                  'People and Society', 'Birth rate', 'text')
-    deaths_every_1000 = FactbookExtractor.extract_until_delimiter(country_json['country'], "deaths",
-                                                                  'People and Society', 'Death rate', 'text')
-    migrants_every_1000 = FactbookExtractor.extract_until_delimiter(country_json['country'], "migrant",
-                                                                    'People and Society', 'Net migration rate', 'text')
-    urban_population_percentage = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                            'People and Society', 'Urbanization',
-                                                                            'urban population', 'text')
-    life_expectancy_at_birth = FactbookExtractor.extract_until_delimiter(country_json['country'], "years",
-                                                                         'People and Society',
-                                                                         'Life expectancy at birth',
-                                                                         'total population', 'text')
-    life_expectancy_at_birth_male = FactbookExtractor.extract_until_delimiter(country_json['country'], "years",
-                                                                              'People and Society',
-                                                                              'Life expectancy at birth',
-                                                                              'male', 'text')
-    life_expectancy_at_birth_female = FactbookExtractor.extract_until_delimiter(country_json['country'], "years",
-                                                                                'People and Society',
-                                                                                'Life expectancy at birth',
-                                                                                'female', 'text')
-    births_per_woman = FactbookExtractor.extract_until_delimiter(country_json['country'], "children",
-                                                                 'People and Society',
-                                                                 'Total fertility rate', 'text')
-    health_expenditure = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                   'People and Society',
-                                                                   'Current health expenditure', 'text')
-    physicians_density = FactbookExtractor.extract_until_delimiter(country_json['country'], "physicians",
-                                                                   'People and Society',
-                                                                   'Physicians density', 'text')
-    hospital_bed_density = FactbookExtractor.extract_until_delimiter(country_json['country'], "beds",
-                                                                     'People and Society',
-                                                                     'Hospital bed density', 'text')
-    obesity_rate = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                             'People and Society',
-                                                             'Obesity - adult prevalence rate', 'text')
-    alcohol_consumption_per_capita = FactbookExtractor.extract_until_delimiter(country_json['country'], "liters",
-                                                                               'People and Society',
-                                                                               'Alcohol consumption per capita',
-                                                                               'total', 'text')
-    beer_consumption_per_capita = FactbookExtractor.extract_until_delimiter(country_json['country'], "liters",
-                                                                            'People and Society',
-                                                                            'Alcohol consumption per capita',
-                                                                            'beer', 'text')
-    wine_consumption_per_capita = FactbookExtractor.extract_until_delimiter(country_json['country'], "liters",
-                                                                            'People and Society',
-                                                                            'Alcohol consumption per capita',
-                                                                            'wine', 'text')
-    spirits_consumption_per_capita = FactbookExtractor.extract_until_delimiter(country_json['country'], "liters",
-                                                                               'People and Society',
-                                                                               'Alcohol consumption per capita',
-                                                                               'spirits', 'text')
-    tobacco_use = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                            'People and Society',
-                                                            'Tobacco use', 'total', 'text')
-    tobacco_use_male = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                 'People and Society',
-                                                                 'Tobacco use', 'male', 'text')
-    tobacco_use_female = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                   'People and Society',
-                                                                   'Tobacco use', 'female', 'text')
-    married_women_rate = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                   'People and Society',
-                                                                   'Currently married women (ages 15-49)', 'text')
-    literacy_rate = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                              'People and Society',
-                                                              'Literacy', 'total population', 'text')
-    literacy_rate_male = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                   'People and Society',
-                                                                   'Literacy', 'male', 'text')
-    literacy_rate_female = FactbookExtractor.extract_until_delimiter(country_json['country'], "%",
-                                                                     'People and Society',
-                                                                     'Literacy', 'female', 'text')
+    flag = FactbookExtractor.extract_flag(country_json['gec'])
+    maps = FactbookExtractor.extract_map(country_json['gec'])
+    total_area_sq_km = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'], "Geography", "Area", "total", "text"),
+            until=" sq"
+        )
+    )
+    land_area_sq_km = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'], "Geography", "Area", "land", "text"),
+            until=" sq"
+        )
+    )
+    water_area_sq_km = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'], "Geography", "Area", "water", "text"),
+            until=" sq"
+        )
+    )
+    border_length_km = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'], "Geography", "Land boundaries", "total", "text"),
+            until=" km"
+        )
+    )
+    coastline_length_km = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'], "Geography", "Coastline", "text"),
+            until=" km"
+        )
+    )
+    population_growth_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Population growth rate', "text"),
+            until="%"
+        )
+    )
+    population_0_14_percentage = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Age structure', '0-14 years', "text"),
+            until="%"
+        )
+    )
+    population_15_64_percentage = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Age structure', '15-64 years', "text"),
+            until="%"
+        )
+    )
+    population_65_more_percentage = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Age structure', '65 years and over', "text"),
+            until="%"
+        )
+    )
+
+    median_age = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Median age', 'total', "text"),
+            until="years"
+        )
+    )
+
+    median_age_male = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Median age', 'male', "text"),
+            until="years"
+        )
+    )
+    median_age_female = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Median age', 'female', "text"),
+            until="years"
+        )
+    )
+    births_every_1000 = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Birth rate', "text"),
+            until="births"
+        )
+    )
+    deaths_every_1000 = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Death rate', "text"),
+            until="deaths"
+        )
+    )
+    migrants_every_1000 = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Net migration rate', "text"),
+            until="migrant"
+        )
+    )
+    urban_population_percentage = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Urbanization', 'urban population', "text"),
+            until="%"
+        )
+    )
+    life_expectancy_at_birth = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Life expectancy at birth',
+                                            'total population', "text"),
+            until="years"
+        )
+    )
+    life_expectancy_at_birth_male = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Life expectancy at birth',
+                                            'male', "text"),
+            until="years"
+        )
+    )
+    life_expectancy_at_birth_female = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Life expectancy at birth',
+                                            'female', "text"),
+            until="years"
+        )
+    )
+    births_per_woman = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Total fertility rate', "text"),
+            until="children"
+        )
+    )
+    health_expenditure = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Current health expenditure', "text"),
+            until="%"
+        )
+    )
+    physicians_density = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Physicians density', "text"),
+            until="physicians"
+        )
+    )
+    hospital_bed_density = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Hospital bed density', "text"),
+            until="beds"
+        )
+    )
+    obesity_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Obesity - adult prevalence rate', "text"),
+            until="%"
+        )
+    )
+    alcohol_consumption_per_capita = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Alcohol consumption per capita', 'total', "text"),
+            until="liters"
+        )
+    )
+    beer_consumption_per_capita = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Alcohol consumption per capita', 'beer', "text"),
+            until="liters"
+        )
+    )
+    wine_consumption_per_capita = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Alcohol consumption per capita', 'wine', "text"),
+            until="liters"
+        )
+    )
+    spirits_consumption_per_capita = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Alcohol consumption per capita', 'spirits', "text"),
+            until="liters"
+        )
+    )
+    tobacco_use = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Tobacco use', 'total', "text"),
+            until="liters"
+        )
+    )
+    tobacco_use_male = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Tobacco use', 'male', "text"),
+            until="liters"
+        )
+    )
+    tobacco_use_female = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Tobacco use', 'female', "text"),
+            until="liters"
+        )
+    )
+    married_women_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Currently married women (ages 15-49)', "text"),
+            until="%"
+        )
+    )
+    literacy_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Literacy', 'total population', "text"),
+            until="%"
+        )
+    )
+    literacy_rate_male = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Literacy', 'male', "text"),
+            until="%"
+        )
+    )
+    literacy_rate_female = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'People and Society', 'Literacy', 'female', "text"),
+            until="%"
+        )
+    )
+    gdp_agriculture = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'GDP - composition, by sector of origin', 'agriculture', 'text'),
+            until="%"
+        )
+    )
+    gdp_industry = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'GDP - composition, by sector of origin', 'industry', 'text'),
+            until="%"
+        )
+    )
+    gdp_services = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'GDP - composition, by sector of origin', 'services', 'text'),
+            until="%"
+        )
+    )
+    industrial_production_growth_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Industrial production growth rate', 'text'),
+            until="%"
+        )
+    )
+    labor_force_agriculture = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Labor force - by occupation', 'agriculture', 'text'),
+            until="%"
+        )
+    )
+    labor_force_industry = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Labor force - by occupation', 'industry', 'text'),
+            until="%"
+        )
+    )
+    labor_force_services = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Labor force - by occupation', 'services', 'text'),
+            until="%"
+        )
+    )
+    unemployment_rate_youth = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Youth unemployment rate (ages 15-24)', 'total', 'text'),
+            until="%"
+        )
+    )
+    population_below_poverty_line = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Population below poverty line', 'text'),
+            until="%"
+        )
+    )
+    taxes = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Taxes and other revenues', 'text'),
+            until="%"
+        )
+    )
+    inflation_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Inflation rate (consumer prices)', 'text'),
+            until="%"
+        )
+    )
+
+    #gdp_real = FactbookExtractor.extract_gdp_real(country_json['country'], 'Economy', 'Real GDP (purchasing power parity)')
+
 
     Country.objects.create(
         iso3=iso3,
@@ -172,12 +411,12 @@ def load_country(country_json):
         official_name=official_name if official_name != "none" else None,
         capital=capital,
         flag=flag,
-        map=map,
         income_level=income_level
     )
 
     CountryGeography.objects.create(
         iso3=iso3,
+        maps=maps,
         total_area_sq_km=total_area_sq_km,
         land_area_sq_km=land_area_sq_km,
         water_area_sq_km=water_area_sq_km,
@@ -219,6 +458,23 @@ def load_country(country_json):
         literacy_rate=literacy_rate,
         literacy_rate_male=literacy_rate_male,
         literacy_rate_female=literacy_rate_female
+    )
+
+    CountryEconomy.objects.create(
+        iso3=iso3,
+        gdp_agriculture=gdp_agriculture,
+        gdp_industry=gdp_industry,
+        gdp_services=gdp_services,
+        industrial_production_growth_rate=industrial_production_growth_rate,
+        labor_force_agriculture=labor_force_agriculture,
+        labor_force_industry=labor_force_industry,
+        labor_force_services=labor_force_services,
+        unemployment_rate_youth=unemployment_rate_youth,
+        population_below_poverty_line=population_below_poverty_line,
+        taxes=taxes,
+        inflation_rate=inflation_rate,
+        #gdp_real=gdp_real
+
     )
 
     for key in border_countries_dict:

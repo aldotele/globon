@@ -1,9 +1,10 @@
+import locale
 import re
 
 
 class FactbookExtractor:
     @staticmethod
-    def extract_field(json, *subfields) -> str | None:
+    def extract_field(json, *subfields) -> str | dict | None:
         res = json
         for subfield in subfields:
             try:
@@ -13,11 +14,28 @@ class FactbookExtractor:
         return res
 
     @staticmethod
-    def extract_population(string):
-        if len(string) > 0 and string[0].isdigit() and " (" in string:
-            number = string.split(" (")[0].replace(",", "")
-            return int(number)
-        return None
+    def extract_by(text: str, delimiters=(), until="", after="", pattern=None):
+        if text and delimiters:
+            index_of_start = text.index(delimiters[0]) if delimiters[0] in text else None
+            index_of_end = text.index(delimiters[1]) if delimiters[1] in text else None
+            return text[index_of_start + 1:index_of_end] if None not in (index_of_start, index_of_end) else None
+        elif text and until:
+            return text[:text.index(until)] if until in text else None
+        elif text and after:
+            return text[text.index(after) + 1:] if after in text else None
+        elif text and pattern:
+            match = re.search(pattern, text)
+            if match:
+                return match.group(1)
+
+    @staticmethod
+    def parse_number(text: str):
+        if text:
+            try:
+                return locale.atof(text)
+            except ValueError:
+                # might insert a log to keep track of not parsed elements
+                return None
 
     @staticmethod
     def extract_capital(json, *subfields):
@@ -93,26 +111,6 @@ class FactbookExtractor:
             return None
 
     @staticmethod
-    def extract_area(json, *subfields):
-        area_text = FactbookExtractor.extract_field(json, *subfields)
-        if area_text and " sq" in area_text:
-            area_text_split = area_text.split(" sq")
-            number_part = area_text_split[0].replace(",", "")
-            if number_part.isdigit():
-                return int(number_part)
-        return None
-
-    @staticmethod
-    def extract_length(json, *subfields):
-        length_text = FactbookExtractor.extract_field(json, *subfields)
-        if length_text and " km" in length_text:
-            length_text_split = length_text.split(" km")
-            number_part = length_text_split[0].replace(",", "")
-            if number_part.isdecimal():
-                return float(number_part)
-        return None
-
-    @staticmethod
     def extract_border_countries(json, *subfields):
         res = {}
         border_countries_text = FactbookExtractor.extract_field(json, *subfields)
@@ -142,42 +140,51 @@ class FactbookExtractor:
         regexp = re.findall(r'\w+(?=\s*\(official)', attempt_1)
         return None
 
-    @staticmethod
-    def extract_rate(json, *subfields):
-        growth_rate_text = FactbookExtractor.extract_field(json, *subfields)
-        if not growth_rate_text:
-            return None
-        return float(growth_rate_text[:growth_rate_text.index("%")].strip()) \
-            if "%" in growth_rate_text else None
-
-    @staticmethod
-    def extract_birth_rate(json, *subfields):
-        birth_rate_text = FactbookExtractor.extract_field(json, *subfields)
-        if not birth_rate_text:
-            return None
-        return float(birth_rate_text[:birth_rate_text.index("births")].strip()) \
-            if "births" in birth_rate_text.lower() else None
-
-    @staticmethod
-    def extract_death_rate(json, *subfields):
-        death_rate_text = FactbookExtractor.extract_field(json, *subfields)
-        if not death_rate_text:
-            return None
-        return float(death_rate_text[:death_rate_text.index("deaths")].strip()) \
-            if "deaths" in death_rate_text.lower() else None
-
-    @staticmethod
-    def extract_median_age(json, *subfields):
-        median_age_text = FactbookExtractor.extract_field(json, *subfields)
-        if not median_age_text:
-            return None
-        return float(median_age_text[:median_age_text.index("years")].strip()) \
-            if "years" in median_age_text.lower() else None
 
     @staticmethod
     def extract_until_delimiter(json, delimiter, *subfields):
         extracted = FactbookExtractor.extract_field(json, *subfields)
         if not extracted:
             return None
-        return float(extracted[:extracted.index(delimiter)].strip()) \
+        return locale.atof(extracted[:extracted.index(delimiter)].strip()) \
             if delimiter in extracted.lower() else None
+
+    @staticmethod
+    def extract_most_recent_until_delimiter(json, delimiter, *subfields):
+        extracted = FactbookExtractor.extract_field(json, *subfields)
+        if not extracted:
+            return None
+        years = [int(key.split(" ")[-1]) for key in extracted.keys()
+                 if (" " in key and key.split(" ")[-1].isdigit())]
+        years.sort(reverse=True)
+        if years:
+            return FactbookExtractor.extract_until_delimiter(extracted, delimiter,
+                                                             subfields[-1] + " " + str(years[0]), "text")
+
+
+    @staticmethod
+    def extract_gdp_real(json, *subfields):
+        extracted = FactbookExtractor.extract_field(json, *subfields)
+        if not extracted:
+            return None
+        years = [int(key.split(" ")[-1]) for key in extracted.keys()
+                 if (" " in key and key.split(" ")[-1].isdigit())]
+        years.sort(reverse=True)
+        if years:
+            extracted = FactbookExtractor.extract_field(extracted, subfields[-1] + " " + str(years[0]), "text")
+            if not extracted:
+                return None
+            index_of_currency = extracted.index("$")
+            index_of_whitespace_after_currency = extracted[index_of_currency:].index(" ")
+            number_piece = extracted[index_of_currency+1:index_of_whitespace_after_currency].strip()
+            if "million" in extracted:
+                return locale.atof(number_piece) * 1000000
+            elif "billion" in extracted:
+                return locale.atof(number_piece) * 1000000000
+            elif "trillion" in extracted:
+                return locale.atof(number_piece) * 1000000000000
+            else:
+                return locale.atof(number_piece)
+        return None
+
+
