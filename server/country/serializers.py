@@ -22,5 +22,5 @@ class CountrySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Country
-        fields = ['name', 'official_name', 'iso3', 'population', 'flag', 'capital', 'translations',
-                  'currencies', 'map', 'languages', 'borders', 'income_level']
+        fields = ['name', 'official_name', 'iso3', 'iso2', 'flag', 'capital', 'translations',
+                  'currencies', 'income_level']

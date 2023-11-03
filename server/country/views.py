@@ -12,10 +12,8 @@ from .serializers import CountrySerializer
                parameters=[OpenApiParameter(name="incomeLevel", type=str, enum=["HIC", "UMC", "LMC", "LIC"]),
                            OpenApiParameter(name="iso3", type=str,
                                             description="unique identifier (ITA for Italy, DEU for Germany, ...)"),
-                           OpenApiParameter(name="minPopulation", type=int,
-                                            description="the minimum population"),
-                           OpenApiParameter(name="maxPopulation", type=int,
-                                            description="the maximum population"),
+                           OpenApiParameter(name="iso2", type=str,
+                                            description="unique identifier (IT for Italy, DE for Germany, ...)"),
                            OpenApiParameter(name="fields", type=str,
                                             description='specify the fields you want to include as "field1,field2, ..."')])
 class CountryList(APIView):
