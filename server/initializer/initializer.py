@@ -71,6 +71,81 @@ def load_country(country_json):
             until=" "
         )
     )
+    gdp_real = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_most_recent_field(country_json['country'],
+                                                        'Economy', 'Real GDP (purchasing power parity)'),
+            delimiters=("$", "(")
+        ),
+        with_unit=True
+    )
+    gdp_gross = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'GDP (official exchange rate)', 'text'),
+            delimiters=("$", "(")
+        ),
+        with_unit=True
+    )
+    real_gdp_growth_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_most_recent_field(country_json['country'],
+                                                        'Economy', 'Real GDP growth rate'),
+            until="%"
+        )
+    )
+    real_gdp_per_capita = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_most_recent_field(country_json['country'],
+                                                        'Economy', 'Real GDP per capita'),
+            delimiters=("$", " ")
+        )
+    )
+    inflation_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_most_recent_field(country_json['country'],
+                                                        'Economy', 'Inflation rate (consumer prices)'),
+            until="%"
+        )
+    )
+    labor_force = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_field(country_json['country'],
+                                            'Economy', 'Labor force', 'text'),
+            until="("
+        ),
+        with_unit=True
+    )
+    unemployment_rate = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_most_recent_field(country_json['country'],
+                                                        'Economy', 'Unemployment rate'),
+            until="%"
+        )
+    )
+    public_debt = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_most_recent_field(country_json['country'],
+                                                        'Economy', 'Public debt'),
+            until="%"
+        )
+    )
+    exports = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_most_recent_field(country_json['country'],
+                                                        'Economy', 'Exports'),
+            delimiters=("$", "(")
+        ),
+        with_unit=True
+    )
+    imports = FactbookExtractor.parse_number(
+        FactbookExtractor.extract_by(
+            FactbookExtractor.extract_most_recent_field(country_json['country'],
+                                                        'Economy', 'Imports'),
+            delimiters=("$", "(")
+        ),
+        with_unit=True
+    )
     capital = FactbookExtractor.extract_capital(country_json['country'], "Government", "Capital", "name", "text")
     border_countries_dict = FactbookExtractor.extract_border_countries(country_json['country'],
                                                                        "Geography", "Land boundaries",
@@ -394,17 +469,8 @@ def load_country(country_json):
             until="%"
         )
     )
-    inflation_rate = FactbookExtractor.parse_number(
-        FactbookExtractor.extract_by(
-            FactbookExtractor.extract_field(country_json['country'],
-                                            'Economy', 'Inflation rate (consumer prices)', 'text'),
-            until="%"
-        )
-    )
 
-    #gdp_real = FactbookExtractor.extract_gdp_real(country_json['country'], 'Economy', 'Real GDP (purchasing power parity)')
-
-
+    # actual database loading starts here
     Country.objects.create(
         iso3=iso3,
         name=name if name != "none" else official_name if official_name else None,
@@ -466,6 +532,7 @@ def load_country(country_json):
         gdp_industry=gdp_industry,
         gdp_services=gdp_services,
         industrial_production_growth_rate=industrial_production_growth_rate,
+        labor_force=labor_force,
         labor_force_agriculture=labor_force_agriculture,
         labor_force_industry=labor_force_industry,
         labor_force_services=labor_force_services,
@@ -473,8 +540,14 @@ def load_country(country_json):
         population_below_poverty_line=population_below_poverty_line,
         taxes=taxes,
         inflation_rate=inflation_rate,
-        #gdp_real=gdp_real
-
+        gdp_real=gdp_real,
+        gdp_gross=gdp_gross,
+        real_gdp_growth_rate=real_gdp_growth_rate,
+        real_gdp_per_capita=real_gdp_per_capita,
+        imports=imports,
+        exports=exports,
+        unemployment_rate=unemployment_rate,
+        public_debt=public_debt
     )
 
     for key in border_countries_dict:
