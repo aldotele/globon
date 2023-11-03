@@ -4,7 +4,9 @@ from django.db import models
 class Country(models.Model):
     name = models.CharField(max_length=255)
     official_name = models.CharField(max_length=255, null=True)
+    iso2 = models.CharField(max_length=2, null=True)
     iso3 = models.CharField(max_length=3)
+    gec = models.CharField(max_length=2, null=True)
     flag = models.URLField(max_length=200, null=True)
     capital = models.JSONField(null=True)
     translations = models.JSONField(null=True)
@@ -14,21 +16,6 @@ class Country(models.Model):
     class Meta:
         db_table = 'country'
         verbose_name_plural = 'countries'
-
-    def __str__(self):
-        return self.name
-
-
-class CountryCodes(models.Model):
-    name = models.CharField(max_length=255)
-    gec = models.CharField(max_length=2)
-    iso2 = models.CharField(max_length=2)
-    iso3 = models.CharField(max_length=3)
-    stanag = models.CharField(max_length=3)
-    internet = models.CharField(max_length=3)
-
-    class Meta:
-        db_table = 'country_codes'
 
     def __str__(self):
         return self.name

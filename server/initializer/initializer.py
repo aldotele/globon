@@ -38,9 +38,6 @@ async def load_countries():
                     region = region_search.values[0].lower()\
                         .replace(" ", "-").replace("-and-", "-n-").replace("-&-", "-n-")
 
-                    # persisting the codes
-                    await create_country_codes(iso3, gec.upper(), row)
-
                     task = asyncio.ensure_future(proxy.retrieve_factbook_country(session, iso3, gec.lower(), region))
                     tasks.append(task)
 
@@ -59,6 +56,8 @@ def load_country(country_json):
 
     # Extraction
     iso3 = country_json['iso3']
+    iso2 = iso3[:2]
+    gec = country_json['gec']
     income_level = CountryUtils.iso3_to_income.get(iso3, None)
     name = FactbookExtractor.extract_field(country_json['country'],
                                            'Government', 'Country name', 'conventional short form', 'text')
@@ -473,6 +472,8 @@ def load_country(country_json):
     # actual database loading starts here
     Country.objects.create(
         iso3=iso3,
+        iso2=iso2,
+        gec=gec,
         name=name if name != "none" else official_name if official_name else None,
         official_name=official_name if official_name != "none" else None,
         capital=capital,
@@ -557,15 +558,3 @@ def load_country(country_json):
             length_km=border_countries_dict[key]
         )
 
-
-@sync_to_async
-def create_country_codes(iso3, gec, codes):
-    from country.models import CountryCodes
-    CountryCodes.objects.create(
-        name=codes['Name'],
-        gec=gec,
-        iso2=codes['A3'],
-        iso3=iso3,
-        stanag=codes['STANAG'],
-        internet=codes['INTERNET']
-    )
