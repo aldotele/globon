@@ -14,5 +14,5 @@ class InitializerConfig(AppConfig):
         from country.models import Country
 
         logging.info("ONE TIME EXECUTION: populating db ...")
-        asyncio.run(load_countries())
+        #asyncio.run(load_countries())
 
