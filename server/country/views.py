@@ -96,6 +96,10 @@ class CountryEconomyList(APIView):
 @extend_schema(responses=CountrySocietySerializer,
                parameters=[OpenApiParameter(name="iso3", type=str,
                                             description="unique identifier (ITA for Italy, DEU for Germany, ...)"),
+                           OpenApiParameter(name="minPopulation", type=int,
+                                            description="the minimum population"),
+                           OpenApiParameter(name="maxPopulation", type=int,
+                                            description="the maximum population"),
                            OpenApiParameter(name="fields", type=str,
                                             description='specify the fields you want to include as "field1,field2, ..."')])
 class CountrySocietyList(APIView):
