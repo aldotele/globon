@@ -11,7 +11,7 @@ class InitializerConfig(AppConfig):
     name = 'initializer'
 
     def ready(self):
-        from country.models import Country
+        #from country.models import Country
 
         logging.info("ONE TIME EXECUTION: populating db ...")
         #asyncio.run(load_countries())
