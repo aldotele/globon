@@ -20,6 +20,10 @@ class Country(models.Model):
     def __str__(self):
         return self.name
 
+    @classmethod
+    def get_field_names(cls):
+        return [f.name for f in cls._meta.fields if f.name != "id"]
+
 
 class CountryGeography(models.Model):
     iso3 = models.CharField(max_length=3)
@@ -38,6 +42,10 @@ class CountryGeography(models.Model):
     def __str__(self):
         return self.iso3
 
+    @classmethod
+    def get_field_names(cls):
+        return [f.name for f in cls._meta.fields if f.name != "id"]
+
 
 class CountryBorder(models.Model):
     country1 = models.CharField(max_length=255, null=True)
@@ -49,6 +57,10 @@ class CountryBorder(models.Model):
 
     def __str__(self):
         return str(self.country1) + "-" + str(self.country2)
+
+    @classmethod
+    def get_field_names(cls):
+        return [f.name for f in cls._meta.fields if f.name != "id"]
 
 
 class CountrySociety(models.Model):
@@ -98,6 +110,10 @@ class CountrySociety(models.Model):
     def __str__(self):
         return self.iso3
 
+    @classmethod
+    def get_field_names(cls):
+        return [f.name for f in cls._meta.fields if f.name != "id"]
+
 
 class CountryEconomy(models.Model):
     iso3 = models.CharField(max_length=3)
@@ -127,4 +143,8 @@ class CountryEconomy(models.Model):
 
     def __str__(self):
         return self.iso3
+
+    @classmethod
+    def get_field_names(cls):
+        return [f.name for f in cls._meta.fields if f.name != "id"]
 
