@@ -37,4 +37,4 @@ def retrieve_factbook_codes():
 async def retrieve_factbook_country(session, iso3, gec, region):
     async with session.get(ProxyAPI.factbook_country_base_uri + "/" + region + "/" + gec + ".json") as resp:
         country_json = await resp.json(content_type=None)
-        return {"iso3": iso3, "gec": gec,"country": country_json}
+        return {"iso3": iso3, "gec": gec, "country": country_json}

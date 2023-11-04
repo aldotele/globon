@@ -1,6 +1,6 @@
 from django_filters import rest_framework
 
-from country.models import Country
+from country.models import Country, CountryGeography, CountryEconomy, CountrySociety
 
 
 class CountryFilters(rest_framework.FilterSet):
@@ -19,16 +19,50 @@ class CountryFilters(rest_framework.FilterSet):
         lookup_expr="gte"
     )
 
-    language = rest_framework.CharFilter(
-        field_name="languages",
-        lookup_expr="icontains"
+    iso3 = rest_framework.CharFilter(
+        field_name="iso3",
+        lookup_expr="iexact"
     )
 
-    isoCode = rest_framework.CharFilter(
-        field_name="iso3",
+    iso2 = rest_framework.CharFilter(
+        field_name="iso2",
         lookup_expr="iexact"
     )
 
     class Meta:
         model = Country
-        fields = ["maxPopulation", "minPopulation", "incomeLevel", "language", "iso3"]
+        fields = ["iso3", "iso2", "maxPopulation", "minPopulation", "incomeLevel"]
+
+
+class CountryGeographyFilters(rest_framework.FilterSet):
+
+    iso3 = rest_framework.CharFilter(
+        field_name="iso3",
+        lookup_expr="iexact"
+    )
+
+    class Meta:
+        model = CountryGeography
+        fields = ["iso3"]
+
+
+class CountryEconomyFilters(rest_framework.FilterSet):
+    iso3 = rest_framework.CharFilter(
+        field_name="iso3",
+        lookup_expr="iexact"
+    )
+
+    class Meta:
+        model = CountryEconomy
+        fields = ["iso3"]
+
+
+class CountrySocietyFilters(rest_framework.FilterSet):
+    iso3 = rest_framework.CharFilter(
+        field_name="iso3",
+        lookup_expr="iexact"
+    )
+
+    class Meta:
+        model = CountrySociety
+        fields = ["iso3"]

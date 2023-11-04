@@ -2,8 +2,10 @@ import re
 
 
 class FactbookExtractor:
+    units = {"million": 1000000, "billion": 1000000000, "trillion": 1000000000000}
+
     @staticmethod
-    def extract_field(json, *subfields):
+    def extract_field(json, *subfields) -> str | dict | None:
         res = json
         for subfield in subfields:
             try:
@@ -13,26 +15,61 @@ class FactbookExtractor:
         return res
 
     @staticmethod
-    def extract_population(string):
-        if len(string) > 0 and string[0].isdigit() and " (" in string:
-            number = string.split(" (")[0].replace(",", "")
-            return int(number)
-        return None
+    def extract_most_recent_field(json, *subfields):
+        # the following extraction will result in a dictionary with a key for each year
+        extracted = FactbookExtractor.extract_field(json, *subfields)
+        if extracted:
+            years = [int(key.split(" ")[-1]) for key in extracted.keys()
+                     if (" " in key and key.split(" ")[-1].isdigit())]
+            years.sort(reverse=True)
+            if years:
+                return FactbookExtractor.extract_field(extracted, subfields[-1] + " " + str(years[0]), "text")
 
     @staticmethod
-    def extract_capital(json, subfields):
-        capital_string = FactbookExtractor.extract_field(json, *subfields)
-        if not capital_string:
+    def extract_by(text: str, delimiters=(), until="", after="", pattern=None):
+        if text and delimiters:
+            index_of_start = text.index(delimiters[0]) if delimiters[0] in text else None
+            index_of_end = text.index(delimiters[1]) if delimiters[1] in text else None
+            return text[index_of_start + 1:index_of_end].strip() if None not in (index_of_start, index_of_end) else None
+        elif text and until:
+            return text[:text.index(until)].strip() if until in text else None
+        elif text and after:
+            return text[text.index(after) + 1:].strip() if after in text else None
+        elif text and pattern:
+            match = re.search(pattern, text)
+            if match:
+                return match.group(1)
+
+    @staticmethod
+    def parse_number(text: str, with_unit=False) -> float | None:
+        if text:
+            try:
+                if with_unit:
+                    text_split = text.split(" ")
+                    if len(text_split) == 2:
+                        number = text_split[0].replace(",", "")
+                        unit = text_split[1].strip().lower()
+                        if unit in FactbookExtractor.units:
+                            return float(number) * FactbookExtractor.units[unit]
+                return float(text.replace(",", ""))
+            except ValueError:
+                # might insert a log to keep track of not parsed elements
+                return None
+
+    @staticmethod
+    def extract_capital(json, *subfields):
+        capital_text = FactbookExtractor.extract_field(json, *subfields)
+        if not capital_text:
             return None
         # splitting by ; which divides capitals in case of more capitals
-        capital_string_split = capital_string.split("; ")
+        capital_text_split = capital_text.split("; ")
         # ignoring the parentheses notes if present
         extracted = [capital[:capital.index(" (")] if " (" in capital
-                     else capital for capital in capital_string_split if "note" not in capital]
+                     else capital for capital in capital_text_split if "note" not in capital]
         # handle case of more elements with possible notes/sentences in it
         if len(extracted) > 1:
             # variable that will store actual capitals, leaving out notes and sentences
-            kept = []
+            kept = [extracted[0]]
             # the check will start from the second element as the first one is always a capital for sure
             for element in extracted[1:]:
                 # element is considered a capital if every word starts with uppercase
@@ -43,13 +80,13 @@ class FactbookExtractor:
             return extracted
 
     @staticmethod
-    def extract_coordinates(json, subfields):
+    def extract_coordinates(json, *subfields):
         try:
-            input = FactbookExtractor.extract_field(json, *subfields)
-            if not input:
+            coordinates_text = FactbookExtractor.extract_field(json, *subfields)
+            if not coordinates_text:
                 return None
             # separate latitude text from longitude text
-            split = input.split(", ")
+            split = coordinates_text.split(", ")
             # the pattern to extract, namely a pattern that match the format like "13 50 N" or "3 5 N"
             pattern = r'\d{1,2}\s\d{1,2}\s[A-Z]'
 
@@ -93,32 +130,12 @@ class FactbookExtractor:
             return None
 
     @staticmethod
-    def extract_area(json, subfields):
-        area_string = FactbookExtractor.extract_field(json, *subfields)
-        if area_string and " sq" in area_string:
-            area_string_split = area_string.split(" sq")
-            number_part = area_string_split[0].replace(",", "")
-            if number_part.isdigit():
-                return int(number_part)
-        return None
-
-    @staticmethod
-    def extract_length(json, subfields):
-        length_string = FactbookExtractor.extract_field(json, *subfields)
-        if length_string and " km" in length_string:
-            length_string_split = length_string.split(" km")
-            number_part = length_string_split[0].replace(",", "")
-            if number_part.isdecimal():
-                return float(number_part)
-        return None
-
-    @staticmethod
-    def extract_border_countries(json, subfields):
+    def extract_border_countries(json, *subfields):
         res = {}
-        border_countries_string = FactbookExtractor.extract_field(json, *subfields)
-        if border_countries_string:
-            border_countries_string = border_countries_string.split(";")
-            for el in border_countries_string:
+        border_countries_text = FactbookExtractor.extract_field(json, *subfields)
+        if border_countries_text:
+            border_countries_text = border_countries_text.split(";")
+            for el in border_countries_text:
                 match = re.search(r'^(.*?)(\d+)', el)
                 if match:
                     country = match.group(1).strip()
@@ -141,3 +158,6 @@ class FactbookExtractor:
         attempt_2 = FactbookExtractor.extract_field(json, *['People and Society', 'Languages', 'text'])
         regexp = re.findall(r'\w+(?=\s*\(official)', attempt_1)
         return None
+
+
+
