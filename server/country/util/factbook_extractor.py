@@ -1,4 +1,3 @@
-import locale
 import re
 
 
@@ -48,11 +47,11 @@ class FactbookExtractor:
                 if with_unit:
                     text_split = text.split(" ")
                     if len(text_split) == 2:
-                        number = text_split[0]
+                        number = text_split[0].replace(",", "")
                         unit = text_split[1].strip().lower()
                         if unit in FactbookExtractor.units:
-                            return locale.atof(number) * FactbookExtractor.units[unit]
-                return locale.atof(text)
+                            return float(number) * FactbookExtractor.units[unit]
+                return float(text.replace(",", ""))
             except ValueError:
                 # might insert a log to keep track of not parsed elements
                 return None

@@ -1,5 +1,4 @@
 import asyncio
-import locale
 import logging
 import time
 
@@ -13,7 +12,7 @@ from world_proxy import proxy
 
 async def load_countries():
     # locale is used to parse as numbers strings written in this format "1,500.57"
-    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+    #locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
     # first step is retrieving the codes of the country from factbook
     # different codes will be used to make proxy requests to different sources
     start_time = time.time()
