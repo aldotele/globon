@@ -9,16 +9,6 @@ class CountryFilters(rest_framework.FilterSet):
         lookup_expr="exact"
     )
 
-    maxPopulation = rest_framework.NumberFilter(
-        field_name="population",
-        lookup_expr="lte"
-    )
-
-    minPopulation = rest_framework.NumberFilter(
-        field_name="population",
-        lookup_expr="gte"
-    )
-
     iso3 = rest_framework.CharFilter(
         field_name="iso3",
         lookup_expr="iexact"
@@ -31,7 +21,7 @@ class CountryFilters(rest_framework.FilterSet):
 
     class Meta:
         model = Country
-        fields = ["iso3", "iso2", "maxPopulation", "minPopulation", "incomeLevel"]
+        fields = ["iso3", "iso2", "incomeLevel"]
 
 
 class CountryGeographyFilters(rest_framework.FilterSet):
@@ -63,6 +53,16 @@ class CountrySocietyFilters(rest_framework.FilterSet):
         lookup_expr="iexact"
     )
 
+    maxPopulation = rest_framework.NumberFilter(
+        field_name="population",
+        lookup_expr="lte"
+    )
+
+    minPopulation = rest_framework.NumberFilter(
+        field_name="population",
+        lookup_expr="gte"
+    )
+
     class Meta:
         model = CountrySociety
-        fields = ["iso3"]
+        fields = ["iso3", "minPopulation", "maxPopulation"]

@@ -21,15 +21,17 @@ let isSubmitted = ref(false);
 let iso3Codes = [];
 
 const afterSubmit = async () => {
-    let uri = SERVER_ADDRESS+"/api/countries?";
+    let uri = SERVER_ADDRESS+"/api/countries";
 
     switch (filters.type) {
     case 'population':
-        uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
-        uri = filters.maxPopulation ? uri + `maxPopulation=${filters.maxPopulation}&` : uri;
+        let society_path = "/society?fields=iso3,population&";
+        uri = filters.minPopulation ? uri + society_path + `minPopulation=${filters.minPopulation}&` : uri;
+        uri = filters.maxPopulation ? uri + society_path + `maxPopulation=${filters.maxPopulation}&` : uri;
         break;
     case 'incomeLevel':
-        uri = filters.incomeLevel ? uri + `incomeLevel=${filters.incomeLevel}&` : uri;
+        let base_path = "?fields=iso3&";
+        uri = filters.incomeLevel ? uri + base_path + `incomeLevel=${filters.incomeLevel}&` : uri;
         break;
     default:
         console.log(`No filters applied.`);
