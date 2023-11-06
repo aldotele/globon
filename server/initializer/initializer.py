@@ -22,6 +22,7 @@ async def load_countries():
 
     async with aiohttp.ClientSession() as session:
         tasks = []
+        parsed_iso3 = []
 
         for index, row in df_codesxref.iterrows():
             # gec code is used for factbook (e.g. gm for germany)
@@ -30,7 +31,8 @@ async def load_countries():
             iso3 = row['A2']
 
             # persist country codes when relative factbook json is present
-            if len(iso3) == 3:
+            if len(iso3) == 3 and iso3 not in parsed_iso3:
+                parsed_iso3.append(iso3)
                 region_search = df_codes.loc[df_codes['Code'] == gec, 'Region']
                 if not region_search.empty:
                     # "&" and "and" will be replaced by "n" in region names
@@ -469,7 +471,7 @@ def load_country(country_json):
     )
 
     # actual database loading starts here
-    Country.objects.create(
+    country = Country.objects.create(
         iso3=iso3,
         iso2=iso2,
         gec=gec,
@@ -481,7 +483,7 @@ def load_country(country_json):
     )
 
     CountryGeography.objects.create(
-        iso3=iso3,
+        country=country,
         maps=maps,
         total_area_sq_km=total_area_sq_km,
         land_area_sq_km=land_area_sq_km,
@@ -492,7 +494,7 @@ def load_country(country_json):
     )
 
     CountrySociety.objects.create(
-        iso3=iso3,
+        country=country,
         population=population,
         population_growth_rate=population_growth_rate,
         population_0_14_percentage=population_0_14_percentage,
@@ -527,7 +529,7 @@ def load_country(country_json):
     )
 
     CountryEconomy.objects.create(
-        iso3=iso3,
+        country=country,
         gdp_agriculture=gdp_agriculture,
         gdp_industry=gdp_industry,
         gdp_services=gdp_services,

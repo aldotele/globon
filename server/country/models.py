@@ -2,11 +2,11 @@ from django.db import models
 
 
 class Country(models.Model):
+    iso3 = models.CharField(max_length=3, unique=True, primary_key=True)
+    iso2 = models.CharField(max_length=2, null=True)
+    gec = models.CharField(max_length=2, null=True)
     name = models.CharField(max_length=255)
     official_name = models.CharField(max_length=255, null=True)
-    iso2 = models.CharField(max_length=2, null=True)
-    iso3 = models.CharField(max_length=3)
-    gec = models.CharField(max_length=2, null=True)
     flag = models.URLField(max_length=200, null=True)
     capital = models.JSONField(null=True)
     translations = models.JSONField(null=True)
@@ -21,12 +21,18 @@ class Country(models.Model):
         return self.name
 
     @classmethod
-    def get_field_names(cls):
-        return [f.name for f in cls._meta.fields if f.name != "id"]
+    def get_fields(cls):
+        fields = [f.name for f in cls._meta.fields if f.name != "id"]
+        return fields
+
+    @classmethod
+    def get_referenced_fields(cls):
+        referenced_fields = [f for f in list(cls._meta.fields_map.keys())]
+        return referenced_fields
 
 
 class CountryGeography(models.Model):
-    iso3 = models.CharField(max_length=3)
+    country = models.OneToOneField(Country, to_field="iso3", related_name='geography', on_delete=models.CASCADE)
     maps = models.URLField(max_length=200, null=True)
     lat_lng = models.JSONField(null=True)
     total_area_sq_km = models.DecimalField(max_digits=10, decimal_places=2, null=True)
@@ -43,7 +49,7 @@ class CountryGeography(models.Model):
         return self.iso3
 
     @classmethod
-    def get_field_names(cls):
+    def get_fields(cls):
         return [f.name for f in cls._meta.fields if f.name != "id"]
 
 
@@ -59,12 +65,12 @@ class CountryBorder(models.Model):
         return str(self.country1) + "-" + str(self.country2)
 
     @classmethod
-    def get_field_names(cls):
+    def get_fields(cls):
         return [f.name for f in cls._meta.fields if f.name != "id"]
 
 
 class CountrySociety(models.Model):
-    iso3 = models.CharField(max_length=3)
+    country = models.OneToOneField(Country, to_field="iso3", related_name='society', on_delete=models.CASCADE)
     languages = models.JSONField(null=True)
     population = models.BigIntegerField(null=True)
     population_growth_rate = models.DecimalField(null=True, max_digits=10, decimal_places=2)
@@ -111,12 +117,12 @@ class CountrySociety(models.Model):
         return self.iso3
 
     @classmethod
-    def get_field_names(cls):
+    def get_fields(cls):
         return [f.name for f in cls._meta.fields if f.name != "id"]
 
 
 class CountryEconomy(models.Model):
-    iso3 = models.CharField(max_length=3)
+    country = models.OneToOneField(Country, to_field="iso3", related_name='economy', on_delete=models.CASCADE)
     gdp_real = models.BigIntegerField(null=True, help_text="purchasing power parity in billion dollars")
     gdp_gross = models.BigIntegerField(null=True, help_text="in billion dollars")
     gdp_agriculture = models.DecimalField(null=True, max_digits=10, decimal_places=2, help_text="percentage of total GDP")
@@ -145,6 +151,6 @@ class CountryEconomy(models.Model):
         return self.iso3
 
     @classmethod
-    def get_field_names(cls):
+    def get_fields(cls):
         return [f.name for f in cls._meta.fields if f.name != "id"]
 
