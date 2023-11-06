@@ -22,14 +22,17 @@ let iso3Codes = [];
 
 const afterSubmit = async () => {
     let uri = SERVER_ADDRESS+"/api/countries";
+    let country_id_key;
 
     switch (filters.type) {
     case 'population':
-        let society_path = "/society?fields=iso3,population&";
+        country_id_key = "country_id"
+        let society_path = "/society?fields=country_id,population&";
         uri = filters.minPopulation ? uri + society_path + `minPopulation=${filters.minPopulation}&` : uri;
         uri = filters.maxPopulation ? uri + society_path + `maxPopulation=${filters.maxPopulation}&` : uri;
         break;
     case 'incomeLevel':
+        country_id_key = "iso3"
         let base_path = "?fields=iso3&";
         uri = filters.incomeLevel ? uri + base_path + `incomeLevel=${filters.incomeLevel}&` : uri;
         break;
@@ -39,17 +42,17 @@ const afterSubmit = async () => {
 
     const response = await fetch(uri, {method: 'GET', redirect: 'follow'});
     const data = await response.json();
-    iso3Codes = await extractCountryCodes(data);
+    iso3Codes = await extractCountryCodes(data, country_id_key);
 
     isSubmitted.value = true;
     //console.log("submitted !")
     searchCount.value++;
 }
 
-async function extractCountryCodes(data) {
+async function extractCountryCodes(data, country_id_key) {
     let codes = []
     data.forEach((country) => {
-        codes.push(country.iso3);
+        codes.push(country[country_id_key]);
     })
     return codes;
 }
