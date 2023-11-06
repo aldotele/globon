@@ -98,7 +98,7 @@ async function applyBorders() {
 
 async function showCountryDetails(e) {
   let isoCode = e.layer.feature.properties.ISO_A3;
-  const response = await fetch(import.meta.env.VITE_SERVER_ADDRESS + "/api/countries?iso3=" + isoCode);
+  const response = await fetch(import.meta.env.VITE_SERVER_ADDRESS + "/api/countries?fields=name,capital,society&iso3=" + isoCode);
   const countriesByIsoCode = await response.json();
   if (countriesByIsoCode.length > 0) {
     triggerCountryAlert(countriesByIsoCode[0]);
@@ -110,7 +110,7 @@ async function triggerCountryAlert(data) {
   Swal.fire({
     title: data.name,
     html: "<h3 style='font-weight:500'>" 
-    //+ "<b>population</b>: " + data.population.toLocaleString() + "<br><br>" 
+    + "<b>population</b>: " + data.society.population.toLocaleString() + "<br><br>" 
     + "<b>capital city</b>: " + data.capital.join(", ") + "<br><br>"
     //+ "<b>currencies</b>: " + data.currencies.join(", ") + "<br><br>"
     //+ "<b>spoken languages</b>: " + data.languages.join(", ")
