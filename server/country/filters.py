@@ -27,7 +27,7 @@ class CountryFilters(rest_framework.FilterSet):
 class CountryGeographyFilters(rest_framework.FilterSet):
 
     iso3 = rest_framework.CharFilter(
-        field_name="iso3",
+        field_name="country__iso3",
         lookup_expr="iexact"
     )
 
@@ -38,7 +38,7 @@ class CountryGeographyFilters(rest_framework.FilterSet):
 
 class CountryEconomyFilters(rest_framework.FilterSet):
     iso3 = rest_framework.CharFilter(
-        field_name="iso3",
+        field_name="country__iso3",
         lookup_expr="iexact"
     )
 
@@ -49,7 +49,7 @@ class CountryEconomyFilters(rest_framework.FilterSet):
 
 class CountrySocietyFilters(rest_framework.FilterSet):
     iso3 = rest_framework.CharFilter(
-        field_name="iso3",
+        field_name="country__iso3",
         lookup_expr="iexact"
     )
 

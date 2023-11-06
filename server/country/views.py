@@ -16,17 +16,17 @@ from .serializers import CountrySerializer, CountryGeographySerializer, CountryE
                            OpenApiParameter(name="iso2", type=str,
                                             description="unique identifier (IT for Italy, DE for Germany, ...)"),
                            OpenApiParameter(name="fields", type=str,
-                                            description='specify the fields you want to include as "field1,field2, ..."')])
+                                            description='specify the fields to retrieve as "field1,field2, ..."')])
 class CountryList(APIView):
     filter_backends = (rest_framework.DjangoFilterBackend,)
     filterset_class = CountryFilters
 
     def get(self, request):
         query = self.filter_queryset(Country.objects.all())
-        serializer = CountrySerializer(
-            query, many=True, fields=[field.lower().strip() for field in request.query_params.get('fields').split(",")]) \
+        fields = [field.strip() for field in request.query_params.get("fields").lower().split(",")] \
             if "fields" in request.query_params \
-            else CountrySerializer(query, many=True)
+            else Country.get_fields()
+        serializer = CountrySerializer(query, many=True, fields=fields)
 
         return Response(serializer.data)
 
@@ -43,14 +43,14 @@ class CountryList(APIView):
                parameters=[OpenApiParameter(name="iso3", type=str,
                                             description="unique identifier (ITA for Italy, DEU for Germany, ...)"),
                            OpenApiParameter(name="fields", type=str,
-                                            description='specify the fields you want to include as "field1,field2, ..."')])
+                                            description='specify the fields to retrieve as "field1,field2, ..."')])
 class CountryGeographyList(APIView):
     filter_backends = (rest_framework.DjangoFilterBackend,)
     filterset_class = CountryGeographyFilters
 
     def get(self, request):
         query = self.filter_queryset(CountryGeography.objects.all())
-        serializer = CountryGeographySerializer(
+        serializer= CountryGeographySerializer(
             query, many=True, fields=[field.lower().strip() for field in request.query_params.get('fields').split(",")]) \
             if "fields" in request.query_params \
             else CountryGeographySerializer(query, many=True)
@@ -70,7 +70,7 @@ class CountryGeographyList(APIView):
                parameters=[OpenApiParameter(name="iso3", type=str,
                                             description="unique identifier (ITA for Italy, DEU for Germany, ...)"),
                            OpenApiParameter(name="fields", type=str,
-                                            description='specify the fields you want to include as "field1,field2, ..."')])
+                                            description='specify the fields to retrieve as "field1,field2, ..."')])
 class CountryEconomyList(APIView):
     filter_backends = (rest_framework.DjangoFilterBackend,)
     filterset_class = CountryEconomyFilters
@@ -101,7 +101,7 @@ class CountryEconomyList(APIView):
                            OpenApiParameter(name="maxPopulation", type=int,
                                             description="the maximum population"),
                            OpenApiParameter(name="fields", type=str,
-                                            description='specify the fields you want to include as "field1,field2, ..."')])
+                                            description='specify the fields to retrieve as "field1,field2, ..."')])
 class CountrySocietyList(APIView):
     filter_backends = (rest_framework.DjangoFilterBackend,)
     filterset_class = CountrySocietyFilters
@@ -126,19 +126,19 @@ class CountrySocietyList(APIView):
 
 class CountryFieldList(APIView):
     def get(self, request):
-        return Response(Country.get_field_names())
+        return Response(Country.get_fields() + Country.get_referenced_fields())
 
 
 class CountryGeographyFieldList(APIView):
     def get(self, request):
-        return Response(CountryGeography.get_field_names())
+        return Response(CountryGeography.get_fields())
 
 
 class CountryEconomyFieldList(APIView):
     def get(self, request):
-        return Response(CountryEconomy.get_field_names())
+        return Response(CountryEconomy.get_fields())
 
 
 class CountrySocietyFieldList(APIView):
     def get(self, request):
-        return Response(CountrySociety.get_field_names())
+        return Response(CountrySociety.get_fields())

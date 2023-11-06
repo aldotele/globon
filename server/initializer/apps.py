@@ -4,7 +4,7 @@ import os
 
 from django.apps import AppConfig
 
-from .initializer import load_countries
+from initializer.initializer import load_countries
 
 
 class InitializerConfig(AppConfig):
