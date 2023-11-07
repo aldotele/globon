@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     # added
     'corsheaders',
     'rest_framework',
+    'graphene_django',
     'drf_spectacular',
     'django_filters',
     'world_proxy.apps.WorldProxyConfig',
@@ -58,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
