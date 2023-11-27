@@ -20,7 +20,12 @@ let isSubmitted = ref(false);
 // will hold the country codes of filtered countries
 let iso3Codes = [];
 
+
 const afterSubmit = async () => {
+    let compositeFilter = ""
+
+    // REST
+    /*
     let uri = SERVER_ADDRESS+"/api/countries";
     let country_id_key;
 
@@ -45,8 +50,62 @@ const afterSubmit = async () => {
     iso3Codes = await extractCountryCodes(data, country_id_key);
 
     isSubmitted.value = true;
-    //console.log("submitted !")
+    console.log("submitted !")
     searchCount.value++;
+    */
+
+
+    // GRAPHQL
+
+    switch (filters.type) {
+    case 'population':
+        if (filters.minPopulation && filters.maxPopulation) {
+            compositeFilter = "(search: \"" + "society__population > " + filters.minPopulation + " & society__population < " + filters.maxPopulation + "\")";
+        } else if (filters.minPopulation) {
+            compositeFilter = "(search: \"" + "society__population > " + filters.minPopulation + "\")";
+        } else if (filters.maxPopulation) {
+            compositeFilter = "(search: \"" + "society__population < " + filters.maxPopulation + "\")";
+        } else {
+            // compositeFilter remains as is, empty
+        }
+        break;
+    case 'incomeLevel':
+        if (filters.incomeLevel) {
+            compositeFilter = "(search: \"" + "income_level = " + filters.incomeLevel + "\")";
+        }
+        break;
+    default:
+        console.log(`No filters applied.`);
+    }
+
+    let query = `{
+        countries${compositeFilter} {
+            iso3,
+            society {
+                population
+            }
+        }
+    }`;
+    
+    try {
+        let res = await fetch(SERVER_ADDRESS+'/graphql', {
+            method: 'POST',
+            headers: {
+            'content-type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+        });
+        res = await res.json();
+        iso3Codes = res.data.countries.map(element => element.iso3);
+        isSubmitted.value = true;
+        searchCount.value++;
+
+        console.log(res.data)
+
+    } catch (error) {
+        console.log(error);
+    }
+
 }
 
 async function extractCountryCodes(data, country_id_key) {

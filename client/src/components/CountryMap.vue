@@ -98,12 +98,35 @@ async function applyBorders() {
 
 async function showCountryDetails(e) {
   let isoCode = e.layer.feature.properties.ISO_A3;
-  const response = await fetch(import.meta.env.VITE_SERVER_ADDRESS + "/api/countries?fields=name,capital,society&iso3=" + isoCode);
-  const countriesByIsoCode = await response.json();
-  if (countriesByIsoCode.length > 0) {
-    triggerCountryAlert(countriesByIsoCode[0]);
+  let isoFilter = "(search: \"iso3 = " + isoCode + "\")";
+  let query = `{
+    countries${isoFilter} {
+        iso3,
+        name,
+        capital,
+        society {
+            population
+        }
+    }
+  }`;
+
+  try {
+    let res = await fetch(import.meta.env.VITE_SERVER_ADDRESS+'/graphql', {
+      method: 'POST',
+      headers: {
+      'content-type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    });
+    res = await res.json();
+    if (res.data.countries.length > 0) {
+      triggerCountryAlert(res.data.countries[0])
+    }
+  } catch (error) {
+      console.log(error);
   }
 }
+
 
 async function triggerCountryAlert(data) {
   // triggering alert with country info
@@ -111,7 +134,7 @@ async function triggerCountryAlert(data) {
     title: data.name,
     html: "<h3 style='font-weight:500'>" 
     + "<b>population</b>: " + data.society.population.toLocaleString() + "<br><br>" 
-    + "<b>capital city</b>: " + data.capital.join(", ") + "<br><br>"
+    + "<b>capital city</b>: " + data.capital.replace("[", "").replace("]", "") + "<br><br>"
     //+ "<b>currencies</b>: " + data.currencies.join(", ") + "<br><br>"
     //+ "<b>spoken languages</b>: " + data.languages.join(", ")
     + "</h3>",
