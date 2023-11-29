@@ -3,6 +3,7 @@ import HomeView  from '../views/HomeView.vue'
 import CountriesView from '../views/CountriesView.vue'
 import CitiesView from '../views/CitiesView.vue'
 import DiscoverView from '../views/DiscoverView.vue'
+import CountriesThematicView from '../views/CountriesThematicView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
       path: '/cities',
       name: 'cities',
       component: CitiesView
+    },
+    {
+      path: '/thematic',
+      name: 'thematic',
+      component: CountriesThematicView
     },
   ]
 })

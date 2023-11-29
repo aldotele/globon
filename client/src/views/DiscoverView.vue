@@ -9,6 +9,10 @@ const discoverCities = () => {
     router.push("/cities");
 }
 
+const discoverThematic = () => {
+    router.push("/thematic");
+}
+
 </script>
 
 <template>
@@ -17,6 +21,7 @@ const discoverCities = () => {
         <div class="discover-wrapper">
             <button class="discover-button" @click="discoverCountries()">COUNTRIES</button>
             <button class="discover-button" @click="discoverCities()">CITIES</button>
+            <button class="discover-button" @click="discoverThematic()">THEMATIC</button>
         </div>
   </main>
 </template>
