@@ -1,9 +1,10 @@
 import graphene
 
 import country.schema
+import city.schema
 
 
-class Query(country.schema.Query, graphene.ObjectType):
+class Query(country.schema.Query, city.schema.Query, graphene.ObjectType):
     pass
 
 

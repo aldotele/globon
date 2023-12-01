@@ -37,33 +37,63 @@ onMounted(async () => {
 });
 
 const afterSubmit = async () => {
-    let uri = SERVER_ADDRESS+"/api/cities?";
-    uri = filters.iso3 ? uri + `iso3=${filters.iso3}&` : uri;
-    uri = filters.minPopulation ? uri + `minPopulation=${filters.minPopulation}&` : uri;
-    uri = filters.maxPopulation ? uri + `maxPopulation=${filters.maxPopulation}&` : uri;
-    uri = filters.capital ? uri + `capital=${filters.capital}&` : uri;
+    // building the composite filter
+    // example: (search: "iso3=ITA&capital=primary")
+    let compositeFilter = ""
 
-    const response = await fetch(uri, {method: 'GET', redirect: 'follow'});
-    const data = await response.json();
+    if (filters.iso3) {
+        compositeFilter += "iso3=" + filters.iso3 + "&";
+    }
+    if (filters.minPopulation) {
+        compositeFilter += "population>" + filters.minPopulation + "&";
+    }
+    if (filters.maxPopulation) {
+        compositeFilter += "population<" + filters.maxPopulation + "&";
+    }
+    if (filters.capital) {
+        compositeFilter += "capital=primary";
+    }
 
-    if (response.status == 403) {
-        isSubmitted.value = false;
-        manyItemsMsg.value = true;
-    } 
+    // GRAPHQL query for countries
+    let query = `{
+        cities(search: "${compositeFilter}") {
+            iso3,
+            city,
+            lat,
+            lng,
+            smId
+        }
+    }`;
 
-    if (response.status == 200) {
-        manyItemsMsg.value = false;
-        citiesIdToCoords = await extractCitiesIdToCoords(data);
-        isSubmitted.value = true;
-        //console.log("submitted !")
-        searchCount.value++;
+    try {
+        let res = await fetch(SERVER_ADDRESS+'/graphql', {
+            method: 'POST',
+            headers: {
+            'content-type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+        });
+        res = await res.json();
+
+        if ("errors" in res) {
+            isSubmitted.value = false;
+            manyItemsMsg.value = true;
+        } else {
+            manyItemsMsg.value = false;
+            citiesIdToCoords = await extractCitiesIdToCoords(res.data.cities);
+            isSubmitted.value = true;
+            //console.log("submitted !")
+            searchCount.value++;
+        }
+    } catch (error) {
+        console.log(error);
     }
 }
 
 async function extractCitiesIdToCoords(data) {
     let res = []
     data.forEach((city) => {
-        let city_id = city.sm_id;
+        let city_id = city.smId;
         let city_coords = [city.lat, city.lng];
         let cityIdToCoords = {};
         cityIdToCoords[city_id] = city_coords
