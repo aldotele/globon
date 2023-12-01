@@ -1,12 +1,8 @@
 <script setup>
 import router from "@/router";
 
-const discoverCountries = () => {
-    router.push("/countries");
-}
-
-const discoverCities = () => {
-    router.push("/cities");
+const discover = (value) => {
+  router.push("/" + value);
 }
 
 </script>
@@ -15,8 +11,8 @@ const discoverCities = () => {
   <main>
     <h1>Discover&nbsp:</h1>
         <div class="discover-wrapper">
-            <button class="discover-button" @click="discoverCountries()">COUNTRIES</button>
-            <button class="discover-button" @click="discoverCities()">CITIES</button>
+            <button class="discover-button" @click="discover('countries')">COUNTRIES</button>
+            <button class="discover-button" @click="discover('cities')">CITIES</button>
         </div>
   </main>
 </template>

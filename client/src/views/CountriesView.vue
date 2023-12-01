@@ -6,7 +6,6 @@ import CountryMap from '../components/CountryMap.vue';
 const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
 
 let filters = reactive({
-    type: null,
     minPopulation: null,
     maxPopulation: null,
     incomeLevel: null,
@@ -22,64 +21,23 @@ let iso3Codes = [];
 
 
 const afterSubmit = async () => {
+    // building the composite filter
+    // example: (search: "society.population>1000&income_level=UMC")
     let compositeFilter = ""
 
-    // REST
-    /*
-    let uri = SERVER_ADDRESS+"/api/countries";
-    let country_id_key;
-
-    switch (filters.type) {
-    case 'population':
-        country_id_key = "country_id"
-        let society_path = "/society?fields=country_id,population&";
-        uri = filters.minPopulation ? uri + society_path + `minPopulation=${filters.minPopulation}&` : uri;
-        uri = filters.maxPopulation ? uri + society_path + `maxPopulation=${filters.maxPopulation}&` : uri;
-        break;
-    case 'incomeLevel':
-        country_id_key = "iso3"
-        let base_path = "?fields=iso3&";
-        uri = filters.incomeLevel ? uri + base_path + `incomeLevel=${filters.incomeLevel}&` : uri;
-        break;
-    default:
-        console.log(`No filters applied.`);
+    if (filters.minPopulation) {
+        compositeFilter += "society.population>" + filters.minPopulation + "&";
+    }
+    if (filters.maxPopulation) {
+        compositeFilter += "society.population<" + filters.maxPopulation + "&";
+    }
+    if (filters.incomeLevel) {
+        compositeFilter += "income_level=" + filters.incomeLevel;
     }
 
-    const response = await fetch(uri, {method: 'GET', redirect: 'follow'});
-    const data = await response.json();
-    iso3Codes = await extractCountryCodes(data, country_id_key);
-
-    isSubmitted.value = true;
-    console.log("submitted !")
-    searchCount.value++;
-    */
-
-
-    // GRAPHQL
-
-    switch (filters.type) {
-    case 'population':
-        if (filters.minPopulation && filters.maxPopulation) {
-            compositeFilter = "(search: \"" + "society__population > " + filters.minPopulation + " & society__population < " + filters.maxPopulation + "\")";
-        } else if (filters.minPopulation) {
-            compositeFilter = "(search: \"" + "society__population > " + filters.minPopulation + "\")";
-        } else if (filters.maxPopulation) {
-            compositeFilter = "(search: \"" + "society__population < " + filters.maxPopulation + "\")";
-        } else {
-            // compositeFilter remains as is, empty
-        }
-        break;
-    case 'incomeLevel':
-        if (filters.incomeLevel) {
-            compositeFilter = "(search: \"" + "income_level = " + filters.incomeLevel + "\")";
-        }
-        break;
-    default:
-        console.log(`No filters applied.`);
-    }
-
+    // GRAPHQL query for countries
     let query = `{
-        countries${compositeFilter} {
+        countries(search: "${compositeFilter}") {
             iso3,
             society {
                 population
@@ -100,76 +58,58 @@ const afterSubmit = async () => {
         isSubmitted.value = true;
         searchCount.value++;
 
-        console.log(res.data)
-
     } catch (error) {
         console.log(error);
     }
 
 }
 
-async function extractCountryCodes(data, country_id_key) {
-    let codes = []
-    data.forEach((country) => {
-        codes.push(country[country_id_key]);
-    })
-    return codes;
-}
-
-
 </script>
+
 
 <template>
     <div class="input-wrapper">
-        <div id=search-by>
 
-            <!-- search by -->
-            <label style="font-size: 25px" for="search">Search countries by:<br> &nbsp;&nbsp; </label>
+        <form @submit.prevent="onSubmit">
 
-            <select name="search" id="search" v-model="filters.type">
-                <option value="">- - - select - - -</option>
-                <option value="population">Population</option>
-                <option value="incomeLevel">Income Level</option>
-            </select>
-        </div>
-
-        <!-- POPULATION form -->
-        <form v-if="filters.type=='population'" @submit.prevent="onSubmit">
+            <div id="form-input-div">
         
-            <p>
-            <label for="minPopulation">Min Population: &nbsp;&nbsp; </label>
-            <input type="text" id="minPopulation" name="minPopulation" v-model="filters.minPopulation">
-            </p>
-        
-            <p>
-            <label for="maxPopulation">Max Population: &nbsp;&nbsp; </label>
-            <input type="text" id="maxPopulation" name="maxPopulation" v-model="filters.maxPopulation">
-            </p>
+                <!-- MIN POPULATION -->
+                <div class="filter-input-div">
+                    <label for="minPopulation">Min Population &nbsp;&nbsp; </label>
+                    <input type="text" id="minPopulation" name="minPopulation" v-model="filters.minPopulation">
+                </div>
 
-            <div class="button-block">
-                <button @click="afterSubmit" class="submit-button" type="submit">Submit</button>
+                <!-- MAX POPULATION -->
+                <div class="filter-input-div">
+                    <label for="maxPopulation">Max Population &nbsp;&nbsp; </label>
+                    <input type="text" id="maxPopulation" name="maxPopulation" v-model="filters.maxPopulation">
+                </div>
+
+                <!-- INCOME -->
+                <div class="filter-input-div">
+                    <label for="incomeLevel">Income Level&nbsp;&nbsp;</label>
+                    <select id="incomeLevel" name="incomeLevel" v-model="filters.incomeLevel">
+                        <option value="">- - - select - - -</option>
+                        <option value="HIC">HIGH</option>
+                        <option value="UMC">UPPER MIDDLE</option>
+                        <option value="LMC">LOWER MIDDLE</option>
+                        <option value="LIC">LOW</option>
+                    </select>
+                </div>
+
             </div>
 
-        </form>
-
-        <!-- INCOME form -->
-        <form v-if="filters.type=='incomeLevel'" @submit.prevent="onSubmit">
-            <label for="incomeLevel">Income Level&nbsp;&nbsp;</label>
-            <select id="incomeLevel" name="incomeLevel" v-model="filters.incomeLevel">
-                <option value="">- - - select - - -</option>
-                <option value="HIC">HIGH</option>
-                <option value="UMC">UPPER MIDDLE</option>
-                <option value="LMC">LOWER MIDDLE</option>
-                <option value="LIC">LOW</option>
-            </select>
-            
             <div class="button-block">
-                <button @click="afterSubmit" class="submit-button" type="submit">Submit</button>
+                <button @click="afterSubmit" class="submit-button" type="submit">Find Countries</button>
             </div>
+
         </form>
     </div>
+
     <CountryMap v-if="isSubmitted" :iso3Codes="iso3Codes" :searchCount="searchCount" />
 </template>
+
 
 <style lang="scss" scoped>
 
@@ -178,22 +118,36 @@ font-family: 'Open Sans', sans-serif;
 }
 .input-wrapper {
     display: flex;
+    justify-content: center;
+    padding-top: 30px;
+}
+
+form {
+    text-align: center;
+    margin-top: 10px;
+}
+
+#form-input-div {
+    width: 500px;
+    display: flex;
     justify-content: space-evenly;
     align-items: center;
 }
 
-#search {
-    width: 180px;
+.filter-input-div {
+    margin: 5px 5px;
 }
 
-#search-by {
+#incomeLevel {
+    width: 150px;
+    font-size: medium;
+}
+
+.button-block {
+    text-align: center;
     margin-top: 30px;
-}
 
-form {
-    margin-top: 30px;
 }
-
 
 .submit-button {
   cursor: pointer;
@@ -205,7 +159,6 @@ form {
   text-decoration: none;
   display: inline-block;
   font-size: 14px;
-  margin-top: 20px;
 }
 
 .submit-button:hover {
@@ -216,6 +169,13 @@ form {
 @media screen and (max-width: 600px) {
     .input-wrapper {
         flex-direction: column;
+    }
+
+    #form-input-div {
+        width: 100%;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
     }
 
     .button-block {

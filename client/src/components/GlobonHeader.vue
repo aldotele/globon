@@ -7,7 +7,7 @@ import { RouterLink } from 'vue-router';
 <template>
     <header>
         <nav class="container">
-            <div class="branding">
+            <div onclick="location.href='/'" class="branding">
                 <img src="../assets/globon-icon.png" alt="">
                 <h1>Globon</h1>
             </div>
@@ -40,6 +40,10 @@ header {
       h1 {
         font-size: 24px;
       }
+    }
+
+    .branding:hover {
+      cursor: pointer;
     }
 
     .nav-routes {

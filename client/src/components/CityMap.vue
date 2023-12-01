@@ -88,19 +88,38 @@ async function applyMarkers() {
 }
 
 async function showCityDetails(city_id) {
-  const response = await fetch(import.meta.env.VITE_SERVER_ADDRESS + "/api/cities?smId=" + city_id);
-  const body = await response.json();
-  if (body.length > 0) {
-    let city = body[0];
-    // center the map on the city
-    let newZoomLevel = state.mapInstance.getZoom() > 6 ? state.mapInstance.getZoom() : 6;
-    state.mapInstance.setView(new L.LatLng(city.lat, city.lng), newZoomLevel);
+  let query = `{
+    cities(search: "sm_id=${city_id}") {
+        iso3,
+        city,
+        capital,
+        country,
+        adminName,
+        population,
+        lat,
+        lng,
+        smId
+    }
+  }`;
 
-    triggerCountryAlert(city);
+  try {
+    let res = await fetch(import.meta.env.VITE_SERVER_ADDRESS+'/graphql', {
+      method: 'POST',
+      headers: {
+      'content-type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    });
+    res = await res.json();
+    if (res.data.cities.length > 0) {
+      triggerCityAlert(res.data.cities[0])
+    }
+  } catch (error) {
+      console.log(error);
   }
 }
 
-async function triggerCountryAlert(data) {
+async function triggerCityAlert(data) {
   // notes will be added if city is either a country/region/county capital
   let notes = data.capital == "primary" ? "capital city" : 
   data.capital == "admin" ? "region capital" 
@@ -111,7 +130,7 @@ async function triggerCountryAlert(data) {
     <h3 style='font-weight:500'>
     <b>population</b>: ${data.population ? data.population.toLocaleString() : "n/a"}<br><br>
     <b>country</b>: ${data.country}<br><br>
-    <b>region</b>: ${data.admin_name}<br><br>
+    <b>region</b>: ${data.adminName}<br><br>
   `;
   
   if (notes) {
