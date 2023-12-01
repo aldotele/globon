@@ -101,7 +101,7 @@ const afterSubmit = async () => {
             </div>
 
             <div class="button-block">
-                <button @click="afterSubmit" class="submit-button" type="submit">Find countries</button>
+                <button @click="afterSubmit" class="submit-button" type="submit">Find Countries</button>
             </div>
 
         </form>
@@ -136,6 +136,11 @@ form {
 
 .filter-input-div {
     margin: 5px 5px;
+}
+
+#incomeLevel {
+    width: 150px;
+    font-size: medium;
 }
 
 .button-block {

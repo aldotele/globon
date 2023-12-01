@@ -76,37 +76,44 @@ async function extractCitiesIdToCoords(data) {
 
 <template>
     <div class="input-wrapper">
-        <!-- COUNTRY form -->
-        <form>
-            <label for="country">Country: &nbsp;&nbsp;</label>
-            <select id="country" name="country" v-model="filters.iso3">
-                <option value="">- - - select - - -</option>
-                <option :key="countryNameToIso[countryName]" :value="countryNameToIso[countryName]" v-for="countryName in Object.keys(countryNameToIso).sort()">{{ countryName }}</option>
-            </select>
+        <form @submit.prevent="onSubmit">
+            <div id="form-input-div">
+
+                <!-- COUNTRY -->
+                <div class="filter-input-div">
+                    <label for="country">Country &nbsp;&nbsp;</label>
+                    <select id="country" name="country" v-model="filters.iso3">
+                        <option value="">- - - select - - -</option>
+                        <option :key="countryNameToIso[countryName]" :value="countryNameToIso[countryName]" v-for="countryName in Object.keys(countryNameToIso).sort()">{{ countryName }}</option>
+                    </select>
+                </div>
+
+                <!-- MIN POPULATION -->
+                <div class="filter-input-div">
+                    <label for="minPopulation">Min Population &nbsp;&nbsp; </label>
+                    <input type="text" id="minPopulation" name="minPopulation" v-model="filters.minPopulation">
+                </div>
+
+                <!-- MAX POPULATION -->
+                <div class="filter-input-div">
+                    <label for="maxPopulation">Max Population &nbsp;&nbsp; </label>
+                    <input type="text" id="maxPopulation" name="maxPopulation" v-model="filters.maxPopulation">
+                </div>
+
+                <!-- CAPITAL -->
+                <div class="filter-input-div">
+                    <label for="capital"> only capitals</label><br>
+                    <input type="checkbox" id="capital-flag" name="capital" value="capital" v-model="filters.capital">
+                </div>
+
+            </div>
+
+            <div id="submit-section" class="button-block">
+                <button @click="afterSubmit" class="submit-button" type="submit">Find Cities</button>
+            </div>
+
         </form>
 
-        <!-- POPULATION form -->
-        <form id="population-form">
-            <p>
-            <label for="minPopulation">Min Population: &nbsp;&nbsp; </label>
-            <input type="text" id="minPopulation" name="minPopulation" v-model="filters.minPopulation">
-            </p>
-        
-            <p>
-            <label for="maxPopulation">Max Population: &nbsp;&nbsp; </label>
-            <input type="text" id="maxPopulation" name="maxPopulation" v-model="filters.maxPopulation">
-            </p>
-        </form>
-
-        <!-- CAPITAL form -->
-        <form>
-            <input type="checkbox" id="capital" name="capital" value="capital" v-model="filters.capital">
-            <label for="capital"> only capitals</label><br>
-        </form>
-
-        <div id="submit-section" class="button-block">
-            <button @click="afterSubmit" class="submit-button" type="submit">Search Cities</button>
-        </div>
     </div>
 
     <p id="many-msg" v-if="manyItemsMsg">Too many cities to display on map. Please narrow down your search.</p>
@@ -121,20 +128,40 @@ font-family: 'Open Sans', sans-serif;
 }
 .input-wrapper {
     display: flex;
-    justify-content: space-evenly;
-    margin: 0 auto;
-    width: 80%;
-    align-items: center;   
+    justify-content: center;
+    padding-top: 30px;
 }
 
 #country {
+    width: 150px;
+    font-size: medium;
+}
+
+#capital-flag {
     width: 100px;
+    height: 15px;
 }
 
 form {
-    margin-top: 30px;
     text-align: center;
-    padding: 20px ;
+    margin-top: 10px;
+}
+
+#form-input-div {
+    width: 700px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.filter-input-div {
+    margin: 10px 5px;
+}
+
+.button-block {
+    text-align: center;
+    margin-top: 30px;
+
 }
 
 .submit-button {
@@ -147,7 +174,6 @@ form {
   text-decoration: none;
   display: inline-block;
   font-size: 14px;
-  margin-top: 20px;
 }
 
 .submit-button:hover {
@@ -165,15 +191,18 @@ form {
         flex-direction: column;
     }
 
-    .button-block {
-        text-align: center;
-        margin-top: 15px;
+    #form-input-div {
+        width: 100%;
+        flex-direction: column;
+        justify-content: space-evenly;
+        align-items: center;
     }
 
-    form {
-        margin-top: 15px;
-        padding: 5px;
+    .button-block {
+        text-align: center;
+        margin-top: 20px;
     }
+
 }
 
 </style>
