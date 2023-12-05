@@ -35,6 +35,11 @@ const afterSubmit = async () => {
         compositeFilter += "income_level=" + filters.incomeLevel;
     }
 
+    // remove any not needed &
+    if (compositeFilter.slice(-1) == "&") {
+        compositeFilter = compositeFilter.substring(0, compositeFilter.length - 1);
+    }
+
     // GRAPHQL query for countries
     let query = `{
         countries(search: "${compositeFilter}") {
