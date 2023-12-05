@@ -54,6 +54,11 @@ const afterSubmit = async () => {
         compositeFilter += "capital=primary";
     }
 
+    // remove any not needed &
+    if (compositeFilter.slice(-1) == "&") {
+        compositeFilter = compositeFilter.substring(0, compositeFilter.length - 1);
+    }
+
     // GRAPHQL query for countries
     let query = `{
         cities(search: "${compositeFilter}") {
