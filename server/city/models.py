@@ -20,3 +20,8 @@ class City(models.Model):
 
     def __str__(self):
         return self.city
+
+    @classmethod
+    def get_fields(cls):
+        fields = [f.name for f in cls._meta.fields if f.name != "id"]
+        return fields
