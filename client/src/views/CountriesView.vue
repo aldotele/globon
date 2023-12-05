@@ -23,22 +23,19 @@ let iso3Codes = [];
 const afterSubmit = async () => {
     // building the composite filter
     // example: (search: "society.population>1000&income_level=UMC")
-    let compositeFilter = ""
+    let compositeFilterList = []
 
     if (filters.minPopulation) {
-        compositeFilter += "society.population>" + filters.minPopulation + "&";
+        compositeFilterList.push("society.population>" + filters.minPopulation);
     }
     if (filters.maxPopulation) {
-        compositeFilter += "society.population<" + filters.maxPopulation + "&";
+        compositeFilterList.push("society.population<" + filters.maxPopulation);
     }
     if (filters.incomeLevel) {
-        compositeFilter += "income_level=" + filters.incomeLevel;
+        compositeFilterList.push("income_level=" + filters.incomeLevel);
     }
 
-    // remove any not needed &
-    if (compositeFilter.slice(-1) == "&") {
-        compositeFilter = compositeFilter.substring(0, compositeFilter.length - 1);
-    }
+    const compositeFilter = compositeFilterList.join("&");
 
     // GRAPHQL query for countries
     let query = `{
