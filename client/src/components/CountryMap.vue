@@ -183,16 +183,8 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @import 'leaflet/dist/leaflet.css';
-html, body {
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  padding: 0;    
-}
-  
+
 main {
-  height: 60vh;
-  width: 95vw;
   margin: 100px auto 30px auto;
 }
 
@@ -203,7 +195,7 @@ p {
 
 #leaflet-map {
   height: 98vh;
-  width: 90%;
+  width: 95%;
   overflow: hidden;
   margin: 0 auto;
   border-style: double;
