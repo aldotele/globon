@@ -16,7 +16,6 @@ class InitializerConfig(AppConfig):
             logging.info("ONE TIME EXECUTION: populating db ...")
             # import model
             from country.models import Country
-
             # check if countries are already on db or not
             if not Country.objects.all():
                 asyncio.run(load_countries())

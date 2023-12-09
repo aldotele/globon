@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'world_proxy.apps.WorldProxyConfig',
     'country.apps.CountryConfig',
     'city.apps.CityConfig',
+    'region.apps.RegionConfig',
     'initializer.apps.InitializerConfig',
 ]
 

@@ -39,25 +39,22 @@ onMounted(async () => {
 const afterSubmit = async () => {
     // building the composite filter
     // example: (search: "iso3=ITA&capital=primary")
-    let compositeFilter = ""
+    let compositeFilterList = []
 
     if (filters.iso3) {
-        compositeFilter += "iso3=" + filters.iso3 + "&";
+        compositeFilterList.push("iso3=" + filters.iso3);
     }
     if (filters.minPopulation) {
-        compositeFilter += "population>" + filters.minPopulation + "&";
+        compositeFilterList.push("population>" + filters.minPopulation);
     }
     if (filters.maxPopulation) {
-        compositeFilter += "population<" + filters.maxPopulation + "&";
+        compositeFilterList.push("population<" + filters.maxPopulation);
     }
     if (filters.capital) {
-        compositeFilter += "capital=primary";
+        compositeFilterList.push("capital=primary");
     }
 
-    // remove any not needed &
-    if (compositeFilter.slice(-1) == "&") {
-        compositeFilter = compositeFilter.substring(0, compositeFilter.length - 1);
-    }
+    const compositeFilter = compositeFilterList.join("&");
 
     // GRAPHQL query for countries
     let query = `{
