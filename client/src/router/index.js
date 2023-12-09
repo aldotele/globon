@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomeView  from '../views/HomeView.vue'
 import CountriesView from '../views/CountriesView.vue'
 import CitiesView from '../views/CitiesView.vue'
+import RegionsView from '../views/RegionsView.vue'
 import DiscoverView from '../views/DiscoverView.vue'
 
 const router = createRouter({
@@ -34,6 +35,11 @@ const router = createRouter({
       path: '/cities',
       name: 'cities',
       component: CitiesView
+    },
+    {
+      path: '/regions',
+      name: 'regions',
+      component: RegionsView
     },
   ]
 })

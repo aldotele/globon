@@ -29,6 +29,7 @@ async def load_countries():
             gec = row['GEC'].lower()
             # iso3 code is used for restcountries and worldbank
             iso3 = row['A2']
+            iso2 = row['A3']
 
             # persist country codes when relative factbook json is present
             if len(iso3) == 3 and iso3 not in parsed_iso3:
@@ -39,7 +40,9 @@ async def load_countries():
                     region = region_search.values[0].lower()\
                         .replace(" ", "-").replace("-and-", "-n-").replace("-&-", "-n-")
 
-                    task = asyncio.ensure_future(proxy.retrieve_factbook_country(session, iso3, gec.lower(), region))
+                    task = asyncio.ensure_future(proxy.retrieve_factbook_country(
+                        session, iso3, iso2, gec.lower(), region)
+                    )
                     tasks.append(task)
 
         results = await asyncio.gather(*tasks)
@@ -57,7 +60,7 @@ def load_country(country_json):
 
     # Extraction
     iso3 = country_json['iso3']
-    iso2 = iso3[:2]
+    iso2 = country_json['iso2']
     gec = country_json['gec']
     income_level = CountryUtils.iso3_to_income.get(iso3, None)
     name = FactbookExtractor.extract_field(country_json['country'],

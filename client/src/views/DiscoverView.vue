@@ -13,6 +13,7 @@ const discover = (value) => {
         <div class="discover-wrapper">
             <button class="discover-button" @click="discover('countries')">COUNTRIES</button>
             <button class="discover-button" @click="discover('cities')">CITIES</button>
+            <button class="discover-button" @click="discover('regions')">REGIONS</button>
         </div>
   </main>
 </template>
@@ -42,7 +43,7 @@ main {
   }
 
   .discover-button {
-    width: 250px;
+    min-width: 200px;
     height: 80px;
     margin: 0 10px;
     cursor: pointer;
@@ -63,5 +64,10 @@ main {
     border: 1px solid black;
   }
 
+  @media screen and (max-width: 600px) {
+    .discover-wrapper {
+        flex-direction: column;
+    }
+}
 }
 </style>

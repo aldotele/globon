@@ -34,7 +34,7 @@ def retrieve_factbook_codes():
     return pd.read_csv(ProxyAPI.factbook_codes, na_filter=False)
 
 
-async def retrieve_factbook_country(session, iso3, gec, region):
+async def retrieve_factbook_country(session, iso3, iso2, gec, region):
     async with session.get(ProxyAPI.factbook_country_base_uri + "/" + region + "/" + gec + ".json") as resp:
         country_json = await resp.json(content_type=None)
-        return {"iso3": iso3, "gec": gec, "country": country_json}
+        return {"iso3": iso3, "iso2": iso2,"gec": gec, "country": country_json}

@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('world_proxy.urls')),
     path('api/countries/', include('country.urls')),
     path('api/cities/', include('city.urls')),
+    path('api/regions/', include('region.urls')),
     path('schema/', SpectacularAPIView.as_view(), name="schema"),
     path('swagger/', SpectacularSwaggerView.as_view(url_name="schema")),
 ]
