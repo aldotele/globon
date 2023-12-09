@@ -10,6 +10,24 @@ from country.util.factbook_extractor import FactbookExtractor
 from world_proxy import proxy
 
 
+def oneTimeIso2Update():
+    from country.models import Country
+    df_codesxref = proxy.retrieve_factbook_codesxref()
+    for index, row in df_codesxref.iterrows():
+        # gec code is used for factbook (e.g. gm for germany)
+        gec = row['GEC'].lower()
+        # iso3 code is used for restcountries and worldbank
+        iso3 = row['A2']
+        iso2 = row['A3']
+
+        try:
+            country = Country.objects.get(iso3=iso3)
+            country.iso2 = iso2
+            country.save()
+        except:
+            print("error on " + iso3 + "|" + iso2)
+
+
 async def load_countries():
     # locale is used to parse as numbers strings written in this format "1,500.57"
     #locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
