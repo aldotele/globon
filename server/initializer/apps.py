@@ -4,7 +4,7 @@ import os
 
 from django.apps import AppConfig
 
-from initializer.initializer import load_countries, oneTimeIso2Update
+from initializer.initializer import load_countries
 
 
 class InitializerConfig(AppConfig):
@@ -12,13 +12,10 @@ class InitializerConfig(AppConfig):
     name = 'initializer'
 
     def ready(self):
-        from country.models import Country
-        oneTimeIso2Update()
-
         if os.environ.get('RUN_MAIN'):
             logging.info("ONE TIME EXECUTION: populating db ...")
             # import model
-
+            from country.models import Country
             # check if countries are already on db or not
             if not Country.objects.all():
                 asyncio.run(load_countries())
