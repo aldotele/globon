@@ -147,10 +147,21 @@ p {
 
 #leaflet-map {
   height: 98vh;
-  width: 95%;
+  width: 90%;
   overflow: hidden;
   margin: 0 auto;
   border-style: double;
+}
+
+@media screen and (max-width: 600px) {
+  main {
+    margin-bottom: 50px;
+  }
+
+  #leaflet-map {
+    height: 85vh;
+    width: 85%;
+  }
 }
 
 </style>
