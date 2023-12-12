@@ -22,18 +22,30 @@ const countryNameToIso = ref({});
 const manyItemsMsg = ref(false);
 
 onMounted(async () => {
-  try {
-    // Make an API request to fetch countries and populate the coutryNameToIso ref
-    const response = await fetch(SERVER_ADDRESS+"/api/countries", {method: 'GET', redirect: 'follow'});
-    const data = await response.json();
+    // GRAPHQL query for countries
+    let query = `{
+        countries {
+            iso3,
+            iso2,
+            name
+        }
+    }`;
 
-    // countryNameToIso object is used to populate the dropdown country filter
-    data.forEach((country) => {
-        countryNameToIso.value[country.name] = country.iso3;
-    })
-  } catch (error) {
-    console.error('Error fetching countries:', error);
-  }
+    try {
+        let res = await fetch(SERVER_ADDRESS+'/graphql', {
+            method: 'POST',
+            headers: {
+            'content-type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+        });
+        res = await res.json();
+        res.data.countries
+            .forEach(country => countryNameToIso.value[country.name] = country.iso3);
+
+    } catch (error) {
+        console.log('Error fetching countries:', error);
+    }
 });
 
 const afterSubmit = async () => {
@@ -56,7 +68,7 @@ const afterSubmit = async () => {
 
     const compositeFilter = compositeFilterList.join("&");
 
-    // GRAPHQL query for countries
+    // GRAPHQL query for cities
     let query = `{
         cities(search: "${compositeFilter}") {
             iso3,

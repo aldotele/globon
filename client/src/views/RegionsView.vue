@@ -21,18 +21,30 @@ let regions = ref(null);
 const countryNameToIso2 = ref({});
 
 onMounted(async () => {
-  try {
-    // Make an API request to fetch countries and populate the coutryNameToIso2 ref
-    const response = await fetch(SERVER_ADDRESS+"/api/countries?fields=name,iso3,iso2", {method: 'GET', redirect: 'follow'});
-    const data = await response.json();
+    // GRAPHQL query for countries
+    let query = `{
+        countries {
+            iso3,
+            iso2,
+            name
+        }
+    }`;
 
-    // countryNameToIso2 object is used to populate the dropdown country filter
-    data.forEach((country) => {
-        countryNameToIso2.value[country.name] = country.iso2;
-    })
-  } catch (error) {
-    console.error('Error fetching countries:', error);
-  }
+    try {
+        let res = await fetch(SERVER_ADDRESS+'/graphql', {
+            method: 'POST',
+            headers: {
+            'content-type': 'application/json',
+            },
+            body: JSON.stringify({ query }),
+        });
+        res = await res.json();
+        res.data.countries
+            .forEach(country => countryNameToIso2.value[country.name] = country.iso2);
+
+    } catch (error) {
+        console.log('Error fetching countries:', error);
+    }
 });
 
 const onChange = async () => {
