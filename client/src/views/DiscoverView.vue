@@ -1,19 +1,56 @@
 <script setup>
 import router from "@/router";
+import { onMounted, ref, reactive} from 'vue'
+
+const SERVER_ADDRESS = import.meta.env.VITE_SERVER_ADDRESS;
+
+//let flags = reactive({"countries": false, "cities": true, "regions": true});
+let isLoading = ref(true)
+let flags = reactive({
+  "countries": false,
+  "cities": false,
+  "regions": false
+})
 
 const discover = (value) => {
   router.push("/" + value);
 }
+
+onMounted(async () => {
+  try {
+    // checking if data are present per section. Using iso3 ITA
+    const countryResponse = await fetch(SERVER_ADDRESS+"/api/countries?fields=iso2&iso3=ITA", {method: 'GET', redirect: 'follow'});
+    const cityResponse = await fetch(SERVER_ADDRESS+"/api/cities?capital=true&iso3=ITA", {method: 'GET', redirect: 'follow'});
+    
+    if (countryResponse) {
+      const countryBody = await countryResponse.json();
+      if (countryBody.length > 0) {
+        flags.countries = true;
+      }
+    }
+    if (cityResponse) {
+      const cityBody = await cityResponse.json();
+      if (cityBody.length > 0) {
+        flags.cities = true;
+        flags.regions = true;
+      }
+    }
+    // opens the sections container
+    isLoading.value = false;
+  } catch (error) {
+        console.error('Error fetching data:', error);
+  }
+})
 
 </script>
 
 <template>
   <main>
     <h1>Discover&nbsp:</h1>
-        <div class="discover-wrapper">
-            <button class="discover-button" @click="discover('countries')">COUNTRIES</button>
-            <button class="discover-button" @click="discover('cities')">CITIES</button>
-            <button class="discover-button" @click="discover('regions')">REGIONS</button>
+        <div v-if="!isLoading" class="discover-wrapper">
+            <button v-if="flags.countries" class="discover-button" @click="discover('countries')">COUNTRIES</button>
+            <button v-if="flags.cities" class="discover-button" @click="discover('cities')">CITIES</button>
+            <button v-if="flags.regions" class="discover-button" @click="discover('regions')">REGIONS</button>
         </div>
   </main>
 </template>
