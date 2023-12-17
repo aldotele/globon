@@ -168,8 +168,9 @@ async function extractCitiesIdToCoords(data) {
 
 <style lang="scss" scoped>
 * {
-font-family: 'Open Sans', sans-serif;
+  font-family: 'Roboto Mono';
 }
+
 .input-wrapper {
     display: flex;
     justify-content: center;

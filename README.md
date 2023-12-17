@@ -8,23 +8,36 @@
 
 
 1 . [Intro](#intro)\
-1 . [Technology Stack](#technology-stack)\
-2 . [Run With Docker](#run-with-docker)
+2 . [Technology Stack](#technology-stack)\
+3 . [API](#api)\
+3 . [Run With Docker](#run-with-docker)
 
 <br/>
 
 ### Intro
-The Globon WebApp allows you to visualize the world map and locate countries of the world, after applying filters on them.
-For example, you can visualize the countries of the world within a specific population range.
+Globon lets you interact with the world map and locate areas of interest after applying filters.
+For example, you can visualize the countries of the world within a specific population range, locate administrative capitals of a specific country, learn about different regions of the world, and a lot more.
 
 <br/>
 
 ### Technology Stack
-Back-End --> **Python** with **Django REST Framework**\
+Back-End --> **Python** with **Django**\
 Front-End --> **Vue.js**\
-Database --> **PostgreSQL**
+Database --> **PostgreSQL**\
+Front-End hosting --> **Vercel**\
+Back-End hosting --> **Render**
 
-The project uses the [Leaflet.js](https://leafletjs.com/) library for visualizing the world map and interacting with it.
+The project uses [Leaflet.js](https://leafletjs.com/) for map rendering and interaction.
+
+<br/>
+
+### API
+The web application provides both REST and GraphQL endpoints that you can use for your own project.
+
+They are available here:
+
+[REST API](https://worldproxy.onrender.com/swagger)\
+[GraphQL](https://worldproxy.onrender.com/graphql)
 
 <br/>
 
@@ -33,8 +46,11 @@ The project uses the [Leaflet.js](https://leafletjs.com/) library for visualizin
 `docker-compose up`
 
 After the three containers are launched successfully, navigate to:
-[localhost:5173](http://localhost:5173) to try it out!
 
-You can also access the [Swagger UI](http://localhost:8000/swagger)
+[localhost:5173](http://localhost:5173) to use Globon!
+
+[localhost:8000/swagger](http://localhost:8000/swagger) to access the RESTful endpoints
+
+[localhost:8000/graphql](http://localhost:8000/graphql) to access the GraphQL endpoint
 
 

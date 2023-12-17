@@ -46,16 +46,20 @@ onMounted(async () => {
 
 <template>
   <main>
-    <h1>Discover&nbsp:</h1>
+    <h1>Discover&nbsp</h1>
         <div v-if="!isLoading" class="discover-wrapper">
-            <button v-if="flags.countries" class="discover-button" @click="discover('countries')">COUNTRIES</button>
-            <button v-if="flags.cities" class="discover-button" @click="discover('cities')">CITIES</button>
-            <button v-if="flags.regions" class="discover-button" @click="discover('regions')">REGIONS</button>
+            <button v-if="flags.countries" class="discover-button" @click="discover('countries')">Countries</button>
+            <button v-if="flags.cities" class="discover-button" @click="discover('cities')">Cities</button>
+            <button v-if="flags.regions" class="discover-button" @click="discover('regions')">Regions</button>
         </div>
   </main>
 </template>
 
 <style lang="scss" scoped>
+* {
+  font-family: 'Roboto Mono';
+}
+
 main {
   display: flex;
   flex-direction: column;

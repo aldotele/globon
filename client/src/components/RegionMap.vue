@@ -186,9 +186,13 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @import 'leaflet/dist/leaflet.css';
+
+* {
+  font-family: 'Roboto Mono';
+}
   
 main {
-  margin: 100px auto 30px auto;
+  margin: 75px auto 30px auto;
 }
 
 p {
