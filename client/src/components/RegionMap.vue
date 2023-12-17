@@ -10,8 +10,13 @@ const props = defineProps({
 
 const counter = computed(() => props.searchCount);
 const regionChange = computed(() => props.filters.region);
+const countryChange = computed(() => props.filters.countryName)
 
-// whenever a new region is selected without submitting a new search, the found flag is reset to zero to start clean
+// clear map whenever either a new country or region is selected without submitting a new search
+watch(countryChange, async () => {
+  await clearBorders();
+  state.foundRegionFlag = false;
+})
 watch(regionChange, async () => {
   await clearBorders();
   state.foundRegionFlag = false;
@@ -83,21 +88,26 @@ async function drawRegion() {
   // loading spinner activated
   state.loadingRegion = true;
   let noRegionFilter = "";
-  let REGIONS_API = `https://nominatim.openstreetmap.org/search.php?country=${props.filters.iso2}&state=${props.filters.region?props.filters.region:noRegionFilter}&polygon_geojson=1&format=jsonv2`;
+  let REGIONS_API = `https://nominatim.openstreetmap.org/search.php?country=${props.filters.countryName}&state=${props.filters.region?props.filters.region:noRegionFilter}&polygon_geojson=1&format=jsonv2`;
   let response = await fetch(REGIONS_API, { method: 'GET', redirect: 'follow'});
   let responseBody = await response.json()
-  if (responseBody && responseBody.length == 1 && "geojson" in responseBody[0] && "lat" in responseBody[0] && "lon" in responseBody[0]) {
+  const fields = ["geojson", "lat", "lon"];
+  if (responseBody && responseBody.length == 1 && fields.every((field) => field in responseBody[0])) {
+    let regionData = responseBody[0];
     // update the center of the map to the region
-    let lat = responseBody[0].lat;
-    let lon = responseBody[0].lon;
+    let lat = regionData.lat;
+    let lon = regionData.lon;
     state.mapInstance.setView(new L.LatLng(lat, lon), 5);
     // found region flag
     state.foundRegionFlag = true;
-    let geojson = responseBody[0].geojson;
+    let geojson = regionData.geojson;
     //console.log(geojson)
     state.marker.addData(geojson)
         .setStyle(mapStyle)
-        .addTo(state.mapInstance);
+        .addTo(state.mapInstance)
+        .on('click', function() {
+          //showRegionCapital(props.filters.region);
+        });
     // deactivate spinner after region was found   
     state.loadingRegion = false;
   } else {
@@ -106,6 +116,47 @@ async function drawRegion() {
     // deactivate spinner when nothing was found
     state.loadingRegion = false;
   }
+}
+
+async function showRegionCapital(region) {
+  let query = `{
+    cities(search: "admin_name=${region} & capital = admin") {
+      city
+    }
+  }`;
+
+  try {
+    let res = await fetch(import.meta.env.VITE_SERVER_ADDRESS+'/graphql', {
+      method: 'POST',
+      headers: {
+      'content-type': 'application/json',
+      },
+      body: JSON.stringify({ query }),
+    });
+    res = await res.json();
+    if (res.data.cities.length > 0) {
+      triggerRegionAlert(region, res.data.cities[0].city)
+    }
+  } catch (error) {
+      console.log(error);
+  }
+}
+
+async function triggerRegionAlert(region, city) {
+
+  let builtHtml = `
+    <h3 style='font-weight:500'>
+    <b>regional capital</b>: ${city}</h3>
+  `;
+  
+  // triggering alert with country info
+  Swal.fire({
+    title: region,
+    html: builtHtml,
+    showConfirmButton: false,
+    showCancelButton: true,
+    cancelButtonText: "Close"
+  });
 }
 
 async function main() {
