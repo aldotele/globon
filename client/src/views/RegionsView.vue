@@ -107,7 +107,7 @@ const afterSubmit = async () => {
             </div>
 
             <div id="submit-section" class="button-block">
-                <button @click="afterSubmit" class="submit-button" type="submit">Find Regions</button>
+                <button :disabled="!filters.iso2" @click="afterSubmit" class="submit-button" type="submit">Find Regions</button>
             </div>
 
         </form>
@@ -169,6 +169,14 @@ form {
 .submit-button:hover {
     color: white;
     background-color: #42e048;
+}
+
+.submit-button:disabled {
+    cursor: default;
+    font-weight: 500;
+    color: rgb(150, 150, 150);
+    background-color: rgb(216, 215, 215);
+    border-color: rgb(150, 150, 150);
 }
 
 @media screen and (max-width: 600px) {
