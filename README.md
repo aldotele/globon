@@ -8,8 +8,9 @@
 
 
 1 . [Intro](#intro)\
-1 . [Technology Stack](#technology-stack)\
-2 . [Run With Docker](#run-with-docker)
+2 . [Technology Stack](#technology-stack)\
+3 . [API](#api)\
+3 . [Run With Docker](#run-with-docker)
 
 <br/>
 
@@ -35,7 +36,7 @@ The web application provides both REST and GraphQL endpoints that you can use fo
 
 They are available here:
 
-[REST API](https://worldproxy.onrender.com/swagger)
+[REST API](https://worldproxy.onrender.com/swagger)\
 [GraphQL](https://worldproxy.onrender.com/graphql)
 
 <br/>
