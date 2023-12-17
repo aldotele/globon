@@ -49,8 +49,9 @@ onMounted(async () => {
 
 const onChange = async () => {
     filters.region = null;
-    // here we have the value of the iso3
-    // iso3 can be used to find all regions of a country
+    filters.iso2 = countryNameToIso2.value[filters.countryName];
+    // here we have the value of the iso2
+    // iso2 can be used to find all regions of a country
     // then a separate request for each region will retrieve the geoJson
     try {
         // Make an API request to fetch regions
@@ -89,9 +90,9 @@ const afterSubmit = async () => {
                 <!-- COUNTRY -->
                 <div class="filter-input-div">
                     <label for="country">Country &nbsp;&nbsp;</label>
-                    <select @change="onChange" id="country" name="country" v-model="filters.iso2">
+                    <select @change="onChange" id="country" name="country" v-model="filters.countryName">
                         <option value="">- - - select - - -</option>
-                        <option :key="countryNameToIso2[countryName]" :value="countryNameToIso2[countryName]" v-for="countryName in Object.keys(countryNameToIso2).sort()">{{ countryName }}</option>
+                        <option :key="countryName" :value="countryName" v-for="countryName in Object.keys(countryNameToIso2).sort()">{{ countryName }}</option>
                     </select>
                 </div>
 
@@ -128,7 +129,7 @@ font-family: 'Open Sans', sans-serif;
     padding-top: 30px;
 }
 
-#country {
+select {
     width: 150px;
     font-size: medium;
 }
