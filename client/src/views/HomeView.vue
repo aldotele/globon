@@ -45,10 +45,13 @@ const launch = () => {
 </template>
 
 <style lang="scss" scoped>
+* {
+  font-family: 'Roboto Mono';
+}
+
 main {
   display: flex;
   flex-direction: column;
-  max-width: 500px;
   width: 100%;
   margin: 0 auto;
   padding: 40px 16px;

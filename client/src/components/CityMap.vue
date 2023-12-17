@@ -127,16 +127,19 @@ async function triggerCityAlert(data) {
   : "";
 
   let builtHtml = `
-    <h3 style='font-weight:500'>
-    <b>population</b>: ${data.population ? data.population.toLocaleString() : "n/a"}<br><br>
+    <h3 style='font-weight:500;font-family:Roboto Mono'>
+    <p style='font-weight:300'><b>population</b>: ${data.population ? data.population.toLocaleString() : "n/a"}<br><br>
     <b>country</b>: ${data.country}<br><br>
-    <b>region</b>: ${data.adminName}<br><br>
   `;
+
+  if (data.adminName) {
+    builtHtml += `<b>region</b>: ${data.adminName}<br><br>`;
+  }
   
   if (notes) {
     builtHtml += `<b>notes</b>: ${notes}<br><br>`;
   }
-  builtHtml += "</h3>";
+  builtHtml += "</p></h3>";
   
   // triggering alert with country info
   Swal.fire({
@@ -174,9 +177,13 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 @import 'leaflet/dist/leaflet.css';
+
+* {
+  font-family: 'Roboto Mono';
+}
   
 main {
-  margin: 100px auto 30px auto;
+  margin: 75px auto 30px auto;
 }
 
 p {

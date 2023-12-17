@@ -132,12 +132,12 @@ async function triggerCountryAlert(data) {
   // triggering alert with country info
   Swal.fire({
     title: data.name,
-    html: "<h3 style='font-weight:500'>" 
-    + "<b>population</b>: " + data.society.population.toLocaleString() + "<br><br>" 
+    html: "<h3 style='font-weight:500;font-family:Roboto Mono'>" 
+    + "<p style='font-weight:300'><b>population</b>: " + data.society.population.toLocaleString() + "<br><br>" 
     + "<b>capital city</b>: " + data.capital.replace("[", "").replace("]", "") + "<br><br>"
     //+ "<b>currencies</b>: " + data.currencies.join(", ") + "<br><br>"
     //+ "<b>spoken languages</b>: " + data.languages.join(", ")
-    + "</h3>",
+    + "</p></h3>",
     showConfirmButton: false,
     showCancelButton: true,
     cancelButtonText: "Close"
@@ -184,8 +184,12 @@ onMounted(() => {
 <style lang="scss" scoped>
 @import 'leaflet/dist/leaflet.css';
 
+* {
+  font-family: 'Roboto Mono';
+}
+
 main {
-  margin: 100px auto 30px auto;
+  margin: 75px auto 30px auto;
 }
 
 p {
