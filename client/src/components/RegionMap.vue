@@ -119,7 +119,6 @@ async function drawRegion() {
 }
 
 async function retrieveCapital(region) {
-  console.log("prova")
   let query;
   // if region is not chosen then the country capital is retrieved
   if (region) {
