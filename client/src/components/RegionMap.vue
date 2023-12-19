@@ -105,7 +105,7 @@ async function drawRegion() {
     state.marker.addData(geojson)
         .setStyle(mapStyle)
         .addTo(state.mapInstance)
-        .on('click', function() {
+        .once('click', function() {
           retrieveCapital(props.filters.region);
         });
     // deactivate spinner after region was found   
@@ -119,6 +119,7 @@ async function drawRegion() {
 }
 
 async function retrieveCapital(region) {
+  console.log("prova")
   let query;
   // if region is not chosen then the country capital is retrieved
   if (region) {
