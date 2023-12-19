@@ -8,8 +8,14 @@ def build_application_filter(composite_filter: str, fields: list) -> dict:
         if "=" in filter:
             field, value = extract_field_value(filter, "=")
             validate_field(field, fields)
-            field_iexact = field + "__iexact"
-            filter_dict[field_iexact] = value
+            # | is an OR condition, for example optionA|optionB|optionC
+            # in this case the OR condition is handled through a field__in logic with a list of options
+            if '|' in value:
+                field_in = field + "__in"
+                filter_dict[field_in] = value.split("|")
+            else:
+                field_iexact = field + "__iexact"
+                filter_dict[field_iexact] = value
         elif ">" in filter:
             field, value = extract_field_value(filter, ">")
             validate_field(field, fields)
