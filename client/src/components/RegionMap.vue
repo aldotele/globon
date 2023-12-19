@@ -106,7 +106,7 @@ async function drawRegion() {
         .setStyle(mapStyle)
         .addTo(state.mapInstance)
         .on('click', function() {
-          //showRegionCapital(props.filters.region);
+          retrieveCapital(props.filters.region);
         });
     // deactivate spinner after region was found   
     state.loadingRegion = false;
@@ -118,12 +118,22 @@ async function drawRegion() {
   }
 }
 
-async function showRegionCapital(region) {
-  let query = `{
-    cities(search: "admin_name=${region} & capital = admin") {
-      city
-    }
-  }`;
+async function retrieveCapital(region) {
+  let query;
+  // if region is not chosen then the country capital is retrieved
+  if (region) {
+    query = `{
+      cities(search: "admin_name=${region} & capital = admin|primary") {
+        city
+      }
+    }`;
+  } else {
+    query = `{
+      cities(search: "iso2=${props.filters.iso2} & capital = primary") {
+        city
+      }
+    }`;   
+  }
 
   try {
     let res = await fetch(import.meta.env.VITE_SERVER_ADDRESS+'/graphql', {
@@ -135,18 +145,18 @@ async function showRegionCapital(region) {
     });
     res = await res.json();
     if (res.data.cities.length > 0) {
-      triggerRegionAlert(region, res.data.cities[0].city)
+      triggerCapitalAlert(region ? region : props.filters.countryName, res.data.cities[0].city)
     }
   } catch (error) {
       console.log(error);
   }
 }
 
-async function triggerRegionAlert(region, city) {
+async function triggerCapitalAlert(region, city) {
 
   let builtHtml = `
     <h3 style='font-weight:500'>
-    <b>regional capital</b>: ${city}</h3>
+    <b>capital</b>: ${city}</h3>
   `;
   
   // triggering alert with country info
