@@ -64,8 +64,7 @@ async function clearMarkers() {
 async function applyMarkers() {
   console.log("search number ", counter.value);
   state.foundCitiesCount = props.citiesIdToCoords.length;
-  // before applying markers, create a marker group for the current search
-  state.markerGroup = L.layerGroup().addTo(state.mapInstance)
+  let markers = []
   // center map on the country if a country filter is present
   if (state.foundCitiesCount > 0 && props.filters.iso3) {
     const firstCoords = Object.values(props.citiesIdToCoords[0])[0];
@@ -75,15 +74,16 @@ async function applyMarkers() {
     state.mapInstance.setView(state.mapOptions.center, 3);
   }
   props.citiesIdToCoords.forEach((cityIdToCoords) => {
-    // creating a new marker with lat, lng and add it to the group
+    // creating a new marker with lat, lng
     // note that cityIdToCoords is an object with key->sm_id and value->[lat, lng]
-    const marker = L.marker(Object.values(cityIdToCoords)[0]);
-    marker.addTo(state.markerGroup)
-    .on('click', function() {
-      showCityDetails(Object.keys(cityIdToCoords)[0]);
-    });
+    const marker = L.marker(Object.values(cityIdToCoords)[0])
+      .on('click', function() {
+        showCityDetails(Object.keys(cityIdToCoords)[0]);
+      });
+    markers.push(marker);
   })
-
+  // add all markers at once to the same layer group
+  state.markerGroup = L.layerGroup(markers).addTo(state.mapInstance);
   state.foundCitiesFlag = true;
 }
 
