@@ -42,18 +42,11 @@ const state = reactive({
   mapOptions: {
     center: L.latLng(30.378472, 14.970598),
     zoom: 1,
-    //zoomControl: true,
-    //zoomAnimation: false,
-    // maxBounds: L.LatLngBounds(
-    //   L.latLng(18.91619, -171.791110603),
-    //   L.latLng(71.3577635769, -66.96466)
-    // ),
     layers: [],
   },
-  marker: L.geoJSON(),
   geoJsonData: null,
   mapInstance: null,
-  //layerControlInstance: null,
+  borderGroup: null,
   foundRegionFlag: false,
   loadingRegion: false,
 })
@@ -68,19 +61,11 @@ async function initMap() {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(leafletMap);
 
-  // Create the layer control and add it to the map:
-  // state.layerControlInstance = L.control.layers({
-  //     OpenStreetMap: tile,
-  //   }).addTo(leafletMap);
-  // Add an event listener to the map:
-  // leafletMap.on('zoomstart', () => {
-  //   console.log('ZOOM STARTED');
-  // });
   state.mapInstance = leafletMap;
 }
 
 async function clearBorders() {
-  state.marker.clearLayers();
+  state.mapInstance.removeLayer(state.borderGroup);
 }
 
 // fetch data
@@ -101,13 +86,12 @@ async function drawRegion() {
     // found region flag
     state.foundRegionFlag = true;
     let geojson = regionData.geojson;
-    //console.log(geojson)
-    state.marker.addData(geojson)
-        .setStyle(mapStyle)
-        .addTo(state.mapInstance)
-        .once('click', function() {
-          retrieveCapital(props.filters.region);
-        });
+    const border = L.geoJSON(geojson)
+      .setStyle(mapStyle)
+      .on('click', function() {
+        retrieveCapital(props.filters.region);
+      });
+    state.borderGroup = L.layerGroup([border]).addTo(state.mapInstance);
     // deactivate spinner after region was found   
     state.loadingRegion = false;
   } else {
