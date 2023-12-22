@@ -58,11 +58,13 @@ async function initMap() {
 
 async function clearMarkers() {
   // deleting the group of markers related to the last search
-  state.mapInstance.removeLayer(state.markerGroup);
+  if (state.markerGroup) {
+    state.mapInstance.removeLayer(state.markerGroup);
+  }
 }
 
 async function applyMarkers() {
-  console.log("search number ", counter.value);
+  //console.log("search number ", counter.value);
   state.foundCitiesCount = props.citiesIdToCoords.length;
   let markers = []
   // center map on the country if a country filter is present
