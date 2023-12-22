@@ -65,7 +65,9 @@ async function initMap() {
 }
 
 async function clearBorders() {
-  state.mapInstance.removeLayer(state.borderGroup);
+  if (state.borderGroup) {
+    state.mapInstance.removeLayer(state.borderGroup);
+  }
 }
 
 // fetch data
@@ -99,6 +101,13 @@ async function drawRegion() {
     state.mapInstance.setView(state.mapOptions.center, 3);
     // deactivate spinner when nothing was found
     state.loadingRegion = false;
+    Swal.fire({
+      title: "N/A",
+      html: props.filters.region + " not found",
+      showConfirmButton: false,
+      showCancelButton: true,
+      cancelButtonText: "Close"
+    });
   }
 }
 
@@ -159,7 +168,6 @@ async function main() {
 }
 
 onMounted(() => {
-  console.log("search number ", counter.value);
   main();
 })
 </script>

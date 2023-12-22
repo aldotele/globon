@@ -53,7 +53,9 @@ async function initMap() {
 }
 
 async function clearBorders() {
-  state.mapInstance.removeLayer(state.borderGroup);
+  if (state.borderGroup) {
+    state.mapInstance.removeLayer(state.borderGroup);
+  }
 }
 
 // fetch data
