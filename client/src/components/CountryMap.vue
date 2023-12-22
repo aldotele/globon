@@ -11,16 +11,13 @@ const props = defineProps({
 
 const counter = computed(() => props.searchCount);
 
-// a new search will increment the counter, therefore previous markers will be removed first
+// a new search will increment the counter, therefore previous borders will be removed first
 watch(counter, async () => {
-  await clearBorders();
-  // clear also the found countried description
+  // clear found countries flag
   state.foundCountriesFlag = false;
+  await clearBorders();
   // fetching data again
   applyBorders();
-}, {
-  // deep property set to true allows to track nested properties changes also
-  deep: true,
 })
 
 const mapStyle = {
@@ -34,25 +31,17 @@ const state = reactive({
   mapOptions: {
     center: L.latLng(30.378472, 14.970598),
     zoom: 1,
-    //zoomControl: true,
-    //zoomAnimation: false,
-    // maxBounds: L.LatLngBounds(
-    //   L.latLng(18.91619, -171.791110603),
-    //   L.latLng(71.3577635769, -66.96466)
-    // ),
     layers: [],
   },
-  marker: L.geoJSON(),
   geoJsonData: null,
   mapInstance: null,
-  //layerControlInstance: null,
+  borderGroup: null,
   foundCountriesCount: 0,
   foundCountriesFlag: false
 })
 
 async function initMap() {
   const leafletMap = L.map(state.mapId, state.mapOptions);
-
   // add tile layer
   const tile = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 18,
@@ -60,19 +49,11 @@ async function initMap() {
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(leafletMap);
 
-  // Create the layer control and add it to the map:
-  // state.layerControlInstance = L.control.layers({
-  //     OpenStreetMap: tile,
-  //   }).addTo(leafletMap);
-  // Add an event listener to the map:
-  // leafletMap.on('zoomstart', () => {
-  //   console.log('ZOOM STARTED');
-  // });
   state.mapInstance = leafletMap;
 }
 
 async function clearBorders() {
-  state.marker.clearLayers();
+  state.mapInstance.removeLayer(state.borderGroup);
 }
 
 // fetch data
@@ -84,14 +65,17 @@ async function fetchAllGeoJsonBorders() {
 }
 
 async function applyBorders() {
+  let borders = [];
   state.geoJsonData.features.forEach((geoJsonCountry) => {
     if (props.iso3Codes.includes(geoJsonCountry.properties.ISO_A3)) {
-      state.marker.addData(geoJsonCountry)
+      const border = L.geoJSON(geoJsonCountry)
         .setStyle(mapStyle)
-        .addTo(state.mapInstance)
-        .on('click', showCountryDetails);    
-      }
+        .on('click', showCountryDetails);
+      borders.push(border);
+    }
   })
+  // creade group of borders with all filtered borders inside it
+  state.borderGroup = L.layerGroup(borders).addTo(state.mapInstance);
   state.foundCountriesCount = props.iso3Codes.length;
   state.foundCountriesFlag = true;
 }
@@ -151,7 +135,6 @@ async function main() {
 }
 
 onMounted(() => {
-  console.log("search number ", counter.value);
   main();
 })
 
@@ -166,19 +149,6 @@ onMounted(() => {
     </div>
     <div :id="state.mapId"></div>
   </main>
-    <!-- <main>
-      <l-map style="display:block" ref="map" v-model:zoom="zoom" v-model:center="center" :useGlobalLeaflet="false">
-        <l-tile-layer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                      layer-type="base"
-                      name="Open Street Map">
-        </l-tile-layer>
-        <l-geo-json v-for="(polygon, index) in polygons" :key="index" :geojson="polygon" :style="{ color: 'red', fill: false }" /> -->
-        <!-- <l-geo-json :geojson="geojson" :style="{ color: 'red', fill: false }" /> -->
-        <!-- <l-polygon v-for="(polygon, index) in polygons" :key="index" :lat-lngs="polygon" color="red" :fill="false" /> -->
-        <!-- {/* <l-polygon :lat-lngs="polygon" color="red" :fill="false" /> */} -->
-      <!-- </l-map>
-      
-    </main> -->
 </template>
 
 <style lang="scss" scoped>
