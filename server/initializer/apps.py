@@ -11,7 +11,7 @@ class InitializerConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
     name = 'initializer'
 
-    def ready(self):
+    def ready(self):                
         if os.environ.get('RUN_MAIN'):
             logging.info("ONE TIME EXECUTION: populating db ...")
             # import model
@@ -23,4 +23,3 @@ class InitializerConfig(AppConfig):
             return True
         else:
             pass
-
