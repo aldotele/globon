@@ -116,11 +116,13 @@ async function showCountryDetails(e) {
 
 async function triggerCountryAlert(data) {
   // triggering alert with country info
+  let capital = data.capital ? data.capital.replace("[", "").replace("]", "") : "-";
+  let population = data.society.population ? data.society.population.toLocaleString() : "-";
   Swal.fire({
-    title: data.name,
+    title: `<h3 style='font-weight:500;font-family:Roboto Mono'>${data.name}</h3>`,
     html: "<h3 style='font-weight:500;font-family:Roboto Mono'>" 
-    + "<p style='font-weight:300'><b>population</b>: " + data.society.population.toLocaleString() + "<br><br>" 
-    + "<b>capital city</b>: " + data.capital.replace("[", "").replace("]", "") + "<br><br>"
+    + `<p style='font-weight:300'><b>population</b>: ${population}<br><br>` 
+    + `<b>capital city</b>: ${capital}<br><br>`
     //+ "<b>currencies</b>: " + data.currencies.join(", ") + "<br><br>"
     //+ "<b>spoken languages</b>: " + data.languages.join(", ")
     + "</p></h3>",
