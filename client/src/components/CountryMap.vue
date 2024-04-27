@@ -83,7 +83,7 @@ async function applyBorders() {
 }
 
 async function showCountryDetails(e) {
-  let isoCode = e.layer.feature.properties.ISO_A3;
+  let isoCode = e.layer.feature.id;
   let isoFilter = "(search: \"iso3 = " + isoCode + "\")";
   let query = `{
     countries${isoFilter} {
