@@ -69,7 +69,7 @@ async function fetchAllGeoJsonBorders() {
 async function applyBorders() {
   let borders = [];
   state.geoJsonData.features.forEach((geoJsonCountry) => {
-    if (props.iso3Codes.includes(geoJsonCountry.properties.ISO_A3)) {
+    if (props.iso3Codes.includes(geoJsonCountry.id)) {
       const border = L.geoJSON(geoJsonCountry)
         .setStyle(mapStyle)
         .on('click', showCountryDetails);
