@@ -12,20 +12,14 @@ class InitializerConfig(AppConfig):
     name = 'initializer'
 
     def ready(self):
-        # import model
-        from country.models import Country
-        # check if countries are already on db or not
-        if not Country.objects.all():
-            asyncio.run(load_countries())
-        return True
-        # if os.environ.get('RUN_MAIN'):
-        #     logging.info("ONE TIME EXECUTION: populating db ...")
-        #     # import model
-        #     from country.models import Country
-        #     # check if countries are already on db or not
-        #     if not Country.objects.all():
-        #         asyncio.run(load_countries())
-        #
-        #     return True
-        # else:
-        #     pass
+        if os.environ.get('RUN_MAIN'):
+            logging.info("ONE TIME EXECUTION: populating db ...")
+            # import model
+            from country.models import Country
+            # check if countries are already on db or not
+            if not Country.objects.all():
+                asyncio.run(load_countries())
+
+            return True
+        else:
+            pass
