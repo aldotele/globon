@@ -54,3 +54,9 @@ After the three containers are launched successfully, navigate to:
 [localhost:8000/graphql](http://localhost:8000/graphql) to access the GraphQL endpoint
 
 
+
+### Infrastructure model
+![Infrastructure main model](.infragenie/infrastructure_main_model.svg)
+- [worldproxy_server component model](.infragenie/worldproxy_server_component_model.svg)
+
+---
