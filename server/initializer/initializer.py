@@ -70,7 +70,7 @@ def load_country(country_json):
     # TODO use pattern instead, to catch the number which refers to population
     population = FactbookExtractor.parse_number(
         FactbookExtractor.extract_by(
-            FactbookExtractor.extract_field(country_json['country'], "People and Society", "Population", "text"),
+            FactbookExtractor.extract_field(country_json['country'], "People and Society", "Population", "total", "text"),
             until=" "
         )
     )

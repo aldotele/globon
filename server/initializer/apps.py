@@ -12,7 +12,7 @@ class InitializerConfig(AppConfig):
     name = 'initializer'
 
     def ready(self):
-        if os.environ.get('RUN_MAIN'):
+        if os.environ.get('INITIALIZER'):
             logging.info("ONE TIME EXECUTION: populating db ...")
             # import model
             from country.models import Country
