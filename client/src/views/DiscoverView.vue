@@ -75,7 +75,7 @@ main {
 
   .discover-wrapper {
     display: flex;
-    justify-content: space-around;
+    justify-content: center;
     align-content: space-around;
   }
 
